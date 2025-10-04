@@ -1,0 +1,56 @@
+# Entorno virtual (virtualenv, venv, conda)
+venv/
+env/
+.venv/
+.env/
+ENV/
+*.env
+
+# Archivos de Python compilados
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de log
+*.log
+
+# Configuración de IDEs/editors
+.vscode/
+.idea/
+*.swp
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de base de datos (si usas SQLite)
+*.sqlite3
+*.db
+
+# Carpeta de distribución o build
+build/
+dist/
+*.egg-info/
+
+# Instancias y archivos temporales de Flask
+instance/
+*.pid
+
+# Testing
+htmlcov/
+coverage.*
+.cache/
+.pytest_cache/
+
+# Pipenv
+Pipfile.lock
+
+# mypy
+.mypy_cache/
+
+# Jupyter notebooks (opcional si no los usas)
+.ipynb_checkpoints/
+
+# Docker (si usas)
+*.tar
+*.dockerfile
