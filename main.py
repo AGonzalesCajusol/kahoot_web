@@ -1,14 +1,19 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import conexion 
 import routes.login as login_routes
 
 app = Flask(__name__)
+app.secret_key = 'secretkey'
 
 @app.route('/')
+@app.route('/index')
 def home():
     return render_template('login.html')
 
 login_routes.registrar_rutas(app)
+
+#
+
 
 #Ruta si se cayo el servidor de base de datos
 @app.route('/errorsistema')

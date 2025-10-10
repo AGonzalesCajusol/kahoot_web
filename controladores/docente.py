@@ -37,14 +37,9 @@ def validar_docente(correo, password, nombres, apellidos):
         return True
 
     except pymysql.err.IntegrityError as e:
-        # Código 1062 de MySQL = Duplicate entry
         if e.args[0] == 1062:
-            print("Error: El correo ya existe")
-            return "duplicado"
+            return {"mensaje" :"Ya existe ese usuario" }
         else:
-            print("Error de integridad:", e)
-            return None
-
+            return {"mensaje" : e }
     except Exception as e:
-        print("Otro error:", e)
-        return None
+        return {"mensaje" : e }
