@@ -5,6 +5,8 @@ env/
 .env/
 ENV/
 *.env
+myvirtualenv/
+
 
 # Archivos de Python compilados
 __pycache__/
