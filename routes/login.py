@@ -23,10 +23,11 @@ def registrar_rutas(app):
         password = request.form['password']
         nombres = request.form['nombres']
         apellidos = request.form['apellidos']
-        response = docente.validar_docente(correo, password, nombres, apellidos)
-        if response:
+        response = docente.registrardocente(correo, password, nombres, apellidos)
+        print(response)
+        if response == True:
             flash(response, "success")
-            return render_template(url_for('login'))
+            return render_template('login.html')
         flash(response, "danger")
-        return render_template('registro.html?')
+        return render_template('registro.html')
         

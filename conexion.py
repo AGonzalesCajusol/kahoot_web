@@ -12,5 +12,6 @@ def conectarbd():
         )
     
     except pymysql.Error as error:
+        print(error)
         return False
     

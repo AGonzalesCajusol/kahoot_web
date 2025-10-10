@@ -23,7 +23,7 @@ def validar_docente(correo, password):
     
 
 
-def validar_docente(correo, password, nombres, apellidos):
+def registrardocente(correo, password, nombres, apellidos):
     try:
         connection = conectarbd()
         if not connection:
@@ -33,13 +33,11 @@ def validar_docente(correo, password, nombres, apellidos):
         with connection.cursor() as cursor:
             query = "insert into Docente (correo, password, nombres, apellidos)  values (%s, %s, %s, %s)"
             cursor.execute(query, (correo, password_encript, nombres, apellidos))
-            cursor.fetchone()
-        return True
-
+            connection.commit()
+        return True 
     except pymysql.err.IntegrityError as e:
-        if e.args[0] == 1062:
-            return {"mensaje" :"Ya existe ese usuario" }
-        else:
-            return {"mensaje" : e }
+        if e.args[0] == 1062:    
+            return {"mensaje": "Ya existe ese usuario"}
+
     except Exception as e:
-        return {"mensaje" : e }
+        return {"mensaje" : str(e) }
