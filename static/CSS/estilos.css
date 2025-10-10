@@ -8,10 +8,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column; /* Añadir esto para que también se centre verticalmente */
+    flex-direction: column;
 }
 
-/* Contenedor para centrar el formulario */
+/* Contenedor de la tarjeta para centrarla correctamente */
 .container-fluid {
     display: flex;
     justify-content: center;
@@ -26,9 +26,16 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: white;
     width: 100%;
-    max-width: 400px; /* Limitar el ancho de la tarjeta */
+    max-width: 450px; /* Limitar el ancho de la tarjeta */
     padding: 2rem;
     text-align: center;
+    max-height: 90vh; /* Limitar la altura del formulario */
+    overflow-y: scroll; /* Mantener el scroll pero ocultarlo visualmente */
+}
+
+/* Ocultar la barra de desplazamiento */
+.card::-webkit-scrollbar {
+    display: none;  /* Ocultar la barra de desplazamiento en navegadores basados en WebKit (Chrome, Safari, etc.) */
 }
 
 /* Título de la tarjeta */
@@ -47,7 +54,7 @@ body {
     font-size: 1rem;
 }
 
-/* Estilización del botón de login */
+/* Estilización del botón de registro */
 .btn-primary {
     background-color: #0072ff;
     border-color: #0072ff;
@@ -72,21 +79,6 @@ a {
 
 a:hover {
     text-decoration: underline;
-}
-
-/* Ajuste de márgenes para los enlaces */
-.mt-3 {
-    margin-top: 1rem !important;
-}
-
-.mt-2 {
-    margin-top: 0.5rem !important;
-}
-
-/* Iconos en los campos de entrada */
-.input-group-text {
-    background-color: #f8f9fa;
-    border-radius: 50px;
 }
 
 /* Asegurarse de que todo el contenido esté centrado correctamente */
