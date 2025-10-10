@@ -1,14 +1,14 @@
 from flask import Flask, render_template
 import conexion 
+import routes.login as login_routes
+
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    conexion.conectarbd()
-    return "Hola mundo"  # O puedes usar return "Hola Flask"
+    return render_template('login.html')
 
-
-
+login_routes.registrar_rutas(app)
 
 #Ruta si se cayo el servidor de base de datos
 @app.route('/errorsistema')
