@@ -18,16 +18,27 @@
 
     <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 450px; padding: 2rem;">
         <div class="card-body">
-            <!-- Título -->
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {% for category, message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endwith %}
+
             <h3 class="card-title text-center text-primary mb-4">Registro de Docente</h3>
             <p class="text-center mb-4">Únete a nuestra plataforma educativa y comparte tu conocimiento.</p>
 
             <!-- Formulario de registro -->
-            <form method="POST" action="/register">
+            <form method="POST" action="/registrarusuario">
                 <!-- Campo de Nombre -->
                 <div class="mb-3">
                     <label for="nombre" class="form-label">Nombre</label>
-                    <input type="text" class="form-control form-control-lg" id="nombre" name="nombre" placeholder="Tu nombre" required>
+                    <input type="text" class="form-control form-control-lg" id="nombre" name="nombres" placeholder="Tu nombre" required>
                 </div>
 
                 <!-- Campo de Apellidos -->

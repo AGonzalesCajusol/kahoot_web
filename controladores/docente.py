@@ -1,3 +1,4 @@
+import hashlib
 from conexion import conectarbd
 from hashlib import sha256
 import pymysql
@@ -22,22 +23,24 @@ def validar_docente(correo, password):
         return None
     
 
-
-def registrardocente(correo, password, nombres, apellidos):
+def registrar_docente(correo, password, nombres, apellidos):
     try:
-        connection = conectarbd()
-        if not connection:
-            return None
+        # Hash de la contraseña utilizando SHA-256
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-        password_encript = sha256(str(password).encode('utf-8')).hexdigest()
-        with connection.cursor() as cursor:
-            query = "insert into Docente (correo, password, nombres, apellidos)  values (%s, %s, %s, %s)"
-            cursor.execute(query, (correo, password_encript, nombres, apellidos))
-            connection.commit()
-        return True 
-    except pymysql.err.IntegrityError as e:
-        if e.args[0] == 1062:    
-            return {"mensaje": "Ya existe ese usuario"}
+        # Conectar a la base de datos y registrar el docente
+        connection = conectarbd()
+        if connection:
+            cursor = connection.cursor()
+
+            # Insertar los datos del docente en la base de datos
+            query = "INSERT INTO Docente (correo, password, nombres, apellidos) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, (correo, hashed_password, nombres, apellidos))
+            connection.commit()  # Guardar los cambios
+            connection.close()
+            return "Docente registrado exitosamente"  # Mensaje de éxito
+        else:
+            return "Error al conectar con la base de datos"
 
     except Exception as e:
-        return {"mensaje" : str(e) }
+        return f"Error al registrar el docente: {str(e)}"

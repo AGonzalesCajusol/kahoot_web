@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, redirect, render_template, request, session, url_for
 import conexion 
 import routes.login as login_routes
 
@@ -14,11 +14,22 @@ def home():
 def register():
     return render_template('registro.html')
 
+@app.route('/dashboard')
+def dashboard():
+    if 'docente_id' not in session:
+        return redirect(url_for('login'))  
 
+    return render_template('dashboard.html')
+
+@app.route('/logout')
+def logout():    
+    session.clear()  
+    flash("Has cerrado sesión exitosamente", "success")  
+    return redirect(url_for('login'))
+
+app.secret_key = 'chui_angel_grupo_web' 
 
 login_routes.registrar_rutas(app)
-
-#
 
 
 

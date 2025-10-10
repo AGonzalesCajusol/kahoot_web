@@ -17,11 +17,22 @@
 <body class="d-flex justify-content-center align-items-center" style="height: 100vh; background: linear-gradient(to right, #00c6ff, #0072ff);">
 
     <div class="card shadow-lg border-0 rounded-4" style="width: 100%; max-width: 400px; padding: 2rem;">
+        
         <div class="card-body">
-            <!-- Título -->
+        
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {% for category, message in messages %}
+                            {{ message }}
+                        {% endfor %}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endif %}
+            {% endwith %}
+            
             <h3 class="card-title text-center text-primary mb-4">Bienvenido de nuevo</h3>
-
-            <!-- Formulario de login -->
+            
             <form method="POST" action="/login">
                 <!-- Campo de Correo Electrónico -->
                 <div class="mb-3">
