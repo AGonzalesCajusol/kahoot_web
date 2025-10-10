@@ -2,7 +2,6 @@ import pymysql
 
 def conectarbd():
     try:
-        print("conecto")
         return pymysql.connect(
             host='preguntas-calculadoramateriales.e.aivencloud.com',
             user='avnadmin',
@@ -13,6 +12,5 @@ def conectarbd():
         )
     
     except pymysql.Error as error:
-        
-        return error
+        return False
     
