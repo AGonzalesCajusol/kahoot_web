@@ -32,12 +32,12 @@
                 <a href="{{ url_for('logout') }}" class="btn btn-danger w-100"><i class="bi bi-door-closed-fill"></i> Cerrar sesión</a>
             </div>
             {%block css%}
-            
+
             {% endblock %}
         </aside>
 
         <!-- Contenido Principal -->
-        <main class="main-content">
+        <main class="main-content min-vh-100" >
             <header class="main-header ">
                 
                 <h1>{%  block titulo_pagina %}Mis Cuestionarios{% endblock%}</h1>
@@ -103,5 +103,7 @@
     </div>
     
     <script src="../static/JS/dashboard.js"></script>
+    {% block scripts %}
+    {% endblock %}
 </body>
 </html>

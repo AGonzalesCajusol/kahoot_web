@@ -1,0 +1,21 @@
+.encabezado_formularios , .footer_formulario , .cuerpo_formularios {
+    padding: 2rem;
+    border-radius: 1rem !important;
+}
+
+.separador{
+    border-bottom: 0.15rem solid rgb(138, 136, 136);
+}
+
+
+.navegacion_formulario {
+  width: 20%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.cont_formulario{
+    min-width: 80%;
+    padding: 0.5rem;
+}
