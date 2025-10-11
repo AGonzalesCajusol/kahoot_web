@@ -3,7 +3,7 @@ import conexion
 import routes.login as login_routes
 
 app = Flask(__name__)
-app.secret_key = 'secretkey'
+app.secret_key = 'chui_angel_grupo_web' 
 
 @app.route('/')
 @app.route('/index')
@@ -27,7 +27,21 @@ def logout():
     flash("Has cerrado sesión exitosamente", "success")  
     return redirect(url_for('login'))
 
-app.secret_key = 'chui_angel_grupo_web' 
+@app.route('/nuevo_cuestionario')
+def nuevo_cuestionario():    
+    return render_template('crear_cuestionarios.html')
+
+@app.route('/repositorio')
+def repositorio():    
+    return render_template('repositorio.html')
+
+@app.route('/perfil')
+def perfil():    
+    return render_template('perfil.html')
+
+@app.route('/estadisticas')
+def estadisticas():    
+    return render_template('estadistica.html')
 
 login_routes.registrar_rutas(app)
 
