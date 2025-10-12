@@ -146,9 +146,73 @@ const detalle = () => {
     `;
 };
 
-const pregunta = (elemento) => {
+const pregunta = (indice) => {
+    const pr = cuerpo_json.preguntas[indice];
+    var alt = '';
+    console.log(pr.respuesta);
+    if (pr.tipo_pregunta == "VF") {
+        alt = `
+            <button type="button" class="btn ${pr.respuesta == 'Verdadero' ? 'btn-success' : 'btn-outline-success'} btn-sm w-50 " onclick="select(this)"> Verdadero </button>
+            <button type="button" class="btn ${pr.respuesta == 'Falso' ? 'btn-success' : 'btn-outline-success'} btn-sm w-50 " onclick="select(this)"> Falso </button>
+        `;
+    } else {
+        alt = "s"
+    }
     contenido.innerHTML = `
-
+         <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
+            <h3 class="fw-bold mb-0">Paso 2: Agregar preguntas</h3>
+        </div>
+        <p class="text-secondary separador mb-4"><i class="bi bi-info-circle me-1"></i>Añade las preguntas que conformarán tu formulario</p>
+        <div class="mb-3">
+            <div class="d-flex align-items-center justify-content-center">
+                <div class="subir btn btn-outline-secondary d-flex flex-column align-items-center" onclick="document.getElementById('archivo_pregunta').click()" style="cursor:pointer;">
+                    <i class="bi bi-upload fs-3 mb-1"></i>
+                    <span class="fs-6">Puedes subir videos o imágenes</span>
+                </div>
+                <input type="file" value="${pr.archivo}" id="archivo_pregunta" name="archivo_pregunta" class="d-none" accept=".mp3, .jpg, .jpeg, .png">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="nombre_pregunta" class="fw-bold"><i class="bi bi-pencil-square me-1"></i>Pregunta:</label>
+            <input type="text"  value="${pr.nombre_pregunta}" class="form-control mt-2" id="nombre_pregunta" placeholder="¿Cuál es tu pregunta?">
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="mt-2" role="radiogroup" aria-labelledby="tipo_pregunta_label">
+                    <span id="tipo_pregunta_label" class="fw-bold"><i class="bi bi-list-check me-1"></i>Tipo pregunta:</span>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="verdadero_falso" value="VF" onclick="VF()" ${pr.tipo_pregunta == 'VF' ? 'checked' : ''}>
+                        <label class="form-check-label" for="verdadero_falso">
+                            <i class="bi bi-check2-square me-1"></i>(Verdadero / Falso)
+                        </label>
+                    </div>
+                    <div class="form-check mt-1">
+                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="alternativas" value="ALT" onclick="ALT()" ${pr.tipo_pregunta == 'ALT' ? 'checked' : ''}>
+                        <label class="form-check-label" for="alternativas">
+                            <i class="bi bi-ui-checks-grid me-1"></i>(Alternativas)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="puntos" class="fw-bold mt-2"><i class="bi bi-star-fill text-warning me-1"></i>Puntos:</label>
+                <input type="number" value="${pr.puntos}" class="form-control mt-2" name="puntos" id="puntos" placeholder="Valor de la pregunta" min="0" required>
+            </div>
+            <div class="col-md-4">
+                <label for="tiempo" class="fw-bold mt-2"><i class="bi bi-clock-fill text-primary me-1"></i>Tiempo:</label>
+                <input type="number" value="${pr.tiempo}" class="form-control mt-2" name="tiempo" id="tiempo" placeholder="Tiempo (segundos)" min="2" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label fw-bold" for="alternativas"><i class="bi bi-list-ol me-1"></i>Alternativas: <button type="button" onclick="agregar_alternativas()" class="btn btn-outline-success btn-sm d-none" id="btn_add"><i class="bi bi-plus-circle"></i></button></label>
+            <div class="alterantivas_form mt-2 ">
+                ${alt}
+            </div>
+        </div>
+        <div >
+            <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
+        </div>
     `;
 };
 
@@ -312,18 +376,18 @@ const guardar_pregunta = () => {
     contenido.innerHTML = "";
     const cards_continue = document.querySelector(".cards_continue");
     cards_continue.innerHTML = "";
-    cuerpo_json.preguntas.forEach((pregunta) => {
+    cuerpo_json.preguntas.forEach((pregunta, index) => {
         cards_continue.innerHTML += `
-            <div class="detalle_inicial card shadow-lg p-3 enfocar mt-2" id="detalle_card" onclick="pregunta(this)">
+            <div class="detalle_inicial card shadow-lg p-3 enfocar mt-2" id="detalle_card" onclick="pregunta(${index})">
                 <div class="row">
                     <div class="col-9">
-                    <p class="text-secondary texto_pregunta">Pregunta ${cuerpo_json.preguntas.indexOf(pregunta) + 1 }: </p> 
+                    <p class="text-secondary texto_pregunta">Pregunta ${index +1}: </p> 
                     <p class="name_cuestion">
                         ${pregunta.nombre_pregunta}
                     </p>
                     </div>
                     <div class="col-2">
-                        <button onclick="eliminar_pr(this, ${cuerpo_json.preguntas.indexOf(pregunta)})" class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
+                        <button onclick="eliminar_pr(this, ${index})" class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
                     </div>
                 </div>
             </div>
@@ -350,4 +414,19 @@ const eliminar_pr = (el, indice) =>{
         enu.textContent = `Pregunta ${index+1}:`
     });
 
+}
+
+
+
+const enviar_datos = async () => {
+    const ruta = "/registrar_pregunta"
+    const response = await fetch(ruta, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body : JSON.stringify(cuerpo_json) 
+    })
+    const data = await response.json();
+    console.log(data);
 }

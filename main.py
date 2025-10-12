@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 import conexion 
 import routes.login as login_routes
 import routes.repositorios as repositorio_routes
@@ -50,7 +50,15 @@ repositorio_routes.registrar_rutas(app)
 
 
 
+#ruta para registrar_formulario
+@app.route('/registrar_pregunta', methods=['POST'])
+def registrar_pregunta():
+    datos = request.get_json()
+    print(datos)
+    return jsonify({'as', 'as'})
 
+
+#ruta en caso de error
 @app.route('/errorsistema')
 def errorsistema():
     opcion = 1
