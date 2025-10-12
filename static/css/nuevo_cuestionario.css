@@ -7,12 +7,11 @@
     border-bottom: 0.15rem solid rgb(138, 136, 136);
 }
 
-
 .navegacion_formulario {
-  width: 20%;
-  padding: 0.5rem;
-  box-sizing: border-box;
-  overflow-y: auto;
+    width: 20%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    overflow-y: auto;
 }
 
 .cont_formulario{

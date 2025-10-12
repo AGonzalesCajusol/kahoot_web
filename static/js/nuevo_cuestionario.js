@@ -1,24 +1,25 @@
-const contenido = document.querySelector('.cont_formulario');
+const contenido = document.querySelector(".cont_formulario");
 
 const cuerpo_json = {
     detallle: {
-        nombre_cuestionario : '',
-        tipo_formulario : '',
-        descripcion_formulario : ''
+        nombre_cuestionario: "",
+        tipo_formulario: "",
+        descripcion_formulario: "",
+        estado: "",
     },
-    preguntas : []
-}
+    preguntas: [],
+};
 
-
-
-const guardar_detalle = () =>{
-    const nombre_cuestionario = document.getElementById('nombre_cuestionario');
-    const tipo_formulario = document.getElementById('tipo_cuestionario');
-    const descripcion_formulario = document.getElementById('descripcion');
+const guardar_detalle = () => {
+    const nombre_cuestionario = document.getElementById("nombre_cuestionario");
+    const tipo_formulario = document.getElementById("tipo_cuestionario");
+    const descripcion_formulario = document.getElementById("descripcion");
+    const estado = document.getElementById("estado");
 
     cuerpo_json.detallle.nombre_cuestionario = nombre_cuestionario.value;
     cuerpo_json.detallle.tipo_formulario = tipo_formulario.value;
     cuerpo_json.detallle.descripcion_formulario = descripcion_formulario.value;
+    cuerpo_json.detallle.estado = estado.value;
 
     contenido.innerHTML = `
         <div class="d-flex align-items-center mb-3">
@@ -76,9 +77,9 @@ const guardar_detalle = () =>{
             <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
         </div>
     `;
-}
+};
 
-const detalle = () =>{
+const detalle = () => {
     contenido.innerHTML = `
         <form class="cont_formulario card shadow-lg p-4" style="padding: 2rem;">
             <h3 class="fw-bold mb-3">Paso 1: Detalle del formulario</h3>
@@ -96,18 +97,40 @@ const detalle = () =>{
                         Tipo de formulario
                     </label>
                     <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario">
-                        <option value="" disabled ${cuerpo_json.detallle.tipo_formulario === "" ? "selected" : ""}>Seleccione una opción</option>
-                        <option value="I" ${cuerpo_json.detallle.tipo_formulario === "I" ? "selected" : ""}>Individual</option>
-                        <option value="G" ${cuerpo_json.detallle.tipo_formulario === "G" ? "selected" : ""}>Grupal</option>
+                        <option value="" disabled ${cuerpo_json.detallle.tipo_formulario === ""? "selected" : "" }>Seleccione una opción</option>
+                        <option value="I" ${cuerpo_json.detallle.tipo_formulario === "I" ? "selected" : "" }>Individual</option>
+                        <option value="G" ${cuerpo_json.detallle.tipo_formulario === "G"? "selected" : "" }>Grupal</option>
                     </select>
+
+                    <label for="pin" class="fw-bold mb-2">
+                        <i class="bi bi-key"></i> PIN
+                    </label>
+                    <input id="pin" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
+
+                    <label for="fecha_programacion" class="fw-bold mb-2">
+                        <i class="bi bi-calendar"></i> Fecha de Programación
+                    </label>
+                    <input id="fecha_programacion" class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
+                     
                 </div>
+
                 <div class="d-flex flex-column flex-grow-1">
                     <label for="descripcion" class="fw-bold mb-2">
                         <i class="bi bi-card-text"></i>
                         Descripción del formulario
                     </label>
                     <textarea  id="descripcion" class="form-control" name="descripcion" rows="7" placeholder="Ingrese la descripción del cuestionario" >${cuerpo_json.detallle.descripcion_formulario}</textarea>
+
+                    <label for="estado" class="fw-bold mb-2">
+                        <i class="bi bi-check-circle"></i> Estado
+                    </label>
+                    <select id="estado" class="form-select mb-3" name="estado">
+                        <option value="P" ${cuerpo_json.detallle.estado === "P" ? "selected" : "" }>Público</option>
+                        <option value="R" ${cuerpo_json.detallle.estado === "R" ? "selected" : "" }>Privado</option>
+                    </select>   
                 </div>
+
+                
             </div>
             <div class="mb-1 mt-4">
                 <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()">
@@ -116,27 +139,26 @@ const detalle = () =>{
             </div>
         </form>
     `;
-}
-
+};
 
 const pregunta = (elemento) => {
     contenido.innerHTML = `
 
     `;
-}
+};
 
 const ALT = () => {
-    document.getElementById('btn_add').classList.remove('d-none');
-    const div_alt = document.querySelector('.alterantivas_form');
+    document.getElementById("btn_add").classList.remove("d-none");
+    const div_alt = document.querySelector(".alterantivas_form");
     div_alt.innerHTML = `
 
     `;
-}
+};
 
 const agregar_alternativas = () => {
-    const div_alt = document.querySelector('.alterantivas_form');
+    const div_alt = document.querySelector(".alterantivas_form");
     div_alt.insertAdjacentHTML(
-        'beforeend',
+        "beforeend",
         `
         <div class="w-50 d-flex alter ">
             <input type="text" class="form-control me-2 " >
@@ -145,51 +167,49 @@ const agregar_alternativas = () => {
         </div> 
         `
     );
-}
+};
 
 const eliminar_alternativa = (elemento) => {
     elemento.parentElement.remove();
-}
+};
 
-const VF = () =>{
-    document.getElementById('btn_add').classList.add('d-none');
-    const div_alt = document.querySelector('.alterantivas_form');
+const VF = () => {
+    document.getElementById("btn_add").classList.add("d-none");
+    const div_alt = document.querySelector(".alterantivas_form");
     div_alt.innerHTML = `
         <button type="button" class="btn btn-outline-success btn-sm w-50 " onclick="select(this)"> Verdadero </button>
         <button type="button" class="btn btn-outline-success btn-sm w-50 " onclick="select(this)"> Falso </button>
     `;
-}
+};
 const sl = (elemento) => {
-    const elementos = document.querySelectorAll('.alterantivas_form .alter');
+    const elementos = document.querySelectorAll(".alterantivas_form .alter");
     elementos.forEach((el) => {
-        const e = el.querySelector('input');
-        const bt = el.querySelector('button.cl');
-        bt.classList.remove('btn-success');
-        bt.classList.add('btn-primary');
-        e.classList.remove('border-success');
+        const e = el.querySelector("input");
+        const bt = el.querySelector("button.cl");
+        bt.classList.remove("btn-success");
+        bt.classList.add("btn-primary");
+        e.classList.remove("border-success");
     });
-    elemento.classList.remove('btn-primary');
-    elemento.classList.add('btn-success');
-    elemento.parentElement.querySelector('input').classList.add('border-success');
-}
-
-
+    elemento.classList.remove("btn-primary");
+    elemento.classList.add("btn-success");
+    elemento.parentElement.querySelector("input").classList.add("border-success");
+};
 
 const select = (elemento) => {
-    const elementos = document.querySelectorAll('.alterantivas_form .btn');
+    const elementos = document.querySelectorAll(".alterantivas_form .btn");
     elementos.forEach((el) => {
-        el.classList.remove('btn-success');
-        el.classList.add('btn-outline-success');
+        el.classList.remove("btn-success");
+        el.classList.add("btn-outline-success");
     });
 
-    if (!elemento.classList.contains('btn-success')) {
-        elemento.classList.remove('btn-outline-success');
-        elemento.classList.add('btn-success');
+    if (!elemento.classList.contains("btn-success")) {
+        elemento.classList.remove("btn-outline-success");
+        elemento.classList.add("btn-success");
     }
-}
+};
 
-const agg_pr = () =>{
-      contenido.innerHTML = `
+const agg_pr = () => {
+    contenido.innerHTML = `
         <div class="d-flex align-items-center mb-3">
             <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
             <h3 class="fw-bold mb-0">Paso 2: Agregar preguntas</h3>
@@ -245,24 +265,26 @@ const agg_pr = () =>{
             <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
         </div>
     `;
-}
+};
 const guardar_pregunta = () => {
-    const nombre_pregunta = document.getElementById('nombre_pregunta').value;
-    const tipo_pregunta = document.querySelector('input[name="tipo_pregunta"]:checked').value;
-    const puntos = document.getElementById('puntos').value;
-    const tiempo = document.getElementById('tiempo').value;
+    const nombre_pregunta = document.getElementById("nombre_pregunta").value;
+    const tipo_pregunta = document.querySelector(
+        'input[name="tipo_pregunta"]:checked'
+    ).value;
+    const puntos = document.getElementById("puntos").value;
+    const tiempo = document.getElementById("tiempo").value;
     const al = [];
     var rpt = "";
-    if(tipo_pregunta == "VF"){
-        al.push('Verdadero');
-        al.push('Falso');
-        const ed = document.querySelector('.alterantivas_form .btn.btn-success');
+    if (tipo_pregunta == "VF") {
+        al.push("Verdadero");
+        al.push("Falso");
+        const ed = document.querySelector(".alterantivas_form .btn.btn-success");
         rpt = ed.textContent;
-    }else{
-        const conjunto = document.querySelectorAll('.alterantivas_form .alter');
+    } else {
+        const conjunto = document.querySelectorAll(".alterantivas_form .alter");
         conjunto.forEach((el) => {
-            const element = el.querySelector('input');
-            if(element.classList.contains('border-success')){
+            const element = el.querySelector("input");
+            if (element.classList.contains("border-success")) {
                 rpt = element.value;
             }
             al.push(element.value);
@@ -274,21 +296,22 @@ const guardar_pregunta = () => {
         puntos: puntos,
         tiempo: tiempo,
         alternativas: al,
-        respuesta: rpt.trim()
+        respuesta: rpt.trim(),
     };
 
     cuerpo_json.preguntas.push(pr);
 
     //renderizamos contenido
     contenido.innerHTML = "";
-    const cards_continue = document.querySelector('.cards_continue');
-    
+    const cards_continue = document.querySelector(".cards_continue");
+
     cuerpo_json.preguntas.forEach((pregunta) => {
         cards_continue.innerHTML += `
             <div class="detalle_inicial card shadow-lg p-3 enfocar " id="detalle_card" onclick="pregunta(this)">
             <div class="row">
                 <div class="col-9">
-                <p class="text-secondary">Pregunta ${cuerpo_json.preguntas.indexOf(pregunta) + 1}: </p> 
+                <p class="text-secondary">Pregunta ${cuerpo_json.preguntas.indexOf(pregunta) + 1
+            }: </p> 
                 <p class="name_cuestion">
                     ${pregunta.nombre_pregunta}
                 </p>
@@ -299,7 +322,5 @@ const guardar_pregunta = () => {
             </div>
             </div>
         `;
-
-
     });
-}
+};

@@ -6,9 +6,9 @@ def obtener_cuestionarios_publicos():
         if connection:
             cursor = connection.cursor()
 
-            query = "SELECT  c.id_cuestionario, c.nombre, c.estado, c.descripcion, c.pin, " \
+            query = "SELECT  c.id_cuestionario, c.nombre, c.tipo_cuestionario, c.descripcion, c.pin, " \
             "CONCAT(d.nombres, ' ', d.apellidos) AS docente_completo FROM  Cuestionario c LEFT JOIN " \
-            "Docente d ON c.id_docente = d.id_docente WHERE c.tipo_cuestionario = 'P' AND c.estado = 'A'"
+            "Docente d ON c.id_docente = d.id_docente WHERE c.estado = 'P'"
             
             cursor.execute(query)
 

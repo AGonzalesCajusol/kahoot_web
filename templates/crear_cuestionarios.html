@@ -1,68 +1,63 @@
-{% extends '/dashboard.html' %}
-{%block css%}
-    <link rel="stylesheet" href="/static/css/nuevo_cuestionario.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
-{% endblock %}
-{% block titulo_pagina%}
-    Nuevo cuestionario
-{% endblock%}
-{% block search %}
-{% endblock%}
-{% block contenido %}
-    <div class="d-flex h-75">
-        <div class="navegacion_formulario me-3">
-            <div class="enfocar" onclick="detalle()">
-                <div class="detalle_inicial card shadow-lg p-3" id="detalle_card">
-                    <p class="fw-bold"> Detalle de formulario</p>
-                    <p class="text-secondary">Define la informacion básica de tu nuevo formulario</p>
-                </div>
-            </div>
-            <div class="text-secondary separador mt-3 mb-3"></div>
-            <div>
-                <button class="btn btn-primary btn-sm w-100" onclick="agg_pr()"><i class="bi bi-plus-circle me-2" ></i>Agregar pregunta</button>
-            </div>
-            <div class="cards_continue mt-2">
-
+{% extends '/dashboard.html' %} {%block css%}
+<link rel="stylesheet" href="/static/css/nuevo_cuestionario.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+{% endblock %} {% block titulo_pagina%} Nuevo cuestionario {% endblock%} {%
+block search %} {% endblock%} {% block contenido %}
+<div class="d-flex h-75">
+    <div class="navegacion_formulario me-3">
+        <div class="enfocar" onclick="detalle()">
+            <div class="detalle_inicial card shadow-lg p-3" id="detalle_card">
+                <p class="fw-bold">Detalle de formulario</p>
+                <p class="text-secondary">
+                    Define la informacion básica de tu nuevo formulario
+                </p>
             </div>
         </div>
-
-        <form class="cont_formulario card shadow-lg p-4 overflow-y-scroll" style="padding: 2rem;">
-                <h3 class="fw-bold">Paso 1: Detalle del formulario</h3>
-                <p class="text-secondary separador">Define la informacion básica de tu nuevo formulario</p>
-                <div class="row ">
-                    <div class="col-5">
-                        <label for="nombre_cuestionario" class="fw-bold">
-                            <i class="bi bi-pencil-square"></i>
-                            Nombre del formulario
-                        </label>
-                        <input id="nombre_cuestionario"  class="form-control mt-2"  name="nombre_cuestionario" type="text" placeholder="Ingrese el nombre del cuestionario" required>
-                    
-                        <label for="tipo_cuestionario" class="mt-2 fw-bold">
-                            <i class="bi bi-info-circle"></i>
-                            Tipo de formulario
-                        </label>
-                        <select class="form-select mt-2 " name="tipo_cuestionario" id="tipo_cuestionario" required>
-                            <option value="" disabled>Ingrese una opcion</option>
-                            <option value="I">Individual</option>
-                            <option value="G">Grupal</option>
-                        </select>
-                    </div>
-                    <div class="col 5">
-                        <label for="descripcion" class="fw-bold">
-                            <i class="bi bi-card-text"></i>
-                            Descripción del formulario
-                        </label>
-                        <textarea id="descripcion" class="form-control h-75 mt-2" name="descripcion" placeholder="Ingrese la descripción del cuestionario" required></textarea>
-                    </div>
-                </div>
-        </form>
-
-        
+        <div class="text-secondary separador mt-3 mb-3"></div>
+        <div>
+            <button class="btn btn-primary btn-sm w-100" onclick="agg_pr()">
+                <i class="bi bi-plus-circle me-2"></i>Agregar pregunta
+            </button>
+        </div>
+        <div class="cards_continue mt-2"></div>
     </div>
 
+    <form class="cont_formulario card shadow-lg p-4 overflow-y-scroll" style="padding: 2rem">
+        <h3 class="fw-bold">Paso 1: Detalle del formulario</h3>
+        <p class="text-secondary separador">
+            Define la informacion básica de tu nuevo formulario
+        </p>
+        <div class="row">
+            <div class="col-5">
+                <label for="nombre_cuestionario" class="fw-bold">
+                    <i class="bi bi-pencil-square"></i>
+                    Nombre del formulario
+                </label>
+                <input id="nombre_cuestionario" class="form-control mt-2" name="nombre_cuestionario" type="text"
+                    placeholder="Ingrese el nombre del cuestionario" required />
 
+                <label for="tipo_cuestionario" class="mt-2 fw-bold">
+                    <i class="bi bi-info-circle"></i>
+                    Tipo de formulario
+                </label>
+                <select class="form-select mt-2" name="tipo_cuestionario" id="tipo_cuestionario" required>
+                    <option value="" disabled>Ingrese una opcion</option>
+                    <option value="I">Individual</option>
+                    <option value="G">Grupal</option>
+                </select>
+            </div>
+            <div class="col 5">
+                <label for="descripcion" class="fw-bold">
+                    <i class="bi bi-card-text"></i>
+                    Descripción del formulario
+                </label>
+                <textarea id="descripcion" class="form-control h-75 mt-2" name="descripcion"
+                    placeholder="Ingrese la descripción del cuestionario" required></textarea>
+            </div>
+        </div>
+    </form>
+</div>
 
-{% endblock %}
-{% block scripts %}
-    <script src="/static/js/nuevo_cuestionario.js"></script>
+{% endblock %} {% block scripts %}
+<script src="/static/js/nuevo_cuestionario.js"></script>
 {% endblock %}
