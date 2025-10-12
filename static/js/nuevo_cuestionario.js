@@ -6,6 +6,8 @@ const cuerpo_json = {
         tipo_formulario: "",
         descripcion_formulario: "",
         estado: "",
+        pin: "",
+        fecha_programacion: ""
     },
     preguntas: [],
 };
@@ -15,11 +17,16 @@ const guardar_detalle = () => {
     const tipo_formulario = document.getElementById("tipo_cuestionario");
     const descripcion_formulario = document.getElementById("descripcion");
     const estado = document.getElementById("estado");
+    const pin_f  = document.getElementById('pin');
+    const f_pro = document.getElementById('fecha_programacion');
 
     cuerpo_json.detallle.nombre_cuestionario = nombre_cuestionario.value;
     cuerpo_json.detallle.tipo_formulario = tipo_formulario.value;
     cuerpo_json.detallle.descripcion_formulario = descripcion_formulario.value;
     cuerpo_json.detallle.estado = estado.value;
+    cuerpo_json.detallle.pin = pin_f.value;
+    cuerpo_json.detallle.fecha_programacion = f_pro.value;
+
 
     contenido.innerHTML = `
         <div class="d-flex align-items-center mb-3">
@@ -81,7 +88,6 @@ const guardar_detalle = () => {
 
 const detalle = () => {
     contenido.innerHTML = `
-        <form class="cont_formulario card shadow-lg p-4" style="padding: 2rem;">
             <h3 class="fw-bold mb-3">Paso 1: Detalle del formulario</h3>
             <p class="text-secondary separador mb-4">Define la información básica de tu nuevo formulario</p>
             <div class="d-flex flex-wrap align-items-start gap-4">
@@ -105,12 +111,12 @@ const detalle = () => {
                     <label for="pin" class="fw-bold mb-2">
                         <i class="bi bi-key"></i> PIN
                     </label>
-                    <input id="pin" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
+                    <input id="pin" value="${cuerpo_json.detallle.pin}" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
 
                     <label for="fecha_programacion" class="fw-bold mb-2">
                         <i class="bi bi-calendar"></i> Fecha de Programación
                     </label>
-                    <input id="fecha_programacion" class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
+                    <input id="fecha_programacion" value="${cuerpo_json.detallle.fecha_programacion}"   class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
                      
                 </div>
 
@@ -137,7 +143,6 @@ const detalle = () => {
                     <i class="bi bi-save"></i> Guardar detalle
                 </button>
             </div>
-        </form>
     `;
 };
 
@@ -268,6 +273,7 @@ const agg_pr = () => {
 };
 const guardar_pregunta = () => {
     const nombre_pregunta = document.getElementById("nombre_pregunta").value;
+    const arc = document.getElementById('archivo_pregunta').files[0] ?  document.getElementById('archivo_pregunta').files[0] : '';
     const tipo_pregunta = document.querySelector(
         'input[name="tipo_pregunta"]:checked'
     ).value;
@@ -293,6 +299,7 @@ const guardar_pregunta = () => {
     const pr = {
         nombre_pregunta: nombre_pregunta,
         tipo_pregunta: tipo_pregunta,
+        archivo : arc,
         puntos: puntos,
         tiempo: tiempo,
         alternativas: al,
@@ -304,23 +311,43 @@ const guardar_pregunta = () => {
     //renderizamos contenido
     contenido.innerHTML = "";
     const cards_continue = document.querySelector(".cards_continue");
-
+    cards_continue.innerHTML = "";
     cuerpo_json.preguntas.forEach((pregunta) => {
         cards_continue.innerHTML += `
-            <div class="detalle_inicial card shadow-lg p-3 enfocar " id="detalle_card" onclick="pregunta(this)">
-            <div class="row">
-                <div class="col-9">
-                <p class="text-secondary">Pregunta ${cuerpo_json.preguntas.indexOf(pregunta) + 1
-            }: </p> 
-                <p class="name_cuestion">
-                    ${pregunta.nombre_pregunta}
-                </p>
+            <div class="detalle_inicial card shadow-lg p-3 enfocar mt-2" id="detalle_card" onclick="pregunta(this)">
+                <div class="row">
+                    <div class="col-9">
+                    <p class="text-secondary texto_pregunta">Pregunta ${cuerpo_json.preguntas.indexOf(pregunta) + 1 }: </p> 
+                    <p class="name_cuestion">
+                        ${pregunta.nombre_pregunta}
+                    </p>
+                    </div>
+                    <div class="col-2">
+                        <button onclick="eliminar_pr(this, ${cuerpo_json.preguntas.indexOf(pregunta)})" class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
+                    </div>
                 </div>
-                <div class="col-2">
-                <button class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
-                </div>
-            </div>
             </div>
         `;
     });
 };
+
+
+const pin = () =>{
+    var numero =  Math.floor(10000 + Math.random() * 90000);
+    document.getElementById('pin').value = numero;
+    cuerpo_json.detallle.pin = numero
+
+}
+pin();
+
+
+const eliminar_pr = (el, indice) =>{
+    const cc = el.parentElement.parentElement.parentElement;
+    cc.remove();
+    cuerpo_json.preguntas.splice(indice, 1); 
+    const enumeracion = document.querySelectorAll('.texto_pregunta');
+    enumeracion.forEach((enu, index) => {  
+        enu.textContent = `Pregunta ${index+1}:`
+    });
+
+}

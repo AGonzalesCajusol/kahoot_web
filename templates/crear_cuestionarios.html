@@ -23,38 +23,60 @@ block search %} {% endblock%} {% block contenido %}
     </div>
 
     <form class="cont_formulario card shadow-lg p-4 overflow-y-scroll" style="padding: 2rem">
-        <h3 class="fw-bold">Paso 1: Detalle del formulario</h3>
-        <p class="text-secondary separador">
-            Define la informacion básica de tu nuevo formulario
-        </p>
-        <div class="row">
-            <div class="col-5">
-                <label for="nombre_cuestionario" class="fw-bold">
-                    <i class="bi bi-pencil-square"></i>
-                    Nombre del formulario
-                </label>
-                <input id="nombre_cuestionario" class="form-control mt-2" name="nombre_cuestionario" type="text"
-                    placeholder="Ingrese el nombre del cuestionario" required />
+            <h3 class="fw-bold mb-3">Paso 1: Detalle del formulario</h3>
+            <p class="text-secondary separador mb-4">Define la información básica de tu nuevo formulario</p>
+            <div class="d-flex flex-wrap align-items-start gap-4">
+                <div class="d-flex flex-column me-4" style="min-width: 300px;">
+                    <label for="nombre_cuestionario" class="fw-bold mb-2">
+                        <i class="bi bi-pencil-square"></i>
+                        Nombre del formulario
+                    </label>
+                    <input id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text" placeholder="Ingrese el nombre del cuestionario" >
+                
+                    <label for="tipo_cuestionario" class="fw-bold mb-2">
+                        <i class="bi bi-info-circle"></i>
+                        Tipo de formulario
+                    </label>
+                    <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario">
+                        <option value="I" >Individual</option>
+                        <option value="G">Grupal</option>
+                    </select>
 
-                <label for="tipo_cuestionario" class="mt-2 fw-bold">
-                    <i class="bi bi-info-circle"></i>
-                    Tipo de formulario
-                </label>
-                <select class="form-select mt-2" name="tipo_cuestionario" id="tipo_cuestionario" required>
-                    <option value="" disabled>Ingrese una opcion</option>
-                    <option value="I">Individual</option>
-                    <option value="G">Grupal</option>
-                </select>
+                    <label for="pin" class="fw-bold mb-2">
+                        <i class="bi bi-key"></i> PIN
+                    </label>
+                    <input id="pin" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
+
+                    <label for="fecha_programacion" class="fw-bold mb-2">
+                        <i class="bi bi-calendar"></i> Fecha de Programación
+                    </label>
+                    <input id="fecha_programacion" class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
+                     
+                </div>
+
+                <div class="d-flex flex-column flex-grow-1">
+                    <label for="descripcion" class="fw-bold mb-2">
+                        <i class="bi bi-card-text"></i>
+                        Descripción del formulario
+                    </label>
+                    <textarea  id="descripcion" class="form-control" name="descripcion" rows="7" placeholder="Ingrese la descripción del cuestionario" ></textarea>
+
+                    <label for="estado" class="fw-bold mb-2">
+                        <i class="bi bi-check-circle"></i> Estado
+                    </label>
+                    <select id="estado" class="form-select mb-3" name="estado">
+                        <option value="P" >Público</option>
+                        <option value="R" >Privado</option>
+                    </select>   
+                </div>
+
+                
             </div>
-            <div class="col 5">
-                <label for="descripcion" class="fw-bold">
-                    <i class="bi bi-card-text"></i>
-                    Descripción del formulario
-                </label>
-                <textarea id="descripcion" class="form-control h-75 mt-2" name="descripcion"
-                    placeholder="Ingrese la descripción del cuestionario" required></textarea>
+            <div class="mb-1 mt-4">
+                <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()">
+                    <i class="bi bi-save"></i> Guardar detalle
+                </button>
             </div>
-        </div>
     </form>
 </div>
 
