@@ -178,13 +178,14 @@
     }
 
     .status {
-        background-color: #0072ff;
+        background-color: #00ff00;
         padding: 5px 10px;
         color: #fff;
         border-radius: 15px;
         font-size: 12px;
         font-weight: 600;
         display: inline-block;
+        width: fit-content;
     }
 
     .status.active {
