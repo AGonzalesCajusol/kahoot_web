@@ -158,10 +158,12 @@
         justify-content: space-between;
         height: 200px;  /* Ajusta la altura de las tarjetas */
         transition: transform 0.3s;
+        height: auto;
     }
 
     .questionnaire-card:hover {
-        transform: translateY(-5px); /* Añade un efecto de hover */
+        transform: translateY(-5px); 
+        box-shadow: 0 8px 20px rgba(0,0,0,.10);
     }
 
     .card-content h4 {
@@ -176,13 +178,14 @@
     }
 
     .status {
-        background-color: #0072ff;
+        background-color: #00ff00;
         padding: 5px 10px;
         color: #fff;
         border-radius: 15px;
         font-size: 12px;
         font-weight: 600;
         display: inline-block;
+        width: fit-content;
     }
 
     .status.active {
@@ -193,4 +196,5 @@
         background-color: #bbb;
     }
 
+    
 
