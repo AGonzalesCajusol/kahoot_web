@@ -158,10 +158,12 @@
         justify-content: space-between;
         height: 200px;  /* Ajusta la altura de las tarjetas */
         transition: transform 0.3s;
+        height: auto;
     }
 
     .questionnaire-card:hover {
-        transform: translateY(-5px); /* Añade un efecto de hover */
+        transform: translateY(-5px); 
+        box-shadow: 0 8px 20px rgba(0,0,0,.10);
     }
 
     .card-content h4 {
@@ -193,4 +195,5 @@
         background-color: #bbb;
     }
 
+    
 

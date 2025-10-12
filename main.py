@@ -1,6 +1,8 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 import conexion 
 import routes.login as login_routes
+import routes.repositorios as repositorio_routes
+
 
 app = Flask(__name__)
 app.secret_key = 'chui_angel_grupo_web' 
@@ -44,6 +46,7 @@ def estadisticas():
     return render_template('estadistica.html')
 
 login_routes.registrar_rutas(app)
+repositorio_routes.registrar_rutas(app)
 
 
 
@@ -59,5 +62,6 @@ def errorsistema():
         mensaje = {'mensaje': 'La tabla usuarios no esta dispobible', 'ruta_foto' : ''}
     return render_template('/Fallas/maestra_error.html', mensaje = mensaje) 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    app.debug = True  
     app.run(debug=True)

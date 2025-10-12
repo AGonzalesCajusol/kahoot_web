@@ -1,9 +1,36 @@
 {% extends '/dashboard.html' %}
-{% block titulo_pagina%}
+{% block titulo_pagina %}
     Repositorio
-{% endblock%}
-{% block search %}
-{% endblock%}
+{% endblock %}
+
 {% block contenido %}
-    Hola
+    <section class="questionnaires-section">
+    <h3>Cuestionarios Públicos</h3>
+    <div id="cuestionarios-lista" class="questionnaires-grid"></div>
+    </section>
+
+    <script>
+    fetch('/cuestionarios_publicos')
+        .then(r => r.json())
+        .then(data => {
+        const wrap = document.getElementById('cuestionarios-lista');
+        if (!Array.isArray(data) || !data.length){
+            wrap.innerHTML = '<p>No se encontraron cuestionarios públicos.</p>';
+            return;
+        }
+        wrap.innerHTML = data.map(q => `
+            <article class="questionnaire-card active">            
+            <div class="card-content">
+                <h4 class="title">${q.nombre}</h4>
+                <p class="subtitle">Docente: ${q.docente_completo}</p>
+                <p class="meta">PIN: ${q.pin}</p>
+            </div>
+            <span class="status ${q.estado === 'A' ? 'active' : 'archived'}">
+                ${q.estado === 'A' ? 'Activo' : 'Archivado'}
+            </span>            
+            </article>
+        `).join('');
+        })
+        .catch(e => console.error(e));
+    </script>
 {% endblock %}
