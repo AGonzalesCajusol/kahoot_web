@@ -6,8 +6,10 @@ const cuerpo_json = {
         tipo_formulario : '',
         descripcion_formulario : ''
     },
-    preguntas : '' 
+    preguntas : []
 }
+
+
 
 const guardar_detalle = () =>{
     const nombre_cuestionario = document.getElementById('nombre_cuestionario');
@@ -18,26 +20,62 @@ const guardar_detalle = () =>{
     cuerpo_json.detallle.tipo_formulario = tipo_formulario.value;
     cuerpo_json.detallle.descripcion_formulario = descripcion_formulario.value;
 
-    contenido.innerHTML = "";
-    const cards_continue = document.querySelector('.cards_continue');
-    const tarjeta = `
-        <div class="detalle_inicial card shadow-lg p-3 enfocar " id="detalle_card">
-            <div class="row">
-                <div class="col-9">
-                    <p class="text-secondary">Pregunta 1:</p> 
-                    <p class="name_cuestion">
-                        ¿asdasdsd?
-                    </p>
+    contenido.innerHTML = `
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
+            <h3 class="fw-bold mb-0">Paso 2: Agregar preguntas</h3>
+        </div>
+        <p class="text-secondary separador mb-4"><i class="bi bi-info-circle me-1"></i>Añade las preguntas que conformarán tu formulario</p>
+        <div class="mb-3">
+            <div class="d-flex align-items-center justify-content-center">
+                <div class="subir btn btn-outline-secondary d-flex flex-column align-items-center" onclick="document.getElementById('archivo_pregunta').click()" style="cursor:pointer;">
+                    <i class="bi bi-upload fs-3 mb-1"></i>
+                    <span class="fs-6">Puedes subir videos o imágenes</span>
                 </div>
-                <div class="col-2">
-                    <button class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
+                <input type="file" id="archivo_pregunta" name="archivo_pregunta" class="d-none" accept=".mp3, .jpg, .jpeg, .png">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="nombre_pregunta" class="fw-bold"><i class="bi bi-pencil-square me-1"></i>Pregunta:</label>
+            <input type="text" class="form-control mt-2" id="nombre_pregunta" placeholder="¿Cuál es tu pregunta?">
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="mt-2" role="radiogroup" aria-labelledby="tipo_pregunta_label">
+                    <span id="tipo_pregunta_label" class="fw-bold"><i class="bi bi-list-check me-1"></i>Tipo pregunta:</span>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="verdadero_falso" value="VF" onclick="VF()">
+                        <label class="form-check-label" for="verdadero_falso">
+                            <i class="bi bi-check2-square me-1"></i>(Verdadero / Falso)
+                        </label>
+                    </div>
+                    <div class="form-check mt-1">
+                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="alternativas" value="ALT" onclick="ALT()">
+                        <label class="form-check-label" for="alternativas">
+                            <i class="bi bi-ui-checks-grid me-1"></i>(Alternativas)
+                        </label>
+                    </div>
                 </div>
             </div>
-
+            <div class="col-md-4">
+                <label for="puntos" class="fw-bold mt-2"><i class="bi bi-star-fill text-warning me-1"></i>Puntos:</label>
+                <input type="number" class="form-control mt-2" name="puntos" id="puntos" placeholder="Valor de la pregunta" min="0" required>
+            </div>
+            <div class="col-md-4">
+                <label for="tiempo" class="fw-bold mt-2"><i class="bi bi-clock-fill text-primary me-1"></i>Tiempo:</label>
+                <input type="number" class="form-control mt-2" name="tiempo" id="tiempo" placeholder="Tiempo (segundos)" min="2" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label fw-bold" for="alternativas"><i class="bi bi-list-ol me-1"></i>Alternativas: <button type="button" onclick="agregar_alternativas()" class="btn btn-outline-success btn-sm d-none" id="btn_add"><i class="bi bi-plus-circle"></i></button></label>
+            <div class="alterantivas_form mt-2 ">
+    
+            </div>
+        </div>
+        <div >
+            <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
         </div>
     `;
-    cards_continue.innerHTML += tarjeta;
-
 }
 
 const detalle = () =>{
@@ -71,14 +109,197 @@ const detalle = () =>{
                     <textarea  id="descripcion" class="form-control" name="descripcion" rows="7" placeholder="Ingrese la descripción del cuestionario" >${cuerpo_json.detallle.descripcion_formulario}</textarea>
                 </div>
             </div>
-            <div class="mt-4 text-end">
-                <button type="button" class="btn btn-primary" onclick="guardar_detalle()">
+            <div class="mb-1 mt-4">
+                <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()">
                     <i class="bi bi-save"></i> Guardar detalle
                 </button>
             </div>
         </form>
-    
-    
     `;
+}
 
+
+const pregunta = (elemento) => {
+    contenido.innerHTML = `
+
+    `;
+}
+
+const ALT = () => {
+    document.getElementById('btn_add').classList.remove('d-none');
+    const div_alt = document.querySelector('.alterantivas_form');
+    div_alt.innerHTML = `
+
+    `;
+}
+
+const agregar_alternativas = () => {
+    const div_alt = document.querySelector('.alterantivas_form');
+    div_alt.insertAdjacentHTML(
+        'beforeend',
+        `
+        <div class="w-50 d-flex alter ">
+            <input type="text" class="form-control me-2 " >
+            <button type="button" class="btn btn-sm btn-primary me-1 cl" onclick ="sl(this)"><i class="bi bi-check2"></i></button>
+            <button type="button" class="btn btn-sm btn-danger" onclick= "eliminar_alternativa(this)"><i class="bi bi-trash3-fill"></i></button>
+        </div> 
+        `
+    );
+}
+
+const eliminar_alternativa = (elemento) => {
+    elemento.parentElement.remove();
+}
+
+const VF = () =>{
+    document.getElementById('btn_add').classList.add('d-none');
+    const div_alt = document.querySelector('.alterantivas_form');
+    div_alt.innerHTML = `
+        <button type="button" class="btn btn-outline-success btn-sm w-50 " onclick="select(this)"> Verdadero </button>
+        <button type="button" class="btn btn-outline-success btn-sm w-50 " onclick="select(this)"> Falso </button>
+    `;
+}
+const sl = (elemento) => {
+    const elementos = document.querySelectorAll('.alterantivas_form .alter');
+    elementos.forEach((el) => {
+        const e = el.querySelector('input');
+        const bt = el.querySelector('button.cl');
+        bt.classList.remove('btn-success');
+        bt.classList.add('btn-primary');
+        e.classList.remove('border-success');
+    });
+    elemento.classList.remove('btn-primary');
+    elemento.classList.add('btn-success');
+    elemento.parentElement.querySelector('input').classList.add('border-success');
+}
+
+
+
+const select = (elemento) => {
+    const elementos = document.querySelectorAll('.alterantivas_form .btn');
+    elementos.forEach((el) => {
+        el.classList.remove('btn-success');
+        el.classList.add('btn-outline-success');
+    });
+
+    if (!elemento.classList.contains('btn-success')) {
+        elemento.classList.remove('btn-outline-success');
+        elemento.classList.add('btn-success');
+    }
+}
+
+const agg_pr = () =>{
+      contenido.innerHTML = `
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
+            <h3 class="fw-bold mb-0">Paso 2: Agregar preguntas</h3>
+        </div>
+        <p class="text-secondary separador mb-4"><i class="bi bi-info-circle me-1"></i>Añade las preguntas que conformarán tu formulario</p>
+        <div class="mb-3">
+            <div class="d-flex align-items-center justify-content-center">
+                <div class="subir btn btn-outline-secondary d-flex flex-column align-items-center" onclick="document.getElementById('archivo_pregunta').click()" style="cursor:pointer;">
+                    <i class="bi bi-upload fs-3 mb-1"></i>
+                    <span class="fs-6">Puedes subir videos o imágenes</span>
+                </div>
+                <input type="file" id="archivo_pregunta" name="archivo_pregunta" class="d-none" accept=".mp3, .jpg, .jpeg, .png">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="nombre_pregunta" class="fw-bold"><i class="bi bi-pencil-square me-1"></i>Pregunta:</label>
+            <input type="text" class="form-control mt-2" id="nombre_pregunta" placeholder="¿Cuál es tu pregunta?">
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <div class="mt-2" role="radiogroup" aria-labelledby="tipo_pregunta_label">
+                    <span id="tipo_pregunta_label" class="fw-bold"><i class="bi bi-list-check me-1"></i>Tipo pregunta:</span>
+                    <div class="form-check mt-2">
+                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="verdadero_falso" value="VF" onclick="VF()">
+                        <label class="form-check-label" for="verdadero_falso">
+                            <i class="bi bi-check2-square me-1"></i>(Verdadero / Falso)
+                        </label>
+                    </div>
+                    <div class="form-check mt-1">
+                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="alternativas" value="ALT" onclick="ALT()">
+                        <label class="form-check-label" for="alternativas">
+                            <i class="bi bi-ui-checks-grid me-1"></i>(Alternativas)
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <label for="puntos" class="fw-bold mt-2"><i class="bi bi-star-fill text-warning me-1"></i>Puntos:</label>
+                <input type="number" class="form-control mt-2" name="puntos" id="puntos" placeholder="Valor de la pregunta" min="0" required>
+            </div>
+            <div class="col-md-4">
+                <label for="tiempo" class="fw-bold mt-2"><i class="bi bi-clock-fill text-primary me-1"></i>Tiempo:</label>
+                <input type="number" class="form-control mt-2" name="tiempo" id="tiempo" placeholder="Tiempo (segundos)" min="2" required>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-check-label fw-bold" for="alternativas"><i class="bi bi-list-ol me-1"></i>Alternativas: <button type="button" onclick="agregar_alternativas()" class="btn btn-outline-success btn-sm d-none" id="btn_add"><i class="bi bi-plus-circle"></i></button></label>
+            <div class="alterantivas_form mt-2 ">
+    
+            </div>
+        </div>
+        <div >
+            <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
+        </div>
+    `;
+}
+const guardar_pregunta = () => {
+    const nombre_pregunta = document.getElementById('nombre_pregunta').value;
+    const tipo_pregunta = document.querySelector('input[name="tipo_pregunta"]:checked').value;
+    const puntos = document.getElementById('puntos').value;
+    const tiempo = document.getElementById('tiempo').value;
+    const al = [];
+    var rpt = "";
+    if(tipo_pregunta == "VF"){
+        al.push('Verdadero');
+        al.push('Falso');
+        const ed = document.querySelector('.alterantivas_form .btn.btn-success');
+        rpt = ed.textContent;
+    }else{
+        const conjunto = document.querySelectorAll('.alterantivas_form .alter');
+        conjunto.forEach((el) => {
+            const element = el.querySelector('input');
+            if(element.classList.contains('border-success')){
+                rpt = element.value;
+            }
+            al.push(element.value);
+        });
+    }
+    const pr = {
+        nombre_pregunta: nombre_pregunta,
+        tipo_pregunta: tipo_pregunta,
+        puntos: puntos,
+        tiempo: tiempo,
+        alternativas: al,
+        respuesta: rpt.trim()
+    };
+
+    cuerpo_json.preguntas.push(pr);
+
+    //renderizamos contenido
+    contenido.innerHTML = "";
+    const cards_continue = document.querySelector('.cards_continue');
+    
+    cuerpo_json.preguntas.forEach((pregunta) => {
+        cards_continue.innerHTML += `
+            <div class="detalle_inicial card shadow-lg p-3 enfocar " id="detalle_card" onclick="pregunta(this)">
+            <div class="row">
+                <div class="col-9">
+                <p class="text-secondary">Pregunta ${cuerpo_json.preguntas.indexOf(pregunta) + 1}: </p> 
+                <p class="name_cuestion">
+                    ${pregunta.nombre_pregunta}
+                </p>
+                </div>
+                <div class="col-2">
+                <button class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
+                </div>
+            </div>
+            </div>
+        `;
+
+
+    });
 }

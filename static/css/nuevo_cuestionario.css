@@ -30,3 +30,13 @@
     transform: scale(1.03);
     cursor: pointer;
 }
+
+.subir{
+    width: 20rem;
+    height: 15rem;
+    background-color: rgb(197, 199, 199);
+    border: 2px dashed #000;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+}
