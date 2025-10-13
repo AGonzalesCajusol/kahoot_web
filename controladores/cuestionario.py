@@ -43,6 +43,27 @@ def registrar_pregunta(pregunta, puntaje, tiempo, tipo_pregunta, id_cuestionario
     except Exception as e:
         return f"Error al registrar la pregunta: {str(e)}"
 
+def registrar_alternativa(respuesta, estado, id_pregunta):
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor()
+
+            query = """
+                INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta)
+                VALUES (%s, %s, %s)
+            """
+            cursor.execute(query, (respuesta, estado, id_pregunta))
+            connection.commit()  
+            connection.close()
+
+            return "Alternativa registrada exitosamente"
+        else:
+            return "Error al conectar con la base de datos"
+    
+    except Exception as e:
+        return f"Error al registrar la alternativa: {str(e)}"
+
 
 
 

@@ -38,5 +38,18 @@ def registrar_rutas(app):
             return jsonify({"message": id_pregunta}), 400
         
 
+    @app.route('/registrar_alternativa', methods=['POST'])
+    def registrar_alternativa_route():
+        datos = request.get_json()  
+        respuesta = datos.get('respuesta')
+        estado = datos.get('estado')
+        id_pregunta = datos.get('id_pregunta')
+
+        response = cuestionario.registrar_alternativa(respuesta, estado, id_pregunta)
+
+        if "registrada exitosamente" in response:
+            return jsonify({"message": response}), 201
+        else:
+            return jsonify({"message": response}), 400
 
 
