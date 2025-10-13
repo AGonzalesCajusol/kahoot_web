@@ -2,7 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 import conexion 
 import routes.login as login_routes
 import routes.repositorios as repositorio_routes
-
+import routes.cuestionario as cuestionario_routes 
 
 app = Flask(__name__)
 app.secret_key = 'chui_angel_grupo_web' 
@@ -47,6 +47,7 @@ def estadisticas():
 
 login_routes.registrar_rutas(app)
 repositorio_routes.registrar_rutas(app)
+cuestionario_routes.registrar_rutas(app)
 
 
 
