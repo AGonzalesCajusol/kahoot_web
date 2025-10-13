@@ -12,7 +12,7 @@ const cuerpo_json = {
     preguntas: [],
 };
 
-const guardar_detalle = () => {
+const guardar_detalle = (ss) => {
     const nombre_cuestionario = document.getElementById("nombre_cuestionario");
     const tipo_formulario = document.getElementById("tipo_cuestionario");
     const descripcion_formulario = document.getElementById("descripcion");
@@ -26,64 +26,65 @@ const guardar_detalle = () => {
     cuerpo_json.detallle.estado = estado.value;
     cuerpo_json.detallle.pin = pin_f.value;
     cuerpo_json.detallle.fecha_programacion = f_pro.value;
-
-
-    contenido.innerHTML = `
-        <div class="d-flex align-items-center mb-3">
-            <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
-            <h3 class="fw-bold mb-0">Paso 2: Agregar preguntas</h3>
-        </div>
-        <p class="text-secondary separador mb-4"><i class="bi bi-info-circle me-1"></i>Añade las preguntas que conformarán tu formulario</p>
-        <div class="mb-3">
-            <div class="d-flex align-items-center justify-content-center">
-                <div class="subir btn btn-outline-secondary d-flex flex-column align-items-center" onclick="document.getElementById('archivo_pregunta').click()" style="cursor:pointer;">
-                    <i class="bi bi-upload fs-3 mb-1"></i>
-                    <span class="fs-6">Puedes subir videos o imágenes</span>
-                </div>
-                <input type="file" id="archivo_pregunta" name="archivo_pregunta" class="d-none" accept=".mp3, .jpg, .jpeg, .png">
+    contenido.innerHTML = '';
+    if(!ss){
+        contenido.innerHTML = `
+            <div class="d-flex align-items-center mb-3">
+                <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
+                <h3 class="fw-bold mb-0">Paso 2: Agregar preguntas</h3>
             </div>
-        </div>
-        <div class="mb-3">
-            <label for="nombre_pregunta" class="fw-bold"><i class="bi bi-pencil-square me-1"></i>Pregunta:</label>
-            <input type="text" class="form-control mt-2" id="nombre_pregunta" placeholder="¿Cuál es tu pregunta?">
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-3">
-                <div class="mt-2" role="radiogroup" aria-labelledby="tipo_pregunta_label">
-                    <span id="tipo_pregunta_label" class="fw-bold"><i class="bi bi-list-check me-1"></i>Tipo pregunta:</span>
-                    <div class="form-check mt-2">
-                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="verdadero_falso" value="VF" onclick="VF()">
-                        <label class="form-check-label" for="verdadero_falso">
-                            <i class="bi bi-check2-square me-1"></i>(Verdadero / Falso)
-                        </label>
+            <p class="text-secondary separador mb-4"><i class="bi bi-info-circle me-1"></i>Añade las preguntas que conformarán tu formulario</p>
+            <div class="mb-3">
+                <div class="d-flex align-items-center justify-content-center">
+                    <div class="subir btn btn-outline-secondary d-flex flex-column align-items-center" onclick="document.getElementById('archivo_pregunta').click()" style="cursor:pointer;">
+                        <i class="bi bi-upload fs-3 mb-1"></i>
+                        <span class="fs-6">Puedes subir videos o imágenes</span>
                     </div>
-                    <div class="form-check mt-1">
-                        <input class="form-check-input" type="radio" name="tipo_pregunta" id="alternativas" value="ALT" onclick="ALT()">
-                        <label class="form-check-label" for="alternativas">
-                            <i class="bi bi-ui-checks-grid me-1"></i>(Alternativas)
-                        </label>
-                    </div>
+                    <input type="file" id="archivo_pregunta" name="archivo_pregunta" class="d-none" accept=".mp3, .jpg, .jpeg, .png">
                 </div>
             </div>
-            <div class="col-md-4">
-                <label for="puntos" class="fw-bold mt-2"><i class="bi bi-star-fill text-warning me-1"></i>Puntos:</label>
-                <input type="number" class="form-control mt-2" name="puntos" id="puntos" placeholder="Valor de la pregunta" min="0" required>
+            <div class="mb-3">
+                <label for="nombre_pregunta" class="fw-bold"><i class="bi bi-pencil-square me-1"></i>Pregunta:</label>
+                <input type="text" class="form-control mt-2" id="nombre_pregunta" placeholder="¿Cuál es tu pregunta?">
             </div>
-            <div class="col-md-4">
-                <label for="tiempo" class="fw-bold mt-2"><i class="bi bi-clock-fill text-primary me-1"></i>Tiempo:</label>
-                <input type="number" class="form-control mt-2" name="tiempo" id="tiempo" placeholder="Tiempo (segundos)" min="2" required>
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="mt-2" role="radiogroup" aria-labelledby="tipo_pregunta_label">
+                        <span id="tipo_pregunta_label" class="fw-bold"><i class="bi bi-list-check me-1"></i>Tipo pregunta:</span>
+                        <div class="form-check mt-2">
+                            <input class="form-check-input" type="radio" name="tipo_pregunta" id="verdadero_falso" value="VF" onclick="VF()">
+                            <label class="form-check-label" for="verdadero_falso">
+                                <i class="bi bi-check2-square me-1"></i>(Verdadero / Falso)
+                            </label>
+                        </div>
+                        <div class="form-check mt-1">
+                            <input class="form-check-input" type="radio" name="tipo_pregunta" id="alternativas" value="ALT" onclick="ALT()">
+                            <label class="form-check-label" for="alternativas">
+                                <i class="bi bi-ui-checks-grid me-1"></i>(Alternativas)
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <label for="puntos" class="fw-bold mt-2"><i class="bi bi-star-fill text-warning me-1"></i>Puntos:</label>
+                    <input type="number" class="form-control mt-2" name="puntos" id="puntos" placeholder="Valor de la pregunta" min="0" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="tiempo" class="fw-bold mt-2"><i class="bi bi-clock-fill text-primary me-1"></i>Tiempo:</label>
+                    <input type="number" class="form-control mt-2" name="tiempo" id="tiempo" placeholder="Tiempo (segundos)" min="2" required>
+                </div>
             </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-check-label fw-bold" for="alternativas"><i class="bi bi-list-ol me-1"></i>Alternativas: <button type="button" onclick="agregar_alternativas()" class="btn btn-outline-success btn-sm d-none" id="btn_add"><i class="bi bi-plus-circle"></i></button></label>
-            <div class="alterantivas_form mt-2 ">
-    
+            <div class="mb-3">
+                <label class="form-check-label fw-bold" for="alternativas"><i class="bi bi-list-ol me-1"></i>Alternativas: <button type="button" onclick="agregar_alternativas()" class="btn btn-outline-success btn-sm d-none" id="btn_add"><i class="bi bi-plus-circle"></i></button></label>
+                <div class="alterantivas_form mt-2 ">
+        
+                </div>
             </div>
-        </div>
-        <div >
-            <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
-        </div>
-    `;
+            <div >
+                <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
+            </div>
+        `;
+    };
 };
 
 const detalle = () => {
@@ -139,24 +140,40 @@ const detalle = () => {
                 
             </div>
             <div class="mb-1 mt-4">
-                <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()">
-                    <i class="bi bi-save"></i> Guardar detalle
-                </button>
+                ${cuerpo_json.detallle.nombre_cuestionario ? `
+                        <button type="button" class="btn btn-warning w-100" onclick="guardar_detalle()">
+                            <i class="bi bi-save"></i> Modificar detalle
+                        </button>
+                    ` 
+                    : ` <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle('si')">
+                            <i class="bi bi-save"></i> Guardar detalle
+                        </button>`
+                }
             </div>
     `;
 };
 
+
+
 const pregunta = (indice) => {
     const pr = cuerpo_json.preguntas[indice];
     var alt = '';
-    console.log(pr.respuesta);
     if (pr.tipo_pregunta == "VF") {
         alt = `
             <button type="button" class="btn ${pr.respuesta == 'Verdadero' ? 'btn-success' : 'btn-outline-success'} btn-sm w-50 " onclick="select(this)"> Verdadero </button>
             <button type="button" class="btn ${pr.respuesta == 'Falso' ? 'btn-success' : 'btn-outline-success'} btn-sm w-50 " onclick="select(this)"> Falso </button>
         `;
     } else {
-        alt = "s"
+        const alternativas = pr.alternativas;
+        alternativas.forEach(a => {
+            alt += `
+                <div class="w-50 d-flex alter ">
+                    <input type="text" class="form-control me-2 ${a == pr.respuesta ? 'border-success' : ''}" value="${a}">
+                    <button type="button" class="btn btn-sm  ${a == pr.respuesta ? 'btn-success' : 'btn-primary'} me-1 cl" onclick ="sl(this)"><i class="bi bi-check2"></i></button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick= "eliminar_alternativa(this)"><i class="bi bi-trash3-fill"></i></button>
+                </div>   
+            `;
+        });
     }
     contenido.innerHTML = `
          <div class="d-flex align-items-center mb-3">
@@ -211,10 +228,12 @@ const pregunta = (indice) => {
             </div>
         </div>
         <div >
-            <button type="button" class="btn btn-primary w-100" onclick="guardar_pregunta()"> Guardar pregunta</button>
+            <button type="button" class="btn btn-warning w-100" onclick="guardar_pregunta(${indice})"> Modificar pregunta</button>
         </div>
     `;
 };
+
+
 
 const ALT = () => {
     document.getElementById("btn_add").classList.remove("d-none");
@@ -335,7 +354,7 @@ const agg_pr = () => {
         </div>
     `;
 };
-const guardar_pregunta = () => {
+const guardar_pregunta = (ss) => {
     const nombre_pregunta = document.getElementById("nombre_pregunta").value;
     const arc = document.getElementById('archivo_pregunta').files[0] ?  document.getElementById('archivo_pregunta').files[0] : '';
     const tipo_pregunta = document.querySelector(
@@ -360,17 +379,30 @@ const guardar_pregunta = () => {
             al.push(element.value);
         });
     }
-    const pr = {
-        nombre_pregunta: nombre_pregunta,
-        tipo_pregunta: tipo_pregunta,
-        archivo : arc,
-        puntos: puntos,
-        tiempo: tiempo,
-        alternativas: al,
-        respuesta: rpt.trim(),
-    };
 
-    cuerpo_json.preguntas.push(pr);
+    //
+    console.log(ss);
+    if(ss >= 0){
+        const res = cuerpo_json.preguntas[ss];
+        res.nombre_pregunta = nombre_pregunta;
+        res.tipo_pregunta = tipo_pregunta;
+        res.archivo = arc;
+        res.puntos = puntos;
+        res.tiempo = tiempo;
+        res.alternativas = al;
+        res.respuesta = rpt.trim();
+    }else{
+        const pr = {
+            nombre_pregunta: nombre_pregunta,
+            tipo_pregunta: tipo_pregunta,
+            archivo : arc,
+            puntos: puntos,
+            tiempo: tiempo,
+            alternativas: al,
+            respuesta: rpt.trim(),
+        };
+        cuerpo_json.preguntas.push(pr);
+    }
 
     //renderizamos contenido
     contenido.innerHTML = "";
