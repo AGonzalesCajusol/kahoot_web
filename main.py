@@ -12,7 +12,7 @@ app.secret_key = 'chui_angel_grupo_web'
 @app.route('/')
 @app.route('/index')
 def home():
-    return render_template('login.html')
+    return render_template('pin_estudiante.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
