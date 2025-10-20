@@ -20,3 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+function confirmarCerrarSesion() {
+    if (confirm("¿Estás seguro de que deseas cerrar sesión?")) {
+        window.location.href = "/logout"; 
+    }
+}

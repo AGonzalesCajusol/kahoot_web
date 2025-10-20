@@ -13,6 +13,7 @@ def registrar_rutas(app):
             if docente:
                 return redirect(url_for('dashboard'))
             else:
+                flash("Correo o contraseña incorrectos. Intenta nuevamente.", "danger") 
                 return render_template('login.html', error="Credenciales incorrectas")
 
         return render_template('login.html')

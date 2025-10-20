@@ -17,8 +17,16 @@ const guardar_detalle = (ss) => {
     const tipo_formulario = document.getElementById("tipo_cuestionario");
     const descripcion_formulario = document.getElementById("descripcion");
     const estado = document.getElementById("estado");
-    const pin_f  = document.getElementById('pin');
+    const pin_f = document.getElementById('pin');
     const f_pro = document.getElementById('fecha_programacion');
+
+    const fecha_actual = new Date();
+    const fecha_programacion = new Date(f_pro.value);
+
+    if (fecha_programacion < fecha_actual) {
+        alert("La fecha de programación no puede ser un día anterior al día actual.");
+        return;
+    }
 
     cuerpo_json.detallle.nombre_cuestionario = nombre_cuestionario.value;
     cuerpo_json.detallle.tipo_formulario = tipo_formulario.value;
@@ -27,7 +35,7 @@ const guardar_detalle = (ss) => {
     cuerpo_json.detallle.pin = pin_f.value;
     cuerpo_json.detallle.fecha_programacion = f_pro.value;
     contenido.innerHTML = '';
-    if(!ss){
+    if (!ss) {
         contenido.innerHTML = `
             <div class="d-flex align-items-center mb-3">
                 <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
@@ -104,9 +112,9 @@ const detalle = () => {
                         Tipo de formulario
                     </label>
                     <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario">
-                        <option value="" disabled ${cuerpo_json.detallle.tipo_formulario === ""? "selected" : "" }>Seleccione una opción</option>
-                        <option value="I" ${cuerpo_json.detallle.tipo_formulario === "I" ? "selected" : "" }>Individual</option>
-                        <option value="G" ${cuerpo_json.detallle.tipo_formulario === "G"? "selected" : "" }>Grupal</option>
+                        <option value="" disabled ${cuerpo_json.detallle.tipo_formulario === "" ? "selected" : ""}>Seleccione una opción</option>
+                        <option value="I" ${cuerpo_json.detallle.tipo_formulario === "I" ? "selected" : ""}>Individual</option>
+                        <option value="G" ${cuerpo_json.detallle.tipo_formulario === "G" ? "selected" : ""}>Grupal</option>
                     </select>
 
                     <label for="pin" class="fw-bold mb-2">
@@ -132,8 +140,8 @@ const detalle = () => {
                         <i class="bi bi-check-circle"></i> Estado
                     </label>
                     <select id="estado" class="form-select mb-3" name="estado">
-                        <option value="P" ${cuerpo_json.detallle.estado === "P" ? "selected" : "" }>Público</option>
-                        <option value="R" ${cuerpo_json.detallle.estado === "R" ? "selected" : "" }>Privado</option>
+                        <option value="P" ${cuerpo_json.detallle.estado === "P" ? "selected" : ""}>Público</option>
+                        <option value="R" ${cuerpo_json.detallle.estado === "R" ? "selected" : ""}>Privado</option>
                     </select>   
                 </div>
 
@@ -144,11 +152,11 @@ const detalle = () => {
                         <button type="button" class="btn btn-warning w-100" onclick="guardar_detalle()">
                             <i class="bi bi-save"></i> Modificar detalle
                         </button>
-                    ` 
-                    : ` <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle('si')">
+                    `
+            : ` <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle('si')">
                             <i class="bi bi-save"></i> Guardar detalle
                         </button>`
-                }
+        }
             </div>
     `;
 };
@@ -356,12 +364,31 @@ const agg_pr = () => {
 };
 const guardar_pregunta = (ss) => {
     const nombre_pregunta = document.getElementById("nombre_pregunta").value;
-    const arc = document.getElementById('archivo_pregunta').files[0] ?  document.getElementById('archivo_pregunta').files[0] : '';
+    const arc = document.getElementById('archivo_pregunta').files[0] ? document.getElementById('archivo_pregunta').files[0] : '';
     const tipo_pregunta = document.querySelector(
         'input[name="tipo_pregunta"]:checked'
     ).value;
     const puntos = document.getElementById("puntos").value;
     const tiempo = document.getElementById("tiempo").value;
+    // Verificar si el campo de pregunta está vacío
+    if (!nombre_pregunta.trim()) {
+        alert("El campo de la pregunta no puede estar vacío.");
+        return;
+    }
+
+    if (!tipo_pregunta) {
+        alert("Por favor, selecciona el tipo de pregunta.");
+        return;
+    }
+
+    if (!puntos || puntos <= 0) {
+        alert("El valor de los puntos debe ser mayor que 0.");
+        return;
+    }
+    if (!tiempo || tiempo < 2) {
+        alert("El tiempo debe ser al menos de 2 segundos.");
+        return;
+    }
     const al = [];
     var rpt = "";
     if (tipo_pregunta == "VF") {
@@ -382,7 +409,7 @@ const guardar_pregunta = (ss) => {
 
     //
     console.log(ss);
-    if(ss >= 0){
+    if (ss >= 0) {
         const res = cuerpo_json.preguntas[ss];
         res.nombre_pregunta = nombre_pregunta;
         res.tipo_pregunta = tipo_pregunta;
@@ -391,11 +418,11 @@ const guardar_pregunta = (ss) => {
         res.tiempo = tiempo;
         res.alternativas = al;
         res.respuesta = rpt.trim();
-    }else{
+    } else {
         const pr = {
             nombre_pregunta: nombre_pregunta,
             tipo_pregunta: tipo_pregunta,
-            archivo : arc,
+            archivo: arc,
             puntos: puntos,
             tiempo: tiempo,
             alternativas: al,
@@ -413,7 +440,7 @@ const guardar_pregunta = (ss) => {
             <div class="detalle_inicial card shadow-lg p-3 enfocar mt-2" id="detalle_card" onclick="pregunta(${index})">
                 <div class="row">
                     <div class="col-9">
-                    <p class="text-secondary texto_pregunta">Pregunta ${index +1}: </p> 
+                    <p class="text-secondary texto_pregunta">Pregunta ${index + 1}: </p> 
                     <p class="name_cuestion">
                         ${pregunta.nombre_pregunta}
                     </p>
@@ -428,8 +455,8 @@ const guardar_pregunta = (ss) => {
 };
 
 
-const pin = () =>{
-    var numero =  Math.floor(10000 + Math.random() * 90000);
+const pin = () => {
+    var numero = Math.floor(10000 + Math.random() * 90000);
     document.getElementById('pin').value = numero;
     cuerpo_json.detallle.pin = numero
 
@@ -437,15 +464,16 @@ const pin = () =>{
 pin();
 
 
-const eliminar_pr = (el, indice) =>{
-    const cc = el.parentElement.parentElement.parentElement;
-    cc.remove();
-    cuerpo_json.preguntas.splice(indice, 1); 
-    const enumeracion = document.querySelectorAll('.texto_pregunta');
-    enumeracion.forEach((enu, index) => {  
-        enu.textContent = `Pregunta ${index+1}:`
-    });
-
+const eliminar_pr = (el, indice) => {
+    if (confirm("¿Estás seguro de que deseas eliminar esta pregunta?")) {
+        const cc = el.parentElement.parentElement.parentElement;
+        cc.remove();
+        cuerpo_json.preguntas.splice(indice, 1);
+        const enumeracion = document.querySelectorAll('.texto_pregunta');
+        enumeracion.forEach((enu, index) => {
+            enu.textContent = `Pregunta ${index + 1}:`
+        });
+    }
 }
 
 
@@ -457,7 +485,7 @@ const enviar_datos = async () => {
         headers: {
             'Content-Type': 'application/json'
         },
-        body : JSON.stringify(cuerpo_json) 
+        body: JSON.stringify(cuerpo_json)
     })
     const data = await response.json();
     console.log(data);
