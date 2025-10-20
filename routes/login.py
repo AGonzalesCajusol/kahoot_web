@@ -33,3 +33,4 @@ def registrar_rutas(app):
         flash(response, "danger")  
         return render_template('registro.html') 
     
+    

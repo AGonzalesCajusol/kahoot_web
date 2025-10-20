@@ -3,6 +3,8 @@ import conexion
 import routes.login as login_routes
 import routes.repositorios as repositorio_routes
 import routes.cuestionario as cuestionario_routes 
+import routes.registro as registro_routes
+import routes.recuperacion as recuperacion_routes
 
 app = Flask(__name__)
 app.secret_key = 'chui_angel_grupo_web' 
@@ -45,9 +47,20 @@ def perfil():
 def estadisticas():    
     return render_template('estadistica.html')
 
+@app.route('/recuperar_contra')
+def recuperar_contra():    
+    return render_template('/recuperacion/recuperar_contrasena.html')
+
+@app.route("/nueva_contrasena", methods=["GET"])
+def nueva_contrasena_page():
+    return render_template("recuperacion/nueva_contrasena.html")
+
+
 login_routes.registrar_rutas(app)
 repositorio_routes.registrar_rutas(app)
 cuestionario_routes.registrar_rutas(app)
+registro_routes.registrar_rutas(app)
+recuperacion_routes.registrar_rutas_recuperacion(app)
 
 
 

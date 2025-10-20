@@ -44,3 +44,4 @@ def registrar_docente(correo, password, nombres, apellidos):
 
     except Exception as e:
         return f"Error al registrar el docente: {str(e)}"
+        
