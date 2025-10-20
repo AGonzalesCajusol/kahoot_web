@@ -24,14 +24,12 @@ def registrar_rutas(app):
         nombres = request.form['nombres']
         apellidos = request.form['apellidos']
 
-        # Llamar al controlador para registrar al docente
         response = registrar_docente(correo, password, nombres, apellidos)
 
-        # Si el registro es exitoso, redirigir al login
         if "exitosamente" in response:
-            flash(response, "success")  # Mostrar mensaje flash de éxito
-            return redirect(url_for('login'))  # Redirigir al login
+            flash(response, "success")  
+            return redirect(url_for('login'))
 
-        flash(response, "danger")  # Mostrar mensaje flash de error
+        flash(response, "danger")  
         return render_template('registro.html') 
     
