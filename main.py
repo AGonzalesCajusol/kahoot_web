@@ -64,12 +64,7 @@ recuperacion_routes.registrar_rutas_recuperacion(app)
 
 
 
-#ruta para registrar_formulario
-@app.route('/registrar_pregunta', methods=['POST'])
-def registrar_pregunta():
-    datos = request.get_json()
-    print(datos)
-    return jsonify({'as', 'as'})
+
 
 
 #ruta en caso de error

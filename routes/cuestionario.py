@@ -1,5 +1,6 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
 from controladores import cuestionario
+
 
 def registrar_rutas(app):
     @app.route('/registrar_cuestionario', methods=['POST'])
@@ -21,21 +22,16 @@ def registrar_rutas(app):
         else:
             return jsonify({"message": response}), 400
 
+    #ruta para registrar_formulario
     @app.route('/registrar_pregunta', methods=['POST'])
-    def registrar_pregunta_route():
+    def registrar_pregunta():
         datos = request.get_json()
-        pregunta_texto = datos.get('pregunta')
-        puntaje = datos.get('puntaje')
-        tiempo = datos.get('tiempo')
-        tipo_pregunta = datos.get('tipo_pregunta')
-        id_cuestionario = 6  
-
-        id_pregunta = cuestionario.registrar_pregunta(pregunta_texto, puntaje, tiempo, tipo_pregunta, id_cuestionario)
-
-        if isinstance(id_pregunta, int):
-            return jsonify({"message": "Pregunta registrada exitosamente", "id_pregunta": id_pregunta}), 201
-        else:
-            return jsonify({"message": id_pregunta}), 400
+        id_docente = session['docente_id']
+        response = cuestionario.registrar_cuestionario(datos,id_docente)
+        if response:
+            return jsonify({'estado': True})
+        
+        return jsonify({'estado': False})
         
 
     @app.route('/registrar_alternativa', methods=['POST'])
