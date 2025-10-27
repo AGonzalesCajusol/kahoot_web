@@ -1,5 +1,7 @@
-from flask import request, jsonify, session
+from flask import redirect, render_template, request, jsonify, session, url_for
+import conexion
 from controladores import cuestionario
+from controladores import docente
 
 
 def registrar_rutas(app):
@@ -71,3 +73,118 @@ def registrar_rutas(app):
         cuestionarios = cuestionario.obtener_cuestionarios_archivados(id_docente)
         print(cuestionarios)
         return jsonify(cuestionarios)
+
+    @app.route('/validar_pin', methods=['POST'])
+    def validar_pin_route():
+        try:
+            datos = request.get_json()
+            pin = datos.get('pin')
+
+            if not pin:
+                return jsonify({"error": "PIN es requerido"}), 400
+
+            resultado = cuestionario.validar_pin(pin)
+
+            if not resultado:
+                return jsonify({"error": "PIN inválido o cuestionario inactivo"}), 400
+
+            id_cuestionario = resultado['id_cuestionario']
+            tipo_cuestionario = resultado['tipo_cuestionario']
+            estado_cuestionario = resultado['estado_cuestionario']
+
+            print(f"id_cuestionario: {id_cuestionario}, tipo_cuestionario: {tipo_cuestionario}, estado_cuestionario: {estado_cuestionario}")
+
+            return jsonify({
+                "id_cuestionario": id_cuestionario,
+                "tipo_cuestionario": tipo_cuestionario,
+                "estado_cuestionario": estado_cuestionario
+            }), 200
+
+        except Exception as e:
+            print(f"Error en /validar_pin: {e}")
+            return jsonify({"error": "Error interno del servidor"}), 500
+
+    @app.route('/registrar_alias/<int:id_cuestionario>')
+    def registrar_alias(id_cuestionario):
+        return render_template('alias.html', id_cuestionario=id_cuestionario)
+
+    @app.route('/verificar_alias', methods=['POST'])
+    def verificar_alias():
+        data = request.get_json()
+        alias = data.get('alias')
+        id_cuestionario = data.get('id_cuestionario')
+
+        connection = conexion.conectarbd()
+        if not connection:
+            return jsonify({'error': 'Error al conectar con la base de datos'}), 500
+
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("""
+                    SELECT id_usuario FROM Usuario
+                    WHERE alias = %s AND id_cuestionario = %s
+                """, (alias, id_cuestionario))
+                existente = cursor.fetchone()
+
+                if existente:
+                    return jsonify({'error': 'Alias ya en uso, elige otro nombre'}), 400
+
+                cursor.execute("""
+                    INSERT INTO Usuario (alias, id_cuestionario, puntaje)
+                    VALUES (%s, %s, 0)
+                """, (alias, id_cuestionario))
+                connection.commit()
+
+                return jsonify({'success': True}), 200
+
+        except Exception as e:
+            print("Error en verificar_alias:", e)
+            return jsonify({'error': 'Error interno del servidor'}), 500
+
+        finally:
+            connection.close()
+
+    @app.route('/sala_espera/<int:id_cuestionario>')
+    def sala_espera(id_cuestionario):
+        connection = conexion.conectarbd()
+        cursor = connection.cursor()
+
+        query_cuestionario = """
+            SELECT 
+                c.nombre AS nombre_cuestionario,
+                c.pin,
+                CONCAT(d.nombres, ' ', d.apellidos) AS nombre_docente
+            FROM Cuestionario c
+            INNER JOIN Docente d ON c.id_docente = d.id_docente
+            WHERE c.id_cuestionario = %s
+        """
+        cursor.execute(query_cuestionario, (id_cuestionario,))
+        cuestionario = cursor.fetchone()
+
+        if not cuestionario:
+            cursor.close()
+            connection.close()
+            return "Cuestionario no encontrado", 404
+
+        query_usuarios = """
+            SELECT alias, puntaje
+            FROM Usuario
+            WHERE id_cuestionario = %s
+            ORDER BY id_usuario ASC
+        """
+        cursor.execute(query_usuarios, (id_cuestionario,))
+        resultados = cursor.fetchall()
+
+        usuarios = [{"alias": row["alias"], "puntaje": row["puntaje"]} for row in resultados]
+
+        cursor.close()
+        connection.close()
+
+        return render_template(
+            'sala_espera.html',
+            cuestionario=cuestionario,
+            usuarios=usuarios
+        )
+
+
+
