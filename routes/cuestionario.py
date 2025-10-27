@@ -62,7 +62,6 @@ def registrar_rutas(app):
         print(cuestionarios)
         return jsonify(cuestionarios)
 
-    
     @app.route('/cuestionarios_archivados', methods=['GET'], endpoint='cuestionarios_archivados_endpoint')
     def cuestionarios_archivados():
         id_docente = request.args.get('id_docente')  
