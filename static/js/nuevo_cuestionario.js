@@ -477,7 +477,6 @@ const eliminar_pr = (el, indice) => {
 }
 
 
-
 const enviar_datos = async () => {
     const ruta = "/registrar_pregunta"
     const response = await fetch(ruta, {

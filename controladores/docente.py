@@ -1,4 +1,6 @@
 import hashlib
+
+from flask import jsonify
 from conexion import conectarbd
 from hashlib import sha256
 import pymysql
@@ -45,3 +47,43 @@ def registrar_docente(correo, password, nombres, apellidos):
     except Exception as e:
         return f"Error al registrar el docente: {str(e)}"
         
+
+def modificar_docente(correo, nuevo_nombre, nuevo_apellido, nuevo_correo=None, nueva_contrasena=None):
+    try:
+        connection = conectarbd()
+        if not connection:
+            return jsonify({"code": 0, "message": "Error al conectar con la base de datos."}), 500
+        
+        cursor = connection.cursor()
+            
+        if nuevo_correo:
+            cursor.execute("SELECT * FROM Docente WHERE correo = %s", (nuevo_correo,))
+            if cursor.fetchone():
+                return jsonify({"code": 0, "message": "El nuevo correo ya está registrado."}), 400
+        
+        update_query = "UPDATE Docente SET nombres = %s, apellidos = %s"
+        params = [nuevo_nombre, nuevo_apellido]
+        
+        if nuevo_correo:
+            update_query += ", correo = %s"
+            params.append(nuevo_correo)
+        
+        if nueva_contrasena:
+            # Hash de la nueva contraseña
+            hashed_password = hashlib.sha256(nueva_contrasena.encode('utf-8')).hexdigest()
+            update_query += ", password = %s"
+            params.append(hashed_password)
+        
+        update_query += " WHERE correo = %s"
+        params.append(correo)
+        
+        cursor.execute(update_query, tuple(params))
+        connection.commit()
+        
+        connection.close()
+        
+        return jsonify({"code": 1, "message": "Datos actualizados exitosamente."}), 200
+        
+    except Exception as e:
+        print(f"Error al actualizar docente: {e}")
+        return jsonify({"code": 0, "message": "Error al actualizar los datos."}), 500

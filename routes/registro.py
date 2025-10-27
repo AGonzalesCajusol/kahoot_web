@@ -1,10 +1,9 @@
 from flask import render_template, request, jsonify
 import time
-from controladores.docente import registrar_docente
-from controladores.correo_config import send_email  # ya lo tienes
+from controladores.docente import registrar_docente, modificar_docente
+from controladores.correo_config import send_email  
 import random
 
-# Diccionario temporal (compartido con /enviar_codigo)
 codigos_verificacion = {}
 
 def registrar_rutas(app):
@@ -97,4 +96,31 @@ def registrar_rutas(app):
     @app.route("/verificarcodigo", methods=["GET"])
     def verificarcodigo_pagina():
         return render_template("verificar_codigo.html")
-        
+            
+    @app.route("/modificar_perfil", methods=["POST"])
+    def modificar_perfil():
+        try:
+            data = request.get_json()
+            correo = data.get("correo")
+            nuevo_nombre = data.get("nombre")
+            nuevo_apellido = data.get("apellido")
+            nuevo_correo = data.get("nuevo_correo")
+            nueva_contrasena = data.get("nueva_contrasena")
+            
+            # Validar campos obligatorios
+            if not correo or not nuevo_nombre or not nuevo_apellido:
+                return jsonify({"code": 0, "message": "Faltan datos obligatorios."}), 400
+
+            # Llamada al controlador para modificar los datos
+            response = modificar_docente(
+                correo,
+                nuevo_nombre,
+                nuevo_apellido,
+                nuevo_correo,
+                nueva_contrasena
+            )
+            return response
+
+        except Exception as e:
+            print(f"Error en /modificar_perfil: {e}")
+            return jsonify({"code": 0, "message": "Error interno del servidor."}), 500
