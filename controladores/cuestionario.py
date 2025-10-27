@@ -1,5 +1,39 @@
 import conexion
 
+def datos_cuestionario(id_for):
+    conn = conexion.conectarbd()
+    print(id_for)
+    with conn.cursor() as cursor:
+        sql = '''
+            SELECT 
+                pr.id_pregunta,
+                pr.pregunta,        -- texto de la pregunta
+                pr.puntaje,
+                pr.tiempo_respuesta,
+                JSON_ARRAYAGG(JSON_OBJECT(
+                    'id_alternativa', al.id_alternativa,
+                    'respuesta', al.respuesta,
+                    'estado_alternativa', al.estado_alternativa
+                )) AS alternativas
+            FROM Pregunta pr
+            INNER JOIN Alternativa al ON pr.id_pregunta = al.id_pregunta
+            WHERE pr.id_cuestionario = %s
+            GROUP BY pr.id_pregunta, pr.pregunta, pr.puntaje;
+        '''
+        cursor.execute(sql,(id_for))
+        datos_frm = cursor.fetchall()
+    return datos_frm
+
+
+def retornar_dartosformuario(id_formulario):
+    conn = conexion.conectarbd()
+    with conn.cursor() as cursor:
+        sql = "select id_cuestionario, c.nombre, c.pin from Cuestionario  as c where c.id_cuestionario = %s"
+        cursor.execute(sql,(id_formulario))
+        datos_frm = cursor.fetchone()
+    return datos_frm
+
+
 def registrar_cuestionario(datos,id_docente):
     detalle = datos.get('detalle', {})
     preguntas = datos.get('preguntas', [])

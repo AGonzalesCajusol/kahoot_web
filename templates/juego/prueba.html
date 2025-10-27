@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/static/css/juego.css">
+</head>
+<body>
+    <div class="cont container-fluid d-flex flex-column justify-content-center align-items-center text-center min-vh-100 min-vw-100">
+        <div class="card shadow-lg p-4 bg-white rounded-4">
+            <h6 id="contador"></h6> 
+        </div>
+        <div class="alternativas card shadow-lg mt-3 d-flex">
+        </div>
+    </div>
+    <div class="min-vh-100 min-vw-100 position-absolute">
+
+    </div>
+
+</body>
+<script>
+let socket = io();
+
+// ID de la sala que pasa Flask
+let id = 2;
+
+// Obtener el elemento donde mostrar el temporizador
+const timerDisplay = document.getElementById('contador');
+
+// Unirse a la sala
+socket.emit('unirme_sala', { sala: id });
+
+// Escuchar el temporizador enviado por el servidor
+let formato = {
+    'id_pregunta': 0,
+    'tiempo_maximo': 0,
+    'puntaje_max': 0,
+    'tiempo_resp': 0,
+    'puntaje_f' : 0,
+};
+
+let time = 0;
+socket.on('tiempo', (data) => {
+    const mins = String(Math.floor(data.tiempo / 60)).padStart(2, '0');
+    const secs = String(data.tiempo % 60).padStart(2, '0');
+    timerDisplay.innerText = `${mins}:${secs}`;
+    time = data.tiempo;
+});
+
+
+socket.on('alternativas', (data) => {
+    const alternativas = JSON.parse(data.alt);
+    timerDisplay.innerText = data.tiempo;
+    formato.tiempo_maximo = data.tiempo;
+    formato.puntaje_max = data.puntaje;
+    mostrar_alternativas(alternativas);
+});
+const div_alt = document.querySelector('.alternativas');
+const mostrar_alternativas = (alt) =>{
+    div_alt.innerHTML = '';
+    alt.forEach((item) => {
+        console.log(item);
+        div_alt.innerHTML += `
+            <button class="me-3 btn_alt btn btn-outline-secondary" data-idal="${item.id_alternativa}" data-estado="${item.estado_alternativa}"  onclick=seleccionar(this)>${item.respuesta}</button>
+        `;
+    })
+}
+
+const seleccionar = (btnSeleccionado) => {
+    btnSeleccionado.classList.add('btn-outline-primary');
+    btnSeleccionado.classList.remove('btn-outline-secondary');
+    let puntaje = 0;
+    const botones = document.querySelectorAll('.btn_alt');
+    botones.forEach((btn) => {
+        btn.disabled = true;
+    });
+    formato.tiempo_resp = time;
+    formato.id_pregunta = btnSeleccionado.dataset.id_alternativa;
+    
+    if(btnSeleccionado.dataset.estado_alternativa == 1){
+        console.log((puntajeMax * (time / formato.tiempo_maximo)));
+        formato.puntaje_f =  +(puntajeMax * (time / formato.tiempo_maximo)).toFixed(2);
+    }
+    console.log(formato);
+}
+
+
+
+</script>
+
+</html>
