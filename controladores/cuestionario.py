@@ -1,6 +1,11 @@
 import conexion
 
-def registrar_cuestionario(nombre, tipo, descripcion, estado, pin, fecha_programacion, id_docente):
+
+
+def registrar_cuestionario(datos,id_docente):
+    detalle = datos.get('detalle', {})
+    preguntas = datos.get('preguntas', [])
+    connection = None
     try:
         connection = conexion.conectarbd()
         if connection:
@@ -10,60 +15,50 @@ def registrar_cuestionario(nombre, tipo, descripcion, estado, pin, fecha_program
                 INSERT INTO Cuestionario (nombre, tipo_cuestionario, descripcion, estado, pin, fecha_programacion, id_docente)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(query, (nombre, tipo, descripcion, estado, pin, fecha_programacion, id_docente))
-            connection.commit()
-            connection.close()
+            cursor.execute(query, (
+                detalle.get('nombre_cuestionario'),
+                detalle.get('tipo_formulario'),
+                detalle.get('descripcion_formulario'),
+                detalle.get('estado'),
+                detalle.get('pin'),
+                detalle.get('fecha_programacion'),
+                id_docente
+            ))
+            id_cuestionario = cursor.lastrowid
+            for pregunta in preguntas:
+                query = """
+                    INSERT INTO Pregunta (pregunta, puntaje, tiempo_respuesta, tipo_pregunta, id_cuestionario)
+                    VALUES (%s, %s, %s, %s, %s)
+                """
+                cursor.execute(query, (
+                    pregunta.get('nombre_pregunta'),
+                    pregunta.get('puntos'),
+                    pregunta.get('tiempo'),
+                    pregunta.get('tipo_pregunta'),
+                    id_cuestionario
+                ))
+                id_pregunta = cursor.lastrowid 
 
-            return "Cuestionario registrado exitosamente"
-        else:
-            return "Error al conectar con la base de datos"
-    
-    except Exception as e:
-        return f"Error al registrar el cuestionario: {str(e)}"
-
-def registrar_pregunta(pregunta, puntaje, tiempo, tipo_pregunta, id_cuestionario):
-    try:
-        connection = conexion.conectarbd()
-        if connection:
-            cursor = connection.cursor()
-
-            query = """
-                INSERT INTO Pregunta (pregunta, puntaje, tiempo_respuesta, tipo_pregunta, id_cuestionario)
-                VALUES (%s, %s, %s, %s, %s)
-            """
-            cursor.execute(query, (pregunta, puntaje, tiempo, tipo_pregunta, id_cuestionario))
+                respuestas = pregunta.get('alternativas')
+                respuesta = pregunta.get('respuesta')
+                for rpt in respuestas:
+                    query = """
+                            INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta)
+                            VALUES (%s, %s, %s)
+                        """
+                    estado = 1 if str(rpt).strip() == respuesta  else 0
+                    cursor.execute(query, (rpt, estado ,id_pregunta))
             connection.commit()  
-            id_pregunta = cursor.lastrowid  
-            connection.close()
-
-            return id_pregunta
+            return True
         else:
-            return "Error al conectar con la base de datos"
-    
+            return 3
     except Exception as e:
-        return f"Error al registrar la pregunta: {str(e)}"
-
-def registrar_alternativa(respuesta, estado, id_pregunta):
-    try:
-        connection = conexion.conectarbd()
+        connection.rollback()
+        print(e)
+        return False
+    finally:
         if connection:
-            cursor = connection.cursor()
-
-            query = """
-                INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta)
-                VALUES (%s, %s, %s)
-            """
-            cursor.execute(query, (respuesta, estado, id_pregunta))
-            connection.commit()  
             connection.close()
-
-            return "Alternativa registrada exitosamente"
-        else:
-            return "Error al conectar con la base de datos"
-    
-    except Exception as e:
-        return f"Error al registrar la alternativa: {str(e)}"
-
 
 
 

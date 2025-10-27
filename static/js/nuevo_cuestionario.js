@@ -1,7 +1,7 @@
 const contenido = document.querySelector(".cont_formulario");
 
 const cuerpo_json = {
-    detallle: {
+    detalle: {
         nombre_cuestionario: "",
         tipo_formulario: "",
         descripcion_formulario: "",
@@ -28,12 +28,12 @@ const guardar_detalle = (ss) => {
         return;
     }
 
-    cuerpo_json.detallle.nombre_cuestionario = nombre_cuestionario.value;
-    cuerpo_json.detallle.tipo_formulario = tipo_formulario.value;
-    cuerpo_json.detallle.descripcion_formulario = descripcion_formulario.value;
-    cuerpo_json.detallle.estado = estado.value;
-    cuerpo_json.detallle.pin = pin_f.value;
-    cuerpo_json.detallle.fecha_programacion = f_pro.value;
+    cuerpo_json.detalle.nombre_cuestionario = nombre_cuestionario.value;
+    cuerpo_json.detalle.tipo_formulario = tipo_formulario.value;
+    cuerpo_json.detalle.descripcion_formulario = descripcion_formulario.value;
+    cuerpo_json.detalle.estado = estado.value;
+    cuerpo_json.detalle.pin = pin_f.value;
+    cuerpo_json.detalle.fecha_programacion = f_pro.value;
     contenido.innerHTML = '';
     if (!ss) {
         contenido.innerHTML = `
@@ -93,6 +93,7 @@ const guardar_detalle = (ss) => {
             </div>
         `;
     };
+    console.log("1", cuerpo_json);
 };
 
 const detalle = () => {
@@ -105,27 +106,27 @@ const detalle = () => {
                         <i class="bi bi-pencil-square"></i>
                         Nombre del formulario
                     </label>
-                    <input value ="${cuerpo_json.detallle.nombre_cuestionario}" id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text" placeholder="Ingrese el nombre del cuestionario" >
+                    <input value ="${cuerpo_json.detalle.nombre_cuestionario}" id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text" placeholder="Ingrese el nombre del cuestionario" >
                 
                     <label for="tipo_cuestionario" class="fw-bold mb-2">
                         <i class="bi bi-info-circle"></i>
                         Tipo de formulario
                     </label>
                     <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario">
-                        <option value="" disabled ${cuerpo_json.detallle.tipo_formulario === "" ? "selected" : ""}>Seleccione una opción</option>
-                        <option value="I" ${cuerpo_json.detallle.tipo_formulario === "I" ? "selected" : ""}>Individual</option>
-                        <option value="G" ${cuerpo_json.detallle.tipo_formulario === "G" ? "selected" : ""}>Grupal</option>
+                        <option value="" disabled ${cuerpo_json.detalle.tipo_formulario === "" ? "selected" : ""}>Seleccione una opción</option>
+                        <option value="I" ${cuerpo_json.detalle.tipo_formulario === "I" ? "selected" : ""}>Individual</option>
+                        <option value="G" ${cuerpo_json.detalle.tipo_formulario === "G" ? "selected" : ""}>Grupal</option>
                     </select>
 
                     <label for="pin" class="fw-bold mb-2">
                         <i class="bi bi-key"></i> PIN
                     </label>
-                    <input id="pin" value="${cuerpo_json.detallle.pin}" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
+                    <input id="pin" value="${cuerpo_json.detalle.pin}" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
 
                     <label for="fecha_programacion" class="fw-bold mb-2">
                         <i class="bi bi-calendar"></i> Fecha de Programación
                     </label>
-                    <input id="fecha_programacion" value="${cuerpo_json.detallle.fecha_programacion}"   class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
+                    <input id="fecha_programacion" value="${cuerpo_json.detalle.fecha_programacion}"   class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
                      
                 </div>
 
@@ -134,21 +135,21 @@ const detalle = () => {
                         <i class="bi bi-card-text"></i>
                         Descripción del formulario
                     </label>
-                    <textarea  id="descripcion" class="form-control" name="descripcion" rows="7" placeholder="Ingrese la descripción del cuestionario" >${cuerpo_json.detallle.descripcion_formulario}</textarea>
+                    <textarea  id="descripcion" class="form-control" name="descripcion" rows="7" placeholder="Ingrese la descripción del cuestionario" >${cuerpo_json.detalle.descripcion_formulario}</textarea>
 
                     <label for="estado" class="fw-bold mb-2">
                         <i class="bi bi-check-circle"></i> Estado
                     </label>
                     <select id="estado" class="form-select mb-3" name="estado">
-                        <option value="P" ${cuerpo_json.detallle.estado === "P" ? "selected" : ""}>Público</option>
-                        <option value="R" ${cuerpo_json.detallle.estado === "R" ? "selected" : ""}>Privado</option>
+                        <option value="P" ${cuerpo_json.detalle.estado === "P" ? "selected" : ""}>Público</option>
+                        <option value="R" ${cuerpo_json.detalle.estado === "R" ? "selected" : ""}>Privado</option>
                     </select>   
                 </div>
 
                 
             </div>
             <div class="mb-1 mt-4">
-                ${cuerpo_json.detallle.nombre_cuestionario ? `
+                ${cuerpo_json.detalle.nombre_cuestionario ? `
                         <button type="button" class="btn btn-warning w-100" onclick="guardar_detalle()">
                             <i class="bi bi-save"></i> Modificar detalle
                         </button>
@@ -160,8 +161,6 @@ const detalle = () => {
             </div>
     `;
 };
-
-
 
 const pregunta = (indice) => {
     const pr = cuerpo_json.preguntas[indice];
@@ -240,8 +239,6 @@ const pregunta = (indice) => {
         </div>
     `;
 };
-
-
 
 const ALT = () => {
     document.getElementById("btn_add").classList.remove("d-none");
@@ -458,7 +455,7 @@ const guardar_pregunta = (ss) => {
 const pin = () => {
     var numero = Math.floor(10000 + Math.random() * 90000);
     document.getElementById('pin').value = numero;
-    cuerpo_json.detallle.pin = numero
+    cuerpo_json.detalle.pin = numero
 
 }
 pin();
@@ -479,6 +476,7 @@ const eliminar_pr = (el, indice) => {
 
 const enviar_datos = async () => {
     const ruta = "/registrar_pregunta"
+    console.log(cuerpo_json);
     const response = await fetch(ruta, {
         method: 'POST',
         headers: {
@@ -486,6 +484,11 @@ const enviar_datos = async () => {
         },
         body: JSON.stringify(cuerpo_json)
     })
-    const data = await response.json();
-    console.log(data);
+    const resp = await response.json();
+    if(resp){
+        //window.location.reload();
+    }
+    //mostar un mensaje que no se pudo registrar
+
+
 }
