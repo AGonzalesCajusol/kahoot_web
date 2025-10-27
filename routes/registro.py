@@ -1,4 +1,4 @@
-from flask import render_template, request, jsonify
+from flask import render_template, request, jsonify, session
 import time
 from controladores.docente import registrar_docente, modificar_docente
 from controladores.correo_config import send_email  
@@ -119,6 +119,12 @@ def registrar_rutas(app):
                 nuevo_correo,
                 nueva_contrasena
             )
+
+            if response[1] == 200:
+                session['nombres'] = nuevo_nombre
+                session['apellidos'] = nuevo_apellido
+                session['correo'] = nuevo_correo if nuevo_correo else correo
+    
             return response
 
         except Exception as e:

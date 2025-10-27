@@ -9,6 +9,107 @@
   <div id="cuestionarios-lista" class="questionnaires-grid"></div>
 </section>
 
+<style>
+  /* 🔹 Tarjeta base */
+  .questionnaire-card {
+    position: relative;
+    overflow: hidden;
+    margin: 10px 0;
+    padding: 20px;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+
+  .questionnaire-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    background-color: #fefefe;
+  }
+
+  /* ✅ Verde tipo “activo” */
+  .questionnaire-card.active {
+    border-left: 6px solid #28a745; /* Verde */
+    background-color: #e9f7e5;      /* Fondo claro */
+  }
+
+  .questionnaire-card.active:hover {
+    background-color: #dcf3d9; /* Un verde más claro al pasar el mouse */
+  }
+
+  /* 🔹 Contenido */
+  .questionnaire-card .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .questionnaire-card .title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #0d1b2a;
+    margin-bottom: 4px;
+  }
+
+  .questionnaire-card .subtitle {
+    color: #495057;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .questionnaire-card .meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+  }
+
+  .questionnaire-card:hover .title {
+    color: #198754; /* Verde Bootstrap */
+  }
+
+  /* 🔸 Grid adaptable */
+  .questionnaires-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  /* 🔸 Título de sección */
+  h3 {
+    font-weight: 700;
+    color: #1d3557;
+    margin-bottom: 1rem;
+  }
+
+  /* 🔸 Animación suave */
+  .questionnaire-card {
+    opacity: 0;
+    animation: fadeInUp 0.5s forwards;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(10px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  /* 🔸 Botones */
+  .button-group {
+    margin-top: 10px;
+  }
+  .button-group .btn {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+</style>
+
 <script>
   fetch('/cuestionarios_publicos')
     .then(r => r.json())
@@ -22,12 +123,15 @@
         const tipo = q.tipo_cuestionario === 'I' ? 'Individual' : 'Grupal';
 
         return `
-          <article class="questionnaire-card">
+          <article class="questionnaire-card active">
             <div class="card-content">
               <h4 class="title">${q.nombre}</h4>
-              <p class="subtitle">Docente: ${q.docente_completo}</p>
-              <p class="meta">Tipo: ${tipo}</p>
-              <p class="meta">PIN: ${q.pin}</p>
+              <p class="subtitle"><i class="bi bi-person-fill"></i> ${q.docente_completo}</p>
+              <p class="meta"><i class="bi bi-people-fill"></i> Tipo: ${tipo}</p>
+              <p class="meta"><i class="bi bi-key-fill"></i> PIN: ${q.pin}</p>
+              <div class="button-group">
+                <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+              </div>
             </div>
           </article>
         `;
