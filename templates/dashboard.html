@@ -10,6 +10,109 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <style>
+        
+        .questionnaire-card {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .questionnaire-card:hover {
+            transform: scale(1.05);
+        }
+
+        /* Estado Activo */
+        .active {
+            border-left: 5px solid #28a745; /* Verde para activos */
+            background-color: #e9f7e5; /* Fondo claro para activos */
+        }
+
+        .active .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Estado Archivado */
+        .archived {
+            border-left: 5px solid #ffc107; /* Amarillo para archivados */
+            background-color: #fff8e1; /* Fondo claro para archivados */
+        }
+
+        .archived .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Botones */
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        /* Títulos y estado */
+        .status {
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 5px;
+            padding: 5px;
+            text-align: center;
+        }
+
+        h4 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        /* Contenedores */
+        .questionnaires-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+    </style>
 </head>
 <body class="bg-background-light font-display">
     <div class="flex min-h-screen">
@@ -71,56 +174,61 @@
     </div>
 
     <script src="../static/JS/dashboard.js"></script>
-    <script>        
-        const docenteId = "{{ session['docente_id'] }}";  // Pasar desde Flask a la plantilla
-        
-        // Cargar cuestionarios activos
-        fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
-            .then(response => response.json())
-            .then(data => {
-                const activosContainer = document.getElementById('cuestionarios-activos');
-                if (!Array.isArray(data) || data.length === 0) {
-                    activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
-                    return;
-                }
-                activosContainer.innerHTML = data.map(q => {
-                    return `
-                        <article class="questionnaire-card active">
-                            <div class="card-content">
-                                <h4>${q.nombre}</h4>
-                                <span class="status">Activo</span>
+    <script>
+    const docenteId = "{{ session['docente_id'] }}";  // Pasar desde Flask a la plantilla
+
+    // Cargar cuestionarios activos
+    fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
+        .then(response => response.json())
+        .then(data => {
+            const activosContainer = document.getElementById('cuestionarios-activos');
+            if (!Array.isArray(data) || data.length === 0) {
+                activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
+                return;
+            }
+            activosContainer.innerHTML = data.map(q => {
+                return `
+                    <article class="questionnaire-card active">
+                        <div class="card-content">
+                            <h4>${q.nombre}</h4>
+                            <span class="status">Activo</span>
+                            <div class="button-group">
                                 <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
                                 <button class="btn btn-success" onclick="location.href='/iniciar_juego/${q.id_cuestionario}'">Iniciar Juego</button>
                             </div>
-                        </article>
-                    `;
-                }).join('');
-            })
-            .catch(error => console.error('Error al cargar los cuestionarios activos:', error));
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        })
+        .catch(error => console.error('Error al cargar los cuestionarios activos:', error));
 
-        // Cargar cuestionarios archivados
-        fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
-            .then(response => response.json())
-            .then(data => {
-                const archivadosContainer = document.getElementById('cuestionarios-archivados');
-                if (!Array.isArray(data) || data.length === 0) {
-                    archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
-                    return;
-                }
-                archivadosContainer.innerHTML = data.map(q => {
-                    return `
-                        <article class="questionnaire-card archived">
-                            <div class="card-content">
-                                <h4>${q.nombre}</h4>
-                                <span class="status">Archivado</span>
-                                <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+    // Cargar cuestionarios archivados
+    fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
+        .then(response => response.json())
+        .then(data => {
+            const archivadosContainer = document.getElementById('cuestionarios-archivados');
+            if (!Array.isArray(data) || data.length === 0) {
+                archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
+                return;
+            }
+            archivadosContainer.innerHTML = data.map(q => {
+                return `
+                    <article class="questionnaire-card archived">
+                        <div class="card-content">
+                            <h4>${q.nombre}</h4>
+                            <span class="status">Archivado</span>
+                            <div class="button-group">
+                                <button class="btn btn-warning" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
                             </div>
-                        </article>
-                    `;
-                }).join('');
-            })
-            .catch(error => console.error('Error al cargar los cuestionarios archivados:', error));
+                        </div>
+                    </article>
+                `;
+            }).join('');
+        })
+        .catch(error => console.error('Error al cargar los cuestionarios archivados:', error));
     </script>
+
 
 
     {% block scripts %}
