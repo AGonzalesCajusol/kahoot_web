@@ -103,6 +103,33 @@ def obtener_cuestionarios_archivados(id_docente):
         if connection:
             connection.close()
 
+def validar_pin(pin):
+    connection = None
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor() 
+            
+            query = """
+                SELECT id_cuestionario, tipo_cuestionario, estado_cuestionario
+                FROM Cuestionario
+                WHERE pin = %s AND estado_cuestionario = 'A'
+            """
+            cursor.execute(query, (pin,))
+            resultado = cursor.fetchone()
+            cursor.close()
+            connection.close()
+            
+            return resultado 
+        else:
+            print("No se pudo conectar a la base de datos")
+            return None
+    except Exception as e:
+        print(f"Error en validar_pin: {e}")
+        return None
+
+
+
 
 
 
