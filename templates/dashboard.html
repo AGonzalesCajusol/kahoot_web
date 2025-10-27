@@ -194,7 +194,10 @@
                             <span class="status">Activo</span>
                             <div class="button-group">
                                 <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
-                                <button class="btn btn-success" onclick="location.href='/iniciar_juego/${q.id_cuestionario}'">Iniciar Juego</button>
+                                <form action="/iniciar_juego" method="POST" style="display:inline;">
+                                    <input type="hidden" name="id_cuestionario" value="${ q.id_cuestionario }">
+                                    <button type="submit" class="btn btn-success">Iniciar Juego</button>
+                                </form>
                             </div>
                         </div>
                     </article>

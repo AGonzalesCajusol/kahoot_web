@@ -1,13 +1,18 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
+from flask_socketio import SocketIO, emit
 import conexion 
 import routes.login as login_routes
 import routes.repositorios as repositorio_routes
 import routes.cuestionario as cuestionario_routes 
 import routes.registro as registro_routes
 import routes.recuperacion as recuperacion_routes
+import routes.juego as rjuego
+
+
 
 app = Flask(__name__)
 app.secret_key = 'chui_angel_grupo_web' 
+socketio = SocketIO(app, cors_allowed_origins="*") 
 
 @app.route('/')
 @app.route('/index')
@@ -60,7 +65,7 @@ repositorio_routes.registrar_rutas(app)
 cuestionario_routes.registrar_rutas(app)
 registro_routes.registrar_rutas(app)
 recuperacion_routes.registrar_rutas_recuperacion(app)
-
+rjuego.registrar_rutas(app,socketio)
 
 
 
