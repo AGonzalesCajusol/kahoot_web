@@ -21,9 +21,8 @@ def register():
 @app.route('/dashboard')
 def dashboard():
     if 'docente_id' not in session:
-        return redirect(url_for('login'))  
-
-    return render_template('dashboard.html')
+        return redirect(url_for('login'))  # Si no está logueado, redirigir al login
+    return render_template('dashboard.html', id_docente=session['docente_id'])
 
 @app.route('/logout')
 def logout():    
@@ -66,8 +65,6 @@ recuperacion_routes.registrar_rutas_recuperacion(app)
 
 
 
-
-#ruta en caso de error
 @app.route('/errorsistema')
 def errorsistema():
     opcion = 1

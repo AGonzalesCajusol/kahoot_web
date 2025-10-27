@@ -1,7 +1,5 @@
 import conexion
 
-
-
 def registrar_cuestionario(datos,id_docente):
     detalle = datos.get('detalle', {})
     preguntas = datos.get('preguntas', [])
@@ -60,6 +58,50 @@ def registrar_cuestionario(datos,id_docente):
         if connection:
             connection.close()
 
+def obtener_cuestionarios_activos(id_docente):
+    connection = None
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor()
+
+            query = """
+                SELECT id_cuestionario, nombre, tipo_cuestionario, pin
+                FROM Cuestionario
+                WHERE estado_cuestionario = 'A' AND id_docente = %s
+            """
+            cursor.execute(query, (id_docente,))            
+            
+            return cursor.fetchall()
+
+    except Exception as e:
+        print(e)
+        return []  
+    finally:
+        if connection:
+            connection.close()
+
+def obtener_cuestionarios_archivados(id_docente):
+    connection = None
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor()
+
+            query = """
+                SELECT id_cuestionario, nombre, tipo_cuestionario, pin
+                FROM Cuestionario
+                WHERE estado_cuestionario = 'I' AND id_docente = %s
+            """
+            cursor.execute(query, (id_docente,))
+
+            return cursor.fetchall()
+    except Exception as e:
+        print(e)
+        return []  
+    finally:
+        if connection:
+            connection.close()
 
 
 

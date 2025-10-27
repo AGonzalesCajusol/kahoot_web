@@ -32,77 +32,97 @@
                 <a href="{{ url_for('logout') }}" class="btn btn-danger w-100"><i class="bi bi-door-closed-fill"></i> Cerrar sesión</a>
             </div>
             {%block css%}
-
             {% endblock %}
         </aside>
 
         <!-- Contenido Principal -->
-        <main class="main-content min-vh-100" >
+        <main class="main-content min-vh-100">
             <header class="main-header ">
+                <h1>{% block titulo_pagina %}Mis Cuestionarios{% endblock %}</h1>
                 
-                <h1>{%  block titulo_pagina %}Mis Cuestionarios{% endblock%}</h1>
-                
-                {% block search%}
-                <div class="search-bar ">
+                {% block search %}
+                <div class="search-bar">
                     <div class="input-group search_buscar">
                         <input type="text" class="form-control form-control-sm border-end-0" placeholder="Buscar cuestionarios...">
                         <span class="input-group-text bg-white"><span class="material-icons-outlined">search</span></span>
                     </div>
                 </div>
-                {% endblock%}
+                {% endblock %}
             </header>
-            {% block contenido %}
- 
 
+            {% block contenido %}
+                <!-- Cuestionarios Activos -->
                 <section class="questionnaires-section">
                     <h3>Cuestionarios Activos</h3>
-                    <div class="questionnaires-grid">
-                        <!-- Cuestionarios Activos -->
-                        <div class="questionnaire-card active">
-                            <div class="card-content">
-                                <h4>Evaluación de Matemáticas - Unidad 3</h4>
-                                <p>Creado el 15 de mayo de 2024</p>
-                                <span class="status">Activo</span>
-                            </div>
-                        </div>
-
-                        <!-- Otro Cuestionario -->
-                        <div class="questionnaire-card active">
-                            <div class="card-content">
-                                <h4>Examen de Ciencias Naturales - Semestre 1</h4>
-                                <p>Creado el 22 de abril de 2024</p>
-                                <span class="status">Activo</span>
-                            </div>
-                        </div>
+                    <div class="questionnaires-grid" id="cuestionarios-activos">
+                        
                     </div>
                 </section>
 
+                
                 <section class="questionnaires-section">
                     <h3>Cuestionarios Archivados</h3>
-                    <div class="questionnaires-grid">
-                        <!-- Cuestionarios Archivados -->
-                        <div class="questionnaire-card archived">
-                            <div class="card-content">
-                                <h4>Prueba de Historia Universal - Trimestre 2</h4>
-                                <p>Creado el 10 de marzo de 2024</p>
-                                <span class="status">Archivado</span>
-                            </div>
-                        </div>
-
-                        <div class="questionnaire-card archived">
-                            <div class="card-content">
-                                <h4>Cuestionario de Literatura Española - Siglo XX</h4>
-                                <p>Creado el 5 de febrero de 2024</p>
-                                <span class="status">Archivado</span>
-                            </div>
-                        </div>
+                    <div class="questionnaires-grid" id="cuestionarios-archivados">
+                        
                     </div>
                 </section>
             {% endblock %}
         </main>
     </div>
-    
+
     <script src="../static/JS/dashboard.js"></script>
+    <script>        
+        const docenteId = "{{ session['docente_id'] }}";  // Pasar desde Flask a la plantilla
+        
+        // Cargar cuestionarios activos
+        fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
+            .then(response => response.json())
+            .then(data => {
+                const activosContainer = document.getElementById('cuestionarios-activos');
+                if (!Array.isArray(data) || data.length === 0) {
+                    activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
+                    return;
+                }
+                activosContainer.innerHTML = data.map(q => {
+                    return `
+                        <article class="questionnaire-card active">
+                            <div class="card-content">
+                                <h4>${q.nombre}</h4>
+                                <span class="status">Activo</span>
+                                <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                                <button class="btn btn-success" onclick="location.href='/iniciar_juego/${q.id_cuestionario}'">Iniciar Juego</button>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            })
+            .catch(error => console.error('Error al cargar los cuestionarios activos:', error));
+
+        // Cargar cuestionarios archivados
+        fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
+            .then(response => response.json())
+            .then(data => {
+                const archivadosContainer = document.getElementById('cuestionarios-archivados');
+                if (!Array.isArray(data) || data.length === 0) {
+                    archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
+                    return;
+                }
+                archivadosContainer.innerHTML = data.map(q => {
+                    return `
+                        <article class="questionnaire-card archived">
+                            <div class="card-content">
+                                <h4>${q.nombre}</h4>
+                                <span class="status">Archivado</span>
+                                <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                            </div>
+                        </article>
+                    `;
+                }).join('');
+            })
+            .catch(error => console.error('Error al cargar los cuestionarios archivados:', error));
+    </script>
+
+
     {% block scripts %}
     {% endblock %}
 </body>

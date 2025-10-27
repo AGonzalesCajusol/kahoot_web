@@ -22,17 +22,16 @@ def registrar_rutas(app):
         else:
             return jsonify({"message": response}), 400
 
-    #ruta para registrar_formulario
+    # Ruta para registrar formulario
     @app.route('/registrar_pregunta', methods=['POST'])
     def registrar_pregunta():
         datos = request.get_json()
         id_docente = session['docente_id']
-        response = cuestionario.registrar_cuestionario(datos,id_docente)
+        response = cuestionario.registrar_cuestionario(datos, id_docente)
         if response:
             return jsonify({'estado': True})
         
         return jsonify({'estado': False})
-        
 
     @app.route('/registrar_alternativa', methods=['POST'])
     def registrar_alternativa_route():
@@ -48,4 +47,27 @@ def registrar_rutas(app):
         else:
             return jsonify({"message": response}), 400
 
+    
+    @app.route('/cuestionarios_activos', methods=['GET'], endpoint='cuestionarios_activos_endpoint')
+    def cuestionarios_activos():
+        id_docente = request.args.get('id_docente') 
+        print("ID Docente recibido:", id_docente)
+        if not id_docente:
+            return jsonify({'error': 'Falta id_docente'}), 400 
+        
+        
+        cuestionarios = cuestionario.obtener_cuestionarios_activos(id_docente)
+        print(cuestionarios)
+        return jsonify(cuestionarios)
 
+    
+    @app.route('/cuestionarios_archivados', methods=['GET'], endpoint='cuestionarios_archivados_endpoint')
+    def cuestionarios_archivados():
+        id_docente = request.args.get('id_docente')  
+        print("ID Docente recibido:", id_docente)
+        if not id_docente:
+            return jsonify({'error': 'Falta id_docente'}), 400
+        
+        cuestionarios = cuestionario.obtener_cuestionarios_archivados(id_docente)
+        print(cuestionarios)
+        return jsonify(cuestionarios)
