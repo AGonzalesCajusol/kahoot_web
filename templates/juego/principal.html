@@ -12,9 +12,12 @@
 <body>
     <div class="cont container-fluid d-flex flex-column justify-content-center align-items-center text-center min-vh-100 min-vw-100">
         <div class="preguntas card shadow-lg p-4 bg-white rounded-4 d-none">
+            <label for="">Pregunta:</label>
             <h2 class="cuest"></h2>
+            <label for="">Puntos</label>
             <p class="punt"></p>
-            <p >Tiempo: <span class="temp"></span> s</p>
+            <label for="">Tiempo</label>
+            <span class="temp"></span>s
         </div>
         <div class="card shadow-lg p-4 bg-white rounded-4 tempo" style="max-width: 420px;">
             <h3 class="fw-bold text-primary mb-3">{{ datos_frm.nombre }}</h3>
@@ -34,7 +37,7 @@
                 Iniciar
             </button>
             <div class="mt-4">
-                <h2 id="timer" class="fw-bold text-dark">00:00</h2>
+                <h2 id="timer" class="fw-bold text-dark"></h2>
             </div>
         </div>
     </div>

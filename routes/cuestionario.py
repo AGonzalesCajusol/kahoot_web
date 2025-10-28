@@ -5,6 +5,14 @@ from controladores import docente
 
 
 def registrar_rutas(app):
+    @app.route('/registrar_respuestasform', methods=['POST'])
+    def registrar_respuestasform():
+        id_participante = session['id_usuario']
+        datos = request.get_json()
+        cuestionario.actualizar_puntaje_usuario(id_participante, datos.get('puntaje'))
+        return {'puntaje': 12}
+
+
     @app.route('/registrar_cuestionario', methods=['POST'])
     def registrar_cuestionario():
         datos = request.get_json()
@@ -90,21 +98,33 @@ def registrar_rutas(app):
             id_cuestionario = resultado['id_cuestionario']
             tipo_cuestionario = resultado['tipo_cuestionario']
             estado_cuestionario = resultado['estado_cuestionario']
+            estado_juego = resultado['estado_juego']
 
-            print(f"id_cuestionario: {id_cuestionario}, tipo_cuestionario: {tipo_cuestionario}, estado_cuestionario: {estado_cuestionario}")
+            print(f"id_cuestionario: {id_cuestionario}, tipo_cuestionario: {tipo_cuestionario}, estado_cuestionario: {estado_cuestionario}, estado_juego: {estado_juego}")
+
+            if estado_juego == 'IN':
+                return jsonify({"error":"El juego ya inicio"}), 400
+            elif estado_juego == 'FN':
+                return jsonify({"error": "el juego ya finalizo"}), 400
+
+            session['id_cuestionario'] = id_cuestionario
+            session['tipo_cuestionario'] = tipo_cuestionario
 
             return jsonify({
                 "id_cuestionario": id_cuestionario,
                 "tipo_cuestionario": tipo_cuestionario,
-                "estado_cuestionario": estado_cuestionario
+                "estado_cuestionario": estado_cuestionario,
+                "estado_juego" : estado_juego
             }), 200
 
         except Exception as e:
             print(f"Error en /validar_pin: {e}")
             return jsonify({"error": "Error interno del servidor"}), 500
 
-    @app.route('/registrar_alias/<int:id_cuestionario>')
-    def registrar_alias(id_cuestionario):
+    @app.route('/registrar_alias')
+    def registrar_alias():
+        id_cuestionario = session['id_cuestionario']
+        print(id_cuestionario)
         return render_template('alias.html', id_cuestionario=id_cuestionario)
 
     @app.route('/verificar_alias', methods=['POST'])
@@ -132,8 +152,8 @@ def registrar_rutas(app):
                     INSERT INTO Usuario (alias, id_cuestionario, puntaje)
                     VALUES (%s, %s, 0)
                 """, (alias, id_cuestionario))
+                session['id_usuario'] = cursor.lastrowid
                 connection.commit()
-
                 return jsonify({'success': True}), 200
 
         except Exception as e:
@@ -185,5 +205,4 @@ def registrar_rutas(app):
             usuarios=usuarios
         )
 
-
-
+    

@@ -21,29 +21,49 @@ startBtn.addEventListener('click', () => {
     startBtn.disabled = true;
     startBtn.innerText = "Contando...";
 
-    interval = setInterval(() => {
-        if (totalSeconds <= 0) {
-            clearInterval(interval);
-            timerDisplay.innerText = "¡Tiempo terminado!";
-            startBtn.disabled = false;
-            startBtn.innerText = "Iniciar";
-            document.querySelector('.tempo').classList.add('d-none');
-            document.querySelector('.preguntas').classList.remove('d-none');
-            inicio_preguntas();
-            return;
-        }
-
-        totalSeconds--;
-        socket.emit('enviar_temporizador', { sala: id, tiempo: totalSeconds });
-        const mins = String(Math.floor(totalSeconds / 60)).padStart(2, '0');
-        const secs = String(totalSeconds % 60).padStart(2, '0');
-        timerDisplay.innerText = `${mins}:${secs}`;
-    }, 1000);
+    socket.emit('iniciar_juego', {'tiempo':totalSeconds});
 });
 
 const pregunta = document.querySelector('.cuest');
 const tiempo = document.querySelector('.temp');
 const puntaje = document.querySelector('.punt');
+
+socket.on('actualizar_tiempoAD', (data) => {
+    const tiempo = data.tiempo;
+    console.log(tiempo);
+    if(tiempo <=0){
+        document.querySelector('.preguntas').classList.remove('d-none');
+        document.querySelector('.tempo').classList.add('d-none');
+    }
+    document.getElementById('timer').textContent = tiempo;
+
+});
+
+socket.on('datos_cuestionario', (data) => {
+    pregunta.textContent = data.pregunta;
+    puntaje.textContent = data.puntaje;
+    tiempo.textContent = data.tiempo;
+});
+socket.on('actualiza_tiempocuestionario', (data) => {
+    tiempo.textContent = data.tiempo;
+});
+socket.on('pantalla_finalizada', (data) => {
+    const preguntasDiv = document.querySelector('.preguntas');
+    let tiempo = 5; // segundos antes de redirigir
+
+    preguntasDiv.textContent = `Se finalizó el cuestionario. Serás redirigido en ${tiempo} segundos.`;
+
+    const interval = setInterval(() => {
+        tiempo--;
+        if (tiempo > 0) {
+            preguntasDiv.textContent = `Se finalizó el cuestionario. Serás redirigido en ${tiempo} segundos.`;
+        } else {
+            clearInterval(interval);
+            window.location.href = '/dashboard'; // Cambia por tu ruta
+        }
+    }, 1000);
+});
+
 
 const inicio_preguntas = () =>{
     console.log(datos)

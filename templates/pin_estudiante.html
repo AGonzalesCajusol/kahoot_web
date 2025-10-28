@@ -126,13 +126,11 @@
       const pin = pinInput.value.trim();
 
       if (!pin) {
-        pinError.classList.remove('d-none');
-        pinInput.addEventListener('input', () => {
-          pinError.classList.add('d-none');
-        });
-        pinError.textContent = "Por favor, ingresa un PIN válido.";
-        return;
-      }
+      pinError.classList.remove('d-none');
+      pinError.textContent = "Por favor, ingresa un PIN válido.";
+      pinInput.addEventListener('input', () => pinError.classList.add('d-none'));
+      return;
+    }
 
       // Enviar el PIN al backend
       const response = await fetch("/validar_pin", {
@@ -143,7 +141,7 @@
       const data = await response.json();
 
       if (response.ok) {
-        window.location.href = `/registrar_alias/${data.id_cuestionario}`;
+          window.location.href = `/registrar_alias`;
       } else {
         pinError.classList.remove('d-none');
         pinError.textContent = data.error || "PIN incorrecto. Inténtalo de nuevo.";

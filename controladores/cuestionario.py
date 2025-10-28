@@ -137,6 +137,36 @@ def obtener_cuestionarios_archivados(id_docente):
         if connection:
             connection.close()
 
+
+def actualizar_puntaje_usuario(id_usuario, nuevo_puntaje):
+    connection = None
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor()
+
+            query = """
+                UPDATE Usuario
+                SET puntaje = %s
+                WHERE id_usuario = %s
+            """
+            cursor.execute(query, (nuevo_puntaje, id_usuario))
+            connection.commit()
+
+            filas_afectadas = cursor.rowcount
+            connection.close()
+
+            if filas_afectadas > 0:
+                print("✅ Puntaje actualizado correctamente.")
+                return True
+            else:
+                print("⚠ No se encontró el usuario con ese ID.")
+                return False
+    except Exception as e:
+        return False
+    
+    
+
 def validar_pin(pin):
     connection = None
     try:
@@ -145,7 +175,7 @@ def validar_pin(pin):
             cursor = connection.cursor() 
             
             query = """
-                SELECT id_cuestionario, tipo_cuestionario, estado_cuestionario
+                SELECT id_cuestionario, tipo_cuestionario, estado_cuestionario, estado_juego
                 FROM Cuestionario
                 WHERE pin = %s AND estado_cuestionario = 'A'
             """
@@ -162,7 +192,44 @@ def validar_pin(pin):
         print(f"Error en validar_pin: {e}")
         return None
 
+def actualizar_estado_juego(id_cuestionario, nuevo_estado):
+    connection = None
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor()
 
+            # Validar que el estado sea permitido
+            estados_validos = ['SL', 'IN', 'FN']
+            if nuevo_estado not in estados_validos:
+                print(f"Estado inválido: {nuevo_estado}")
+                return False
+
+            query = """
+                UPDATE Cuestionario
+                SET estado_juego = %s
+                WHERE id_cuestionario = %s
+            """
+            cursor.execute(query, (nuevo_estado, id_cuestionario))
+            connection.commit()
+
+            filas_afectadas = cursor.rowcount
+            cursor.close()
+            connection.close()
+
+            if filas_afectadas > 0:
+                print(f"Estado del juego actualizado a '{nuevo_estado}' para id_cuestionario {id_cuestionario}")
+                return True
+            else:
+                print(f"No se encontró el cuestionario con id {id_cuestionario}")
+                return False
+
+        else:
+            print("No se pudo conectar a la base de datos")
+            return False
+    except Exception as e:
+        print(f"Error en actualizar_estado_juego: {e}")
+        return False
 
 
 
