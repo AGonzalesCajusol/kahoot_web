@@ -1,273 +1,283 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Pregunta en Curso</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
-<style>
-body {
-  background: linear-gradient(135deg, #eef2ff, #f7f7ff);
-  font-family: 'Poppins', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  color: #333;
-}
+  <style>
+    body {
+      background: linear-gradient(135deg, #eef2ff, #f7f7ff);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: #333;
+    }
 
-.quiz-container {
-  background: #fff;
-  border-radius: 20px;
-  padding: 3rem;
-  width: 90%;
-  max-width: 900px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  position: relative;
-  text-align: center;
-}
+    .quiz-container {
+      background: #fff;
+      border-radius: 20px;
+      padding: 3rem;
+      width: 90%;
+      max-width: 900px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      position: relative;
+      text-align: center;
+    }
 
-/* ---- Barra de progreso ---- */
-.progress-container {
-  width: 100%;
-  height: 10px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 1rem;
-  position: relative;
-}
+    /* ---- Contador circular ---- */
+    .timer-circle {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: conic-gradient(#0072ff var(--progress, 100%), #e0e0e0 0%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #0072ff;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: background 0.3s linear;
+    }
 
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, #0072ff, #00c6ff);
-  width: 100%;
-  transition: width 0.3s linear;
-}
+    /* ---- Pregunta ---- */
+    .question {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      background: #f9f9ff;
+      padding: 1.5rem;
+      border-radius: 15px;
+    }
 
-.time-label {
-  position: absolute;
-  top: -28px;
-  left: 0;
-  width: 100%;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #0072ff;
-}
+    /* ---- Opciones ---- */
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
 
-/* ---- Pregunta ---- */
-.question {
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 2rem;
-  background: #f9f9ff;
-  padding: 1.5rem;
-  border-radius: 15px;
-}
+    .option-btn {
+      padding: 1rem;
+      border-radius: 15px;
+      border: none;
+      font-size: 1.1rem;
+      color: #fff;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
 
-/* ---- Opciones ---- */
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-}
+    /* Colores predeterminados */
+    .option-btn:nth-child(1) { background: #5a6efc; }
+    .option-btn:nth-child(2) { background: #fc5a77; }
+    .option-btn:nth-child(3) { background: #29c7ac; }
+    .option-btn:nth-child(4) { background: #f79e3d; }
 
-.option-btn {
-  padding: 1rem;
-  border-radius: 15px;
-  border: none;
-  font-size: 1.1rem;
-  color: #fff;
-  font-weight: 500;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
+    .option-btn:hover {
+      transform: scale(1.05);
+      filter: brightness(1.1);
+    }
 
-.option-btn:nth-child(1) {
-  background: #5a6efc;
-}
-.option-btn:nth-child(2) {
-  background: #fc5a77;
-}
-.option-btn:nth-child(3) {
-  background: #29c7ac;
-}
-.option-btn:nth-child(4) {
-  background: #f79e3d;
-}
+    /* Respuesta seleccionada */
+    .option-btn.seleccionado {
+      background: #0072ff !important;
+      color: #fff !important;
+      border: 2px solid #004ecb !important;
+      transform: scale(1.08);
+      pointer-events: none; /* Bloquea otras selecciones */
+    }
 
-.option-btn:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
+    /* Respuesta correcta */
+    .option-btn.correcta {
+      background: #28a745 !important;
+      color: #fff;
+    }
 
-/* ---- Puntuación ---- */
-.score {
-  position: absolute;
-  top: 20px;
-  right: 25px;
-  background: #0072ff;
-  color: #fff;
-  font-weight: 600;
-  padding: 8px 20px;
-  border-radius: 50px;
-  font-size: 0.95rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
+    /* Respuesta incorrecta */
+    .option-btn.incorrecta {
+      background: #dc3545 !important;
+      color: #fff;
+    }
 
-@media (max-width: 600px) {
-  .question {
-    font-size: 1.3rem;
-    padding: 1rem;
-  }
-  .option-btn {
-    font-size: 1rem;
-  }
-}
-.spinner-lg {
-    width: 6rem;
-    height: 6rem;
-}
-</style>
+    /* ---- Puntuación ---- */
+    .score {
+      position: absolute;
+      top: 20px;
+      right: 25px;
+      background: #0072ff;
+      color: #fff;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
 
+    /* ---- Loader ---- */
+    .spinner-lg {
+      width: 6rem;
+      height: 6rem;
+    }
+
+    @media (max-width: 600px) {
+      .question {
+        font-size: 1.3rem;
+        padding: 1rem;
+      }
+      .option-btn {
+        font-size: 1rem;
+      }
+      .timer-circle {
+        width: 55px;
+        height: 55px;
+        font-size: 1rem;
+      }
+    }
+  </style>
 </head>
 <body>  
 
-    <input type="text" id="id_pregunta" class="d-none">
+  <input type="text" id="id_pregunta" class="d-none">
+
   <div class="quiz-container">
     <div class="score">⭐ <span class="puntos"></span> Puntos</div>
 
-    <div class="tt">
-      <div class="time-label">Tiempo restante: <span id="tiempo">15</span>s</div>
-        <meter value="0" min="0" max="" class="w-100 mt-3" id="progreso"></meter>
+    <!-- Círculo de tiempo -->
+    <div class="timer-circle" id="circle-timer">
+      <span id="tiempo">15</span>s
     </div>
 
     <div class="question"></div>
 
-    <div class="options-grid opciones">
+    <div class="options-grid opciones"></div>
 
+    <div class="min-vh-100 max position-relative d-none">
+      <div id="contenido" class="text-center d-none">
+        <h1>Tu puntaje: <span id="puntaje"></span></h1>
+      </div>
+
+      <div id="loader" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" 
+          style="background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 1050;">
+          <div class="spinner-border text-primary spinner-lg" role="status">
+              <span class="visually-hidden">Cargando...</span>
+          </div>
+      </div>
     </div>
-        <div class="min-vh-100 max position-relative d-none">
-            <!-- Contenido principal -->
-            <div id="contenido" class="text-center d-none">
-                <h1>Tu puntaje: <span id="puntaje"></span></h1>
-            </div>
-
-            <!-- Overlay de carga -->
-            <div id="loader" class="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center" 
-                style="background: rgba(255,255,255,0.8); backdrop-filter: blur(5px); z-index: 1050;">
-                <div class="spinner-border text-primary spinner-lg" role="status">
-                    <span class="visually-hidden">Cargando...</span>
-                </div>
-            </div>
-        </div>
   </div>
 
-<script>
+  <script>
     let puntaje = 0;
-
-    const rpt = []
-    let id_alternativa = 0;
-    let tic = 0;
     const socket = io();
     const div_botones = document.querySelector('.opciones');
     const f_puntos = document.querySelector('.puntos');
     const f_tiempo = document.getElementById('tiempo');
     const f_pregunta = document.querySelector('.question');
-    const progreso = document.getElementById('progreso');
-
+    const circle = document.getElementById('circle-timer');
 
     let tiempo_max = 0;
     let puntaje_max = 0;
+    let id_alternativa = 0;
+    let tic = 0;
+
     socket.on('datos_cuestionario', (data) => {
-        console.log('datos_cuestion ', data);
-        f_pregunta.textContent = data.pregunta;
-        f_puntos.textContent = data.puntaje;
-        f_tiempo.textContent = data.tiempo_respuesta;
-        tiempo_max = data.tiempo_respuesta;
-        puntaje_max = data.puntaje;
-        f_tiempo.textContent = data.tiempo_resp
-        progreso.max = data.tiempo_respuesta;
-        progreso.value = data.tiempo_respuesta;
-        document.getElementById('id_pregunta').value = data.id_pregunta;
+      f_pregunta.textContent = data.pregunta;
+      f_puntos.textContent = data.puntaje;
+      f_tiempo.textContent = data.tiempo_respuesta;
+      tiempo_max = data.tiempo_respuesta;
+      puntaje_max = data.puntaje;
+      document.getElementById('id_pregunta').value = data.id_pregunta;
+      actualizarCirculo(100);
     });
+
     socket.on('actualiza_tiempocuestionario', (data) => {
-        f_tiempo.textContent = data.tiempo;
-        progreso.value = data.tiempo;
+      const tiempo = data.tiempo;
+      f_tiempo.textContent = tiempo;
+      const porcentaje = (tiempo / tiempo_max) * 100;
+      actualizarCirculo(porcentaje);
     });
 
     socket.on('respuesta_cuestionario', (data) => {
-        id_alternativa = 0;
-        tic = 0;
-        let dt = JSON.parse(data);
-        div_botones.innerHTML = '';
-
-        dt.forEach((respuesta) => {
-            console.log(respuesta);
-            // Crear botón por cada respuesta
-            const btn = document.createElement('button');
-            btn.textContent = respuesta.texto; // o la propiedad que tenga la respuesta
-            btn.classList.add('btn_respuesta');
-            div_botones.innerHTML += `<button onclick="seleccion(this)" class="btn btn-outline-secondary options-grid btn_respuesta" data-id="${respuesta.id_alternativa}" data-estado="${respuesta.estado_alternativa}">${respuesta.respuesta}</button>`;
-        });
+      id_alternativa = 0;
+      tic = 0;
+      let dt = JSON.parse(data);
+      div_botones.innerHTML = '';
+      dt.forEach((respuesta) => {
+        div_botones.innerHTML += `<button onclick="seleccion(this)" class="option-btn" data-id="${respuesta.id_alternativa}" data-estado="${respuesta.estado_alternativa}">${respuesta.respuesta}</button>`;
+      });
     });
 
-
-    const seleccion = (element) =>{
-        tic = document.getElementById('tiempo').textContent;
-        id_alternativa = element.dataset.id;
-        const tiempo_restante = document.getElementById('tiempo').textContent;
-        console.log(id_alternativa);
-        element.classList.remove('btn-secondary');
-        element.classList.add('btn-primary');
-        element.classList.add('text-primary');
-        if(element.dataset.estado == 1){
-            puntaje_obtenido = (tiempo_restante / tiempo_max) * puntaje_max;
-            puntaje +=puntaje_obtenido;
-        }
-        console.log(puntaje);
+    function actualizarCirculo(porcentaje) {
+      circle.style.setProperty('--progress', `${porcentaje}%`);
     }
 
+    const seleccion = (element) => {
+      // Verificar si ya se ha seleccionado una respuesta
+      if (element.classList.contains('seleccionado')) return;
 
-socket.on('pantalla_finalizada', async (data) => {
-    // Mostrar loader y ocultar contenido principal si estaba oculto
-    const loader = document.getElementById('loader');
-    const contenido = document.getElementById('contenido');
-    loader.classList.remove('d-none');
-    contenido.classList.add('d-none');
+      // Quitar selección previa (si había alguna)
+      document.querySelectorAll('.option-btn').forEach(btn => {
+        btn.classList.remove('seleccionado');
+        btn.style.pointerEvents = 'none'; // Bloquear todas las respuestas después de selección
+      });
 
-    try {
-        const response = await fetch('/registrar_respuestasform', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({'puntaje': puntaje})
+      // Marcar el nuevo seleccionado
+      element.classList.add('seleccionado');
+      element.style.pointerEvents = 'none'; // Bloquear la opción seleccionada
+
+      // Obtener los datos de la respuesta seleccionada
+      tic = document.getElementById('tiempo').textContent;
+      id_alternativa = element.dataset.id;
+      const tiempo_restante = document.getElementById('tiempo').textContent;
+
+      // Evaluar si la respuesta es correcta o incorrecta
+      if (element.dataset.estado == 1) {
+        // Respuesta correcta
+        element.classList.add('correcta');
+        puntaje_obtenido = (tiempo_restante / tiempo_max) * puntaje_max;
+        puntaje += puntaje_obtenido;
+      } else {
+        // Respuesta incorrecta
+        element.classList.add('incorrecta');
+      }
+
+      // Mostrar puntaje actualizado
+      console.log("Puntaje:", puntaje);
+    };
+
+    socket.on('pantalla_finalizada', async (data) => {
+      const loader = document.getElementById('loader');
+      const contenido = document.getElementById('contenido');
+      loader.classList.remove('d-none');
+      contenido.classList.add('d-none');
+
+      try {
+        await fetch('/registrar_respuestasform', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({'puntaje': puntaje})
         });
 
-        const result = await response.json();
-
-        // Mostrar puntaje
         document.getElementById('puntaje').textContent = puntaje;
-
-        // Ocultar loader y mostrar contenido con puntaje
         loader.classList.add('d-none');
         contenido.classList.remove('d-none');
 
-        // Esperar 5 segundos y redirigir a "/"
-        setTimeout(() => {
-            window.location.href = '/';
-        }, 5000);
-
-    } catch (error) {
+        // Esperar 5 segundos y redirigir
+        setTimeout(() => window.location.href = '/', 5000);
+      } catch (error) {
         console.error('Error registrando respuestas:', error);
         alert('Ocurrió un error al registrar las respuestas.');
-    }
-});
-
-
-</script>
+      }
+    });
+  </script>
 
 </body>
 </html>

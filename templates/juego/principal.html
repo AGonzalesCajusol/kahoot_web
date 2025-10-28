@@ -11,14 +11,17 @@
 </head>
 <body>
     <div class="cont container-fluid d-flex flex-column justify-content-center align-items-center text-center min-vh-100 min-vw-100">
+        <!-- Pregunta card -->
         <div class="preguntas card shadow-lg p-4 bg-white rounded-4 d-none">
-            <label for="">Pregunta:</label>
-            <h2 class="cuest"></h2>
-            <label for="">Puntos</label>
-            <p class="punt"></p>
-            <label for="">Tiempo</label>
-            <span class="temp"></span>s
+            <label for="" class="fw-semibold text-primary">Pregunta:</label>
+            <h2 class="cuest fw-bold"></h2>
+            <label for="" class="fw-semibold text-primary">Puntos</label>
+            <p class="punt fw-semibold"></p>
+            <label for="" class="fw-semibold text-primary">Tiempo</label>
+            <span class="temp fw-semibold"></span>s
         </div>
+
+        <!-- Temporizador card -->
         <div class="card shadow-lg p-4 bg-white rounded-4 tempo" style="max-width: 420px;">
             <h3 class="fw-bold text-primary mb-3">{{ datos_frm.nombre }}</h3>
             <h5 class="text-muted mb-4">PIN: <span class="fw-semibold">{{ datos_frm.pin }}</span></h5>
@@ -30,17 +33,21 @@
                     <input type="number" id="seconds" class="form-control w-50 text-center" min="0" max="59" placeholder="Segundos">
                 </div>
             </div>
+
             <div>
                 <i class="fs-1 text-danger bi bi-alarm-fill"></i>
             </div>
+
             <button id="startBtn" class="btn btn-gradient w-100 mt-3 fw-semibold btn-outline-primary">
                 Iniciar
             </button>
+
             <div class="mt-4">
                 <h2 id="timer" class="fw-bold text-dark"></h2>
             </div>
         </div>
     </div>
+
     <script>
         const sala = "{{ datos_frm.id_cuestionario }}";
         const datos = {{ data  | tojson }};

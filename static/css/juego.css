@@ -1,3 +1,87 @@
-.cont{
+.cont {
     background: linear-gradient(to right, #00c6ff, #0072ff) !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+}
+
+.card {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+}
+
+.preguntas {
+    background-color: #ffffff;
+    padding: 2rem;
+    width: 80%;
+    max-width: 600px;
+}
+
+.tempo {
+    background-color: #f7f9fc;
+    border-radius: 15px;
+    padding: 2rem;
+    width: 80%;
+    max-width: 420px;
+}
+
+h3, h5 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+    color: #0072ff;
+}
+
+h5 {
+    color: #6c757d;
+}
+
+button#startBtn {
+    background: linear-gradient(to right, #0072ff, #00c6ff);
+    border: none;
+    color: white;
+    padding: 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background 0.3s ease;
+}
+
+button#startBtn:hover {
+    background: linear-gradient(to left, #0072ff, #00c6ff);
+    cursor: pointer;
+}
+
+input.form-control {
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.timer-circle {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: conic-gradient(#0072ff var(--progress, 100%), #e0e0e0 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #0072ff;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: background 0.3s linear;
+}
+
+.fw-semibold {
+    font-weight: 600;
+}
+
+.text-primary {
+    color: #0072ff;
+}
+
+.text-dark {
+    color: #212529;
 }
