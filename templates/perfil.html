@@ -261,6 +261,7 @@ Perfil del Docente
                         document.getElementById('btnModificar').style.display = 'inline-block';
 
                         Swal.fire('¡Éxito!', 'Cambios guardados correctamente.', 'success');
+                        location.reload();
                     } else {
                         Swal.fire('¡Error!', 'Hubo un problema al guardar los cambios.', 'error');
                     }

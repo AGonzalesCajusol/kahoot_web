@@ -552,21 +552,52 @@ const eliminar_pr = (el, indice) => {
     });
 };
 
+const confirmarEnvio = () => {
+    Swal.fire({
+        text: '¿Estás seguro de que deseas crear este formulario?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, crear',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, se envían los datos
+            enviar_datos();
+        } else {
+            console.log('El usuario canceló la acción de crear el formulario.');
+        }
+    });
+};
 
 
+// Función para enviar los datos del formulario
 const enviar_datos = async () => {
-    const ruta = "/registrar_pregunta"
-    console.log(cuerpo_json);
+    const ruta = "/registrar_pregunta";
+    console.log(cuerpo_json); // Aquí puedes ver los datos antes de enviarlos
+
     const response = await fetch(ruta, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(cuerpo_json)
-    })
+    });
+
     const resp = await response.json();
+
     if (resp) {
-        //window.location.reload();
+        Swal.fire({
+            icon: 'success',
+            title: 'Formulario creado',
+            text: 'El formulario ha sido creado y guardado correctamente.'
+        });
+        // Recargar la página para reflejar los cambios
+        location.reload();
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo crear el formulario.'
+        });
     }
-    //mostar un mensaje que no se pudo registrar
-}
+};
