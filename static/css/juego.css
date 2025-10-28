@@ -16,6 +16,54 @@
     padding: 2rem;
     width: 80%;
     max-width: 600px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Títulos y texto de la pregunta */
+.preguntas h2.cuest {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #0072ff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.preguntas h2.cuest:hover {
+    transform: scale(1.05);
+}
+
+/* Etiquetas de Puntos y Tiempo */
+.preguntas label {
+    font-weight: 600;
+    color: #0072ff;
+    margin-top: 1rem;
+}
+
+/* Puntos y Tiempo */
+.preguntas p, .preguntas span {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #333;
+}
+
+/* Efecto de Hover */
+.preguntas:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+/* Estilo para los labels (Puntos y Tiempo) */
+.preguntas label {
+    color: #0072ff;
+}
+
+/* Tipografía y Color */
+.preguntas .fw-semibold {
+    font-weight: 600;
 }
 
 .tempo {
