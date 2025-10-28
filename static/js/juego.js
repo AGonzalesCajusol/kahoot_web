@@ -5,9 +5,9 @@ const secondsInput = document.getElementById('seconds');
 let interval;
 
 const socket = io();
-    let id = 2;
+const id = window.idCuestionario; 
 
-socket.emit('unirme_sala', {sala: id})
+socket.emit('unirme_sala', { sala: id });
 
 startBtn.addEventListener('click', () => {
     clearInterval(interval);
@@ -59,7 +59,7 @@ socket.on('pantalla_finalizada', (data) => {
             preguntasDiv.textContent = `Se finalizó el cuestionario. Serás redirigido en ${tiempo} segundos.`;
         } else {
             clearInterval(interval);
-            window.location.href = '/dashboard'; // Cambia por tu ruta
+            window.location.href =  `/resultados_inter/${id}`;
         }
     }, 1000);
 });

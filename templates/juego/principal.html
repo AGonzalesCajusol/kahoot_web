@@ -49,9 +49,11 @@
     </div>
 
     <script>
-        const sala = "{{ datos_frm.id_cuestionario }}";
-        const datos = {{ data  | tojson }};
+        const idCuestionario = {{ id_cuestionario | tojson }};
+        window.idCuestionario = idCuestionario;
     </script>
-    <script src="/static/js/juego.js"></script>
+
+    <script src="{{ url_for('static', filename='JS/juego.js') }}"></script>
+
 </body>
 </html>

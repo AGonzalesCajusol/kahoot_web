@@ -7,6 +7,7 @@ import routes.cuestionario as cuestionario_routes
 import routes.registro as registro_routes
 import routes.recuperacion as recuperacion_routes
 import routes.juego as rjuego
+import routes.resultados as resultados_routes
 
 
 
@@ -66,6 +67,7 @@ cuestionario_routes.registrar_rutas(app)
 registro_routes.registrar_rutas(app)
 recuperacion_routes.registrar_rutas_recuperacion(app)
 rjuego.registrar_rutas(app,socketio)
+resultados_routes.registrar_rutas_resultados(app)
 
 
 

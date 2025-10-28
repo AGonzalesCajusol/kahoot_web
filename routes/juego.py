@@ -17,12 +17,11 @@ def registrar_rutas(app, socketio):
     
     @app.route('/iniciar_juego/', methods = ['POST'])
     def iniciar_juego():
-        id_form = request.form['id_cuestionario']
-        #verificamos que ese formulario le pertenezca a ese docente
+        id_form = request.form['id_cuestionario']        
         datos_fmr = cuestionario.retornar_dartosformuario(id_form)
         data = cuestionario.datos_cuestionario(id_form)
         session['id_sala'] =id_form
-        return render_template('/juego/principal.html', datos_frm=datos_fmr, data=data)
+        return render_template('/juego/principal.html', datos_frm=datos_fmr, data=data, id_cuestionario=id_form)
     
     @socketio.on('unirme_sala')
     def unirme_sala(data):

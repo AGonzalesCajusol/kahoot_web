@@ -1,0 +1,61 @@
+/* Estilos Generales */
+body {
+  background: linear-gradient(to right, #0072ff, #00c6ff);
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 2rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+h2, h5 {
+  color: #fff;
+}
+
+/* Estilo para los avatares */
+.avatar {
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+}
+
+/* Estilo para las medallas */
+.medal {
+  font-size: 18px;
+  color: gold;
+}
+
+/* Botones de exportación */
+.btn-export-excel, .btn-export-drive {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.btn-export-excel {
+  background-color: #1e90ff;
+  border: none;
+}
+
+.btn-export-drive {
+  background-color: #34a853;
+  border: none;
+}
+
+/* Tabla de resultados */
+table {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+th, td {
+  text-align: center;
+  vertical-align: middle;
+}
