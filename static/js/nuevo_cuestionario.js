@@ -24,7 +24,11 @@ const guardar_detalle = (ss) => {
     const fecha_programacion = new Date(f_pro.value);
 
     if (fecha_programacion < fecha_actual) {
-        alert("La fecha de programación no puede ser un día anterior al día actual.");
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'La fecha de programación no puede ser un día anterior al día actual.',
+        });
         return;
     }
 
@@ -93,6 +97,11 @@ const guardar_detalle = (ss) => {
             </div>
         `;
     };
+    Swal.fire({
+        icon: 'success',
+        title: 'Detalle Guardado',
+        text: 'El detalle del formulario ha sido guardado correctamente.'
+    });
     console.log("1", cuerpo_json);
 };
 
@@ -360,96 +369,144 @@ const agg_pr = () => {
     `;
 };
 const guardar_pregunta = (ss) => {
+    // Obtener los valores de los campos
     const nombre_pregunta = document.getElementById("nombre_pregunta").value;
     const arc = document.getElementById('archivo_pregunta').files[0] ? document.getElementById('archivo_pregunta').files[0] : '';
-    const tipo_pregunta = document.querySelector(
-        'input[name="tipo_pregunta"]:checked'
-    ).value;
+    const tipo_pregunta = document.querySelector('input[name="tipo_pregunta"]:checked')?.value;
     const puntos = document.getElementById("puntos").value;
     const tiempo = document.getElementById("tiempo").value;
+
     // Verificar si el campo de pregunta está vacío
     if (!nombre_pregunta.trim()) {
-        alert("El campo de la pregunta no puede estar vacío.");
-        return;
-    }
-
-    if (!tipo_pregunta) {
-        alert("Por favor, selecciona el tipo de pregunta.");
-        return;
-    }
-
-    if (!puntos || puntos <= 0) {
-        alert("El valor de los puntos debe ser mayor que 0.");
-        return;
-    }
-    if (!tiempo || tiempo < 2) {
-        alert("El tiempo debe ser al menos de 2 segundos.");
-        return;
-    }
-    const al = [];
-    var rpt = "";
-    if (tipo_pregunta == "VF") {
-        al.push("Verdadero");
-        al.push("Falso");
-        const ed = document.querySelector(".alterantivas_form .btn.btn-success");
-        rpt = ed.textContent;
-    } else {
-        const conjunto = document.querySelectorAll(".alterantivas_form .alter");
-        conjunto.forEach((el) => {
-            const element = el.querySelector("input");
-            if (element.classList.contains("border-success")) {
-                rpt = element.value;
-            }
-            al.push(element.value);
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'El campo de la pregunta no puede estar vacío.'
         });
+        return;
     }
 
-    //
-    console.log(ss);
-    if (ss >= 0) {
-        const res = cuerpo_json.preguntas[ss];
-        res.nombre_pregunta = nombre_pregunta;
-        res.tipo_pregunta = tipo_pregunta;
-        res.archivo = arc;
-        res.puntos = puntos;
-        res.tiempo = tiempo;
-        res.alternativas = al;
-        res.respuesta = rpt.trim();
-    } else {
-        const pr = {
-            nombre_pregunta: nombre_pregunta,
-            tipo_pregunta: tipo_pregunta,
-            archivo: arc,
-            puntos: puntos,
-            tiempo: tiempo,
-            alternativas: al,
-            respuesta: rpt.trim(),
-        };
-        cuerpo_json.preguntas.push(pr);
+    // Verificar si el tipo de pregunta no está seleccionado
+    if (!tipo_pregunta) {
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'Por favor, selecciona el tipo de pregunta.'
+        });
+        return;
     }
 
-    //renderizamos contenido
-    contenido.innerHTML = "";
-    const cards_continue = document.querySelector(".cards_continue");
-    cards_continue.innerHTML = "";
-    cuerpo_json.preguntas.forEach((pregunta, index) => {
-        cards_continue.innerHTML += `
-            <div class="detalle_inicial card shadow-lg p-3 enfocar mt-2" id="detalle_card" onclick="pregunta(${index})">
-                <div class="row">
-                    <div class="col-9">
-                    <p class="text-secondary texto_pregunta">Pregunta ${index + 1}: </p> 
-                    <p class="name_cuestion">
-                        ${pregunta.nombre_pregunta}
-                    </p>
+    // Verificar que el valor de los puntos sea mayor que 0
+    if (!puntos || puntos <= 0) {
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'El valor de los puntos debe ser mayor que 0.'
+        });
+        return;
+    }
+
+    // Verificar que el tiempo sea al menos 2 segundos
+    if (!tiempo || tiempo < 2) {
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'El tiempo debe ser al menos de 2 segundos.'
+        });
+        return;
+    }
+
+    // Mostrar confirmación antes de guardar la pregunta
+    Swal.fire({
+        text: '¿Quieres guardar esta pregunta?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, guardar la pregunta
+
+            const al = [];
+            let rpt = "";
+
+            if (tipo_pregunta === "VF") {
+                al.push("Verdadero");
+                al.push("Falso");
+                const ed = document.querySelector(".alterantivas_form .btn.btn-success");
+                rpt = ed ? ed.textContent : ""; // Obtener la respuesta seleccionada
+            } else {
+                const conjunto = document.querySelectorAll(".alterantivas_form .alter");
+                conjunto.forEach((el) => {
+                    const element = el.querySelector("input");
+                    if (element.classList.contains("border-success")) {
+                        rpt = element.value;
+                    }
+                    al.push(element.value);
+                });
+            }
+
+            // Si se está modificando una pregunta existente (ss >= 0), actualizarla
+            if (ss >= 0) {
+                const res = cuerpo_json.preguntas[ss];
+                res.nombre_pregunta = nombre_pregunta;
+                res.tipo_pregunta = tipo_pregunta;
+                res.archivo = arc;
+                res.puntos = puntos;
+                res.tiempo = tiempo;
+                res.alternativas = al;
+                res.respuesta = rpt.trim();
+            } else {
+                // Si se está agregando una nueva pregunta, crearla
+                const pr = {
+                    nombre_pregunta: nombre_pregunta,
+                    tipo_pregunta: tipo_pregunta,
+                    archivo: arc,
+                    puntos: puntos,
+                    tiempo: tiempo,
+                    alternativas: al,
+                    respuesta: rpt.trim(),
+                };
+                cuerpo_json.preguntas.push(pr);
+            }
+
+            // Limpiar y renderizar el contenido
+            contenido.innerHTML = "";
+            const cards_continue = document.querySelector(".cards_continue");
+            cards_continue.innerHTML = "";
+
+            // Actualizar las preguntas en el DOM
+            cuerpo_json.preguntas.forEach((pregunta, index) => {
+                cards_continue.innerHTML += `
+                    <div class="detalle_inicial card shadow-lg p-3 enfocar mt-2" id="detalle_card" onclick="pregunta(${index})">
+                        <div class="row">
+                            <div class="col-9">
+                                <p class="text-secondary texto_pregunta">Pregunta ${index + 1}: </p>
+                                <p class="name_cuestion">
+                                    ${pregunta.nombre_pregunta}
+                                </p>
+                            </div>
+                            <div class="col-2">
+                                <button onclick="eliminar_pr(this, ${index})" class="btn btn-danger rounded-circle" style="width: 2.5rem; height: 2.5rem;">
+                                    <i class="bi bi-trash3 fs-9"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-2">
-                        <button onclick="eliminar_pr(this, ${index})" class="btn btn-danger rounded-circle " style="width: 2.5rem; height: 2.5rem;"><i class="bi bi-trash3 fs-9"></i></button>
-                    </div>
-                </div>
-            </div>
-        `;
+                `;
+            });
+            Swal.fire({
+                icon: 'success',
+                title: 'Pregunta Guardada',
+                text: 'La pregunta ha sido guardada correctamente.'
+            });
+        } else {
+            // Si el usuario cancela, no hacer nada
+            console.log('El usuario canceló la acción de guardar.');
+        }
     });
 };
+
 
 
 const pin = () => {
@@ -462,16 +519,39 @@ pin();
 
 
 const eliminar_pr = (el, indice) => {
-    if (confirm("¿Estás seguro de que deseas eliminar esta pregunta?")) {
-        const cc = el.parentElement.parentElement.parentElement;
-        cc.remove();
-        cuerpo_json.preguntas.splice(indice, 1);
-        const enumeracion = document.querySelectorAll('.texto_pregunta');
-        enumeracion.forEach((enu, index) => {
-            enu.textContent = `Pregunta ${index + 1}:`
-        });
-    }
-}
+    // Mostrar un cuadro de confirmación con SweetAlert2
+    Swal.fire({
+        text: '¿Quieres eliminar esta pregunta?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Si el usuario confirma, eliminar la pregunta
+            const cc = el.parentElement.parentElement.parentElement;
+            cc.remove();  // Eliminar el elemento del DOM
+            cuerpo_json.preguntas.splice(indice, 1);  // Eliminar la pregunta del array
+
+            // Actualizar los índices de las preguntas en la vista
+            const enumeracion = document.querySelectorAll('.texto_pregunta');
+            enumeracion.forEach((enu, index) => {
+                enu.textContent = `Pregunta ${index + 1}:`;  // Actualizar la numeración de las preguntas
+            });
+
+            // Mostrar mensaje de éxito
+            Swal.fire({
+                icon: 'success',
+                title: 'Pregunta eliminada',
+                text: 'La pregunta ha sido eliminada correctamente.'
+            });
+        } else {
+            // Si el usuario cancela, no hacer nada
+            console.log('El usuario canceló la acción de eliminar.');
+        }
+    });
+};
+
 
 
 const enviar_datos = async () => {
@@ -485,10 +565,8 @@ const enviar_datos = async () => {
         body: JSON.stringify(cuerpo_json)
     })
     const resp = await response.json();
-    if(resp){
+    if (resp) {
         //window.location.reload();
     }
     //mostar un mensaje que no se pudo registrar
-
-
 }

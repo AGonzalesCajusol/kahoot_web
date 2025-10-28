@@ -50,45 +50,55 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // 2) Interceptar envío para mandar código por correo
-        event.preventDefault();
+        // 2) Confirmación de registro con SweetAlert2
+        event.preventDefault(); // Prevenir envío de formulario mientras confirmamos
 
-        // Tomar datos del form
-        const payload = {
-            nombres: form.querySelector('#nombre')?.value?.trim(),
-            apellidos: form.querySelector('#apellidos')?.value?.trim(),
-            email: form.querySelector('#email')?.value?.trim(),
-            password: password
-        };
+        Swal.fire({
+            text: '¿Quieres registrarte con los datos proporcionados?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, registrarme',
+            cancelButtonText: 'Cancelar'
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                // Tomar datos del form
+                const payload = {
+                    nombres: form.querySelector('#nombre')?.value?.trim(),
+                    apellidos: form.querySelector('#apellidos')?.value?.trim(),
+                    email: form.querySelector('#email')?.value?.trim(),
+                    password: password
+                };
 
-        // UI: deshabilitar botón
-        const originalText = submitBtn.innerText;
-        submitBtn.disabled = true;
-        submitBtn.innerText = "Enviando código...";
+                // UI: deshabilitar botón
+                const originalText = submitBtn.innerText;
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Registrando...";
 
-        try {
-            const resp = await fetch("/enviar_codigo", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+                try {
+                    const resp = await fetch("/enviar_codigo", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(payload)
+                    });
 
-            const data = await resp.json();
+                    const data = await resp.json();
 
-            if (resp.ok && data.code === 1) {
-                showAlert("success", data.message || "Código enviado al correo.");
-                sessionStorage.setItem("pending_email", payload.email);
-                setTimeout(() => {
-                    window.location.href = "/verificarcodigo";
-                }, 800);
-            } else {
-                showAlert("danger", data.message || "No se pudo enviar el código. Intenta nuevamente.");
+                    if (resp.ok && data.code === 1) {
+                        showAlert("success", data.message || "Código enviado al correo.");
+                        sessionStorage.setItem("pending_email", payload.email);
+                        setTimeout(() => {
+                            window.location.href = "/verificarcodigo";
+                        }, 800);
+                    } else {
+                        showAlert("danger", data.message || "No se pudo enviar el código. Intenta nuevamente.");
+                    }
+                } catch (e) {
+                    showAlert("danger", "Ocurrió un error al enviar el código. Verifica tu conexión.");
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                }
             }
-        } catch (e) {
-            showAlert("danger", "Ocurrió un error al enviar el código. Verifica tu conexión.");
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = originalText;
-        }
+        });
     });
 });

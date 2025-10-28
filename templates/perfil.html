@@ -161,7 +161,6 @@ Perfil del Docente
         <input type="password" id="editPassword" class="form-control" style="display:none" placeholder="Nueva contraseña (opcional)">
     </div>
 
-
     <div class="action-buttons">
         <button id="btnModificar" class="btn btn-primary"><i class="bi bi-pencil-square me-1"></i>Modificar</button>
         <button id="btnGuardar" class="btn btn-success" style="display:none"><i class="bi bi-save me-1"></i>Guardar</button>
@@ -172,24 +171,32 @@ Perfil del Docente
 <script>
     // --- Mostrar campos para edición ---
     document.getElementById('btnModificar').addEventListener('click', function() {
-        if (confirm("¿Estás seguro de modificar los campos?")) {
-            // Mostrar inputs de edición
-            document.getElementById('editNombre').style.display = 'block';
-            document.getElementById('editApellido').style.display = 'block';
-            document.getElementById('editCorreo').style.display = 'block';
-            document.getElementById('editPassword').style.display = 'block';
+        Swal.fire({
+            title: '¿Estás seguro de modificar los campos?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, modificar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Mostrar inputs de edición
+                document.getElementById('editNombre').style.display = 'block';
+                document.getElementById('editApellido').style.display = 'block';
+                document.getElementById('editCorreo').style.display = 'block';
+                document.getElementById('editPassword').style.display = 'block';
 
-            // Ocultar textos actuales
-            document.getElementById('nombre').style.display = 'none';
-            document.getElementById('apellido').style.display = 'none';
-            document.getElementById('correo').style.display = 'none';
-            document.getElementById('password').style.display = 'none';
+                // Ocultar textos actuales
+                document.getElementById('nombre').style.display = 'none';
+                document.getElementById('apellido').style.display = 'none';
+                document.getElementById('correo').style.display = 'none';
+                document.getElementById('password').style.display = 'none';
 
-            // Mostrar/ocultar botones
-            document.getElementById('btnModificar').style.display = 'none';  
-            document.getElementById('btnGuardar').style.display = 'inline-block'; 
-            document.getElementById('btnAtras').style.display = 'inline-block';  
-        }
+                // Mostrar/ocultar botones
+                document.getElementById('btnModificar').style.display = 'none';  
+                document.getElementById('btnGuardar').style.display = 'inline-block'; 
+                document.getElementById('btnAtras').style.display = 'inline-block';  
+            }
+        });
     });
 
     // --- Guardar cambios ---
@@ -200,80 +207,100 @@ Perfil del Docente
         const password = document.getElementById('editPassword').value.trim();
 
         if (!nombre || !apellido || !correo) {
-            alert("Por favor, completa todos los campos obligatorios.");
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: 'Por favor, completa todos los campos obligatorios.'
+            });
             return;
         }
 
-        if (confirm("¿Deseas guardar los cambios?")) {
-            // Construir datos a enviar
-            const dataToSend = { nombre, apellido, correo };
-            if (password !== "") dataToSend.password = password; // Solo si se cambió
+        Swal.fire({
+            title: '¿Deseas guardar los cambios?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, guardar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Construir datos a enviar
+                const dataToSend = { nombre, apellido, correo };
+                if (password !== "") dataToSend.password = password; // Solo si se cambió
 
-            fetch('/modificar_perfil', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataToSend)
-            })
-            .then(res => res.json()) 
-            .then(data => {
-                console.log("Respuesta del servidor:", data);
+                fetch('/modificar_perfil', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataToSend)
+                })
+                .then(res => res.json()) 
+                .then(data => {
+                    console.log("Respuesta del servidor:", data);
 
-                if (data.code === 1) {
-                    // Actualizar la vista con nuevos valores
-                    document.getElementById('nombre').innerText = nombre;
-                    document.getElementById('apellido').innerText = apellido;
-                    document.getElementById('correo').innerText = correo;
-                    document.getElementById('password').innerText = '********';
-                    document.getElementById('editPassword').value = ''; // Limpiar campo
+                    if (data.code === 1) {
+                        // Actualizar la vista con nuevos valores
+                        document.getElementById('nombre').innerText = nombre;
+                        document.getElementById('apellido').innerText = apellido;
+                        document.getElementById('correo').innerText = correo;
+                        document.getElementById('password').innerText = '********';
+                        document.getElementById('editPassword').value = ''; // Limpiar campo
 
-                    // Ocultar inputs y mostrar textos actualizados
-                    document.getElementById('editNombre').style.display = 'none';
-                    document.getElementById('editApellido').style.display = 'none';
-                    document.getElementById('editCorreo').style.display = 'none';
-                    document.getElementById('editPassword').style.display = 'none';
+                        // Ocultar inputs y mostrar textos actualizados
+                        document.getElementById('editNombre').style.display = 'none';
+                        document.getElementById('editApellido').style.display = 'none';
+                        document.getElementById('editCorreo').style.display = 'none';
+                        document.getElementById('editPassword').style.display = 'none';
 
-                    document.getElementById('nombre').style.display = 'block';
-                    document.getElementById('apellido').style.display = 'block';
-                    document.getElementById('correo').style.display = 'block';
-                    document.getElementById('password').style.display = 'block';
+                        document.getElementById('nombre').style.display = 'block';
+                        document.getElementById('apellido').style.display = 'block';
+                        document.getElementById('correo').style.display = 'block';
+                        document.getElementById('password').style.display = 'block';
 
-                    // Botones
-                    document.getElementById('btnGuardar').style.display = 'none';
-                    document.getElementById('btnAtras').style.display = 'none';
-                    document.getElementById('btnModificar').style.display = 'inline-block';
+                        // Botones
+                        document.getElementById('btnGuardar').style.display = 'none';
+                        document.getElementById('btnAtras').style.display = 'none';
+                        document.getElementById('btnModificar').style.display = 'inline-block';
 
-                    alert('Cambios guardados exitosamente ✅');
-                } else {
-                    alert('⚠️ Error al guardar los cambios. Inténtalo nuevamente.');
-                }
-            })
-            .catch(error => {
-                console.error('Error en la solicitud:', error);
-                alert('❌ Hubo un problema al guardar los cambios.');
-            });
-        }
+                        Swal.fire('¡Éxito!', 'Cambios guardados correctamente.', 'success');
+                    } else {
+                        Swal.fire('¡Error!', 'Hubo un problema al guardar los cambios.', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                    Swal.fire('¡Error!', 'Hubo un problema al guardar los cambios.', 'error');
+                });
+            }
+        });
     });
 
     // --- Volver atrás sin guardar ---
     document.getElementById('btnAtras').addEventListener('click', function() {
-        if (confirm("¿Deseas volver atrás sin guardar los cambios?")) {
-            // Ocultar inputs y mostrar los valores actuales
-            document.getElementById('editNombre').style.display = 'none';
-            document.getElementById('editApellido').style.display = 'none';
-            document.getElementById('editCorreo').style.display = 'none';
-            document.getElementById('editPassword').style.display = 'none';
-            document.getElementById('editPassword').value = '';
+        Swal.fire({
+            title: '¿Deseas volver atrás sin guardar los cambios?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, volver atrás',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Ocultar inputs y mostrar los valores actuales
+                document.getElementById('editNombre').style.display = 'none';
+                document.getElementById('editApellido').style.display = 'none';
+                document.getElementById('editCorreo').style.display = 'none';
+                document.getElementById('editPassword').style.display = 'none';
+                document.getElementById('editPassword').value = '';
 
-            document.getElementById('nombre').style.display = 'block';
-            document.getElementById('apellido').style.display = 'block';
-            document.getElementById('correo').style.display = 'block';
-            document.getElementById('password').style.display = 'block';
+                document.getElementById('nombre').style.display = 'block';
+                document.getElementById('apellido').style.display = 'block';
+                document.getElementById('correo').style.display = 'block';
+                document.getElementById('password').style.display = 'block';
 
-            // Restaurar botones
-            document.getElementById('btnModificar').style.display = 'inline-block';
-            document.getElementById('btnGuardar').style.display = 'none';
-            document.getElementById('btnAtras').style.display = 'none';
-        }
+                // Restaurar botones
+                document.getElementById('btnModificar').style.display = 'inline-block';
+                document.getElementById('btnGuardar').style.display = 'none';
+                document.getElementById('btnAtras').style.display = 'none';
+            }
+        });
     });
 </script>
 
