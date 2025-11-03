@@ -204,7 +204,7 @@ def registrar_rutas(app):
             cuestionario=cuestionario,
             usuarios=usuarios
         )
-
+    import pandas as pd
     @app.route('/subirformulario_excel', methods=['POST'])
     def subirformulario_excel():
         excel = request.files['excel_archivo']
