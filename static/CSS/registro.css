@@ -18,6 +18,8 @@ body {
     align-items: center; /* Centra la imagen verticalmente */
     height: 20px; /* Ajusta la altura según lo necesites */
     margin-bottom: 20px;
+    text-align: center;
+    margin-bottom: 1.5rem;
 }
 
 .sidebar-header .logo {
@@ -25,7 +27,6 @@ body {
     height: auto; 
     object-fit: contain;
 }
-
 
 
 /* Estilo de la tarjeta */

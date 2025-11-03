@@ -1,8 +1,9 @@
 from flask import render_template, request, jsonify, session
 import time
-from controladores.docente import registrar_docente, modificar_docente
+from controladores.docente import registrar_docente, modificar_docente, registrar_jugador, correo_disponible
 from controladores.correo_config import send_email  
 import random
+
 
 codigos_verificacion = {}
 
@@ -20,13 +21,16 @@ def registrar_rutas(app):
                 return jsonify({"code": 0, "message": "Faltan datos obligatorios."}), 400
 
             codigo = str(random.randint(100000, 999999))
+            tipo_usuario = data.get("tipo_usuario", "docente")
             codigos_verificacion[email] = {
                 "codigo": codigo,
-                "expiracion": time.time() + 600,  # 10 min
+                "expiracion": time.time() + 600,
                 "nombres": nombres,
                 "apellidos": apellidos,
-                "password": password
+                "password": password,
+                "tipo_usuario": tipo_usuario
             }
+
 
             if send_email(email, codigo):
                 return jsonify({
@@ -67,26 +71,35 @@ def registrar_rutas(app):
             if registro["codigo"] != codigo:
                 return jsonify({"code": 0, "message": "Código incorrecto."}), 400
 
-            # ✅ Código correcto → registrar docente
-            response = registrar_docente(
-                registro["email"] if "email" in registro else email,
-                registro["password"],
-                registro["nombres"],
-                registro["apellidos"]
-            )
+            registro_email = email
 
-            # Eliminar el código temporal
+            tipo_usuario = registro.get("tipo_usuario", "docente")
+
+            if tipo_usuario == "docente":
+                response = registrar_docente(
+                    registro_email,
+                    registro["password"],
+                    registro.get("nombres", ""),
+                    registro.get("apellidos", "")
+                )
+            else:
+                response = registrar_jugador(
+                    registro_email,
+                    registro["password"]
+                )
+
+
             codigos_verificacion.pop(email, None)
 
             if "exitosamente" in response.lower():
                 return jsonify({
                     "code": 1,
-                    "message": "Correo verificado y docente registrado correctamente."
+                    "message": f"Correo verificado y {tipo_usuario} registrado correctamente."
                 }), 200
             else:
                 return jsonify({
                     "code": 0,
-                    "message": f"Hubo un problema al registrar el docente: {response}"
+                    "message": f"Hubo un problema al registrar el {tipo_usuario}: {response}"
                 }), 500
 
         except Exception as e:
@@ -130,3 +143,20 @@ def registrar_rutas(app):
         except Exception as e:
             print(f"Error en /modificar_perfil: {e}")
             return jsonify({"code": 0, "message": "Error interno del servidor."}), 500
+
+    @app.route("/validar_correo", methods=["POST"])
+    def validar_correo_route():
+        try:
+            data = request.get_json()
+            correo = data.get("email")
+            if not correo:
+                return jsonify({"code": 0, "message": "Correo no proporcionado"}), 400
+
+            if correo_disponible(correo):
+                return jsonify({"code": 1, "message": "Correo disponible"}), 200
+            else:
+                return jsonify({"code": 0, "message": "Este correo ya está registrado"}), 200
+
+        except Exception as e:
+            print("Error en /validar_correo:", e)
+            return jsonify({"code": 0, "message": "Error interno del servidor"}), 500

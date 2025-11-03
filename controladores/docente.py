@@ -25,17 +25,36 @@ def validar_docente(correo, password):
         return None
     
 
+def correo_disponible(correo):
+    try:
+        connection = conectarbd()
+        if not connection:
+            return False
+        
+        with connection.cursor() as cursor:
+            # Buscar en Docente
+            cursor.execute("SELECT id_docente FROM Docente WHERE correo = %s", (correo,))
+            if cursor.fetchone():
+                return False
+            # Buscar en Jugador
+            cursor.execute("SELECT id_jugador FROM Jugador WHERE email = %s", (correo,))
+            if cursor.fetchone():
+                return False
+        
+        connection.close()
+        return True
+    except Exception as e:
+        print("Error en correo_disponible:", e)
+        return False
+    
 def registrar_docente(correo, password, nombres, apellidos):
     try:
-        # Hash de la contraseña utilizando SHA-256
         hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
-        # Conectar a la base de datos y registrar el docente
         connection = conectarbd()
         if connection:
             cursor = connection.cursor()
 
-            # Insertar los datos del docente en la base de datos
             query = "INSERT INTO Docente (correo, password, nombres, apellidos) VALUES (%s, %s, %s, %s)"
             cursor.execute(query, (correo, hashed_password, nombres, apellidos))
             connection.commit()  # Guardar los cambios
@@ -47,7 +66,6 @@ def registrar_docente(correo, password, nombres, apellidos):
     except Exception as e:
         return f"Error al registrar el docente: {str(e)}"
         
-
 def modificar_docente(correo, nuevo_nombre, nuevo_apellido, nuevo_correo=None, nueva_contrasena=None):
     try:
         connection = conectarbd()
@@ -87,3 +105,19 @@ def modificar_docente(correo, nuevo_nombre, nuevo_apellido, nuevo_correo=None, n
     except Exception as e:
         print(f"Error al actualizar docente: {e}")
         return jsonify({"code": 0, "message": "Error al actualizar los datos."}), 500
+
+def registrar_jugador(email, password):
+    try:
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        connection = conectarbd()
+        if connection:
+            cursor = connection.cursor()
+            query = "INSERT INTO Jugador (email, contraseña) VALUES (%s, %s)"
+            cursor.execute(query, (email, hashed_password))
+            connection.commit()
+            connection.close()
+            return "Jugador registrado exitosamente"
+        else:
+            return "Error al conectar con la base de datos"
+    except Exception as e:
+        return f"Error al registrar jugador: {str(e)}"

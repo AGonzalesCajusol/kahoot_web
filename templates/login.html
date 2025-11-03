@@ -38,11 +38,13 @@
                 <div class="mb-3">
                     <label for="email" class="form-label">Correo electrónico</label>
                     <input type="email" class="form-control form-control-lg" id="email" name="email" placeholder="Introduce tu correo" required onblur="validateEmail()">
+                    <div id="email-message" class="small mt-1"></div>
                 </div>
 
                 <div class="mb-3">
                     <label for="password" class="form-label">Contraseña</label>
                     <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Introduce tu contraseña" required onblur="validatePassword()">
+                    <div id="password-message" class="small mt-1"></div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2 fs-5">Iniciar sesión</button>
@@ -61,36 +63,45 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
         function validateEmail() {
-            const email = document.getElementById("email");
-            const message = document.getElementById("email-message");
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const email = document.getElementById("email");
+    const message = document.getElementById("email-message"); // este debe existir en tu HTML
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-            if (email.value === "") {
-                email.style.backgroundColor = "#f8d7da";
-                message.textContent = "Este campo no puede estar vacío";
-                message.style.color = "#dc3545"; 
-                return false;
-            } else if (!emailPattern.test(email.value)) {
-                email.style.backgroundColor = "#f8d7da"; 
-                message.textContent = "Correo no válido";
-                message.style.color = "#dc3545"; 
-                return false;
-            } else {
-                email.style.backgroundColor = "#d4edda"; 
-                message.textContent = "Correo válido";
-                message.style.color = "#28a745";
-                return true;
-            }
-        }
+    if (!message) return; // previene error si falta el div
+
+    if (email.value === "") {
+        email.style.backgroundColor = "#f8d7da";
+        message.textContent = "Este campo no puede estar vacío";
+        message.style.color = "#dc3545"; 
+        return false;
+    } else if (!emailPattern.test(email.value)) {
+        email.style.backgroundColor = "#f8d7da"; 
+        message.textContent = "Correo no válido";
+        message.style.color = "#dc3545"; 
+        return false;
+    } else {
+        email.style.backgroundColor = "#d4edda"; 
+        message.textContent = "Correo válido";
+        message.style.color = "#28a745";
+        return true;
+    }
+}
 
         function validatePassword() {
             const password = document.getElementById("password");
-            const message = document.getElementById("password-message");
+            const message = document.getElementById("password-message"); // este debe existir en tu HTML
+
+            if (!message) return; // previene error si falta el div
 
             if (password.value === "") {
                 password.style.backgroundColor = "#f8d7da";
                 message.textContent = "Este campo no puede estar vacío";
                 message.style.color = "#dc3545"; 
+                return false;
+            } else if (password.value.length < 8) {
+                password.style.backgroundColor = "#f8d7da";
+                message.textContent = "La contraseña debe tener al menos 8 caracteres";
+                message.style.color = "#dc3545";
                 return false;
             } else {
                 password.style.backgroundColor = "#d4edda"; 
@@ -99,6 +110,8 @@
                 return true;
             }
         }
+
+        
         document.getElementById("loginForm").addEventListener("submit", function (event) {
             const emailValid = validateEmail(); 
             const passwordValid = validatePassword();  
