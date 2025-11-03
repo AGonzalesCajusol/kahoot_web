@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, session, url_for, flash
 from controladores.login import validar_docente
 from controladores.docente import registrar_docente 
+from controladores.jugador import validar_jugador
 
 def registrar_rutas(app):
     @app.route('/login', methods=['GET', 'POST'])
@@ -10,15 +11,21 @@ def registrar_rutas(app):
             password = request.form['password']
 
             docente = validar_docente(correo, password)
-
             if docente:
-                # Guardar datos de sesión
                 session['docente_id'] = docente['id_docente']
                 session['nombres'] = docente['nombres']
+                session['tipo_usuario'] = 'docente'
                 return redirect(url_for('dashboard'))
-            else:
-                flash("Correo o contraseña incorrectos. Intenta nuevamente.", "danger")
-                return render_template('login.html', error="Credenciales incorrectas")
+
+            jugador = validar_jugador(correo, password)
+            if jugador:
+                session['jugador_id'] = jugador['id_jugador']
+                session['email'] = jugador['email']
+                session['tipo_usuario'] = 'jugador'
+                return redirect(url_for('dashboard'))
+
+            flash("Correo o contraseña incorrectos. Intenta nuevamente.", "danger")
+            return render_template('login.html')
 
         return render_template('login.html')
 

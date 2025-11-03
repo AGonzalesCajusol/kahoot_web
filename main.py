@@ -34,11 +34,20 @@ def register():
 
 @app.route('/dashboard')
 def dashboard():
-    id_docente = session.get('docente_id')
-    nombres = session.get('nombres')
+    tipo_usuario = None
+    nombres = None
+    email = None
 
-    # Renderiza igual, pero pasando si hay sesión o no
-    return render_template('dashboard.html', id_docente=id_docente, nombres=nombres)
+    if 'docente_id' in session:
+        tipo_usuario = 'docente'
+        nombres = session.get('nombres')
+    elif 'jugador_id' in session:
+        tipo_usuario = 'jugador'
+        email = session.get('email')  # o el campo que uses
+
+    return render_template('dashboard.html', tipo_usuario=tipo_usuario, nombres=nombres, email=email)
+
+
 
 
 # @app.route('/logout')

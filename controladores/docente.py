@@ -12,17 +12,19 @@ def validar_docente(correo, password):
         if not connection:
             return None
 
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()  
         with connection.cursor() as cursor:
             query = "SELECT * FROM Docente WHERE correo = %s AND password = %s"
-            cursor.execute(query, (correo, password))
+            cursor.execute(query, (correo, hashed_password))
             result = cursor.fetchone()
 
         connection.close()
         return result
 
     except Exception as e:
-        # opcional: print(e) para depuración
+        print("Error en validar_docente:", e)
         return None
+
     
 
 def correo_disponible(correo):

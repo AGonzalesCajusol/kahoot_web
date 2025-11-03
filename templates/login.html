@@ -61,7 +61,8 @@
 
     <!-- Incluir Bootstrap JS desde CDN -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script>
         function validateEmail() {
     const email = document.getElementById("email");
     const message = document.getElementById("email-message"); // este debe existir en tu HTML
