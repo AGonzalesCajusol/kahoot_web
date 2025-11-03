@@ -18,7 +18,11 @@ def registrar_rutas(app):
         print(respuesta)
         return render_template('crear_cuestionarios.html', datos = respuesta)
 
-
+    @app.route('/vercuestionario/<int:id>')
+    def vercuestionario(id):
+        respuesta = cuestionario.datos_cuestionario1(id)
+        return render_template('cuestionariover.html', datos = respuesta)
+    
     @app.route('/registrar_respuestasform', methods=['POST'])
     def registrar_respuestasform():
         id_participante = session['id_usuario']
