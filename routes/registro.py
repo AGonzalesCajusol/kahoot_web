@@ -16,7 +16,6 @@ def registrar_rutas(app):
             nombres = data.get("nombres")
             apellidos = data.get("apellidos")
             password = data.get("password")
-            image_base64 = data.get("image")
 
             if not email or not password:
                 return jsonify({"code": 0, "message": "Faltan datos obligatorios."}), 400
@@ -29,8 +28,7 @@ def registrar_rutas(app):
                 "nombres": nombres,
                 "apellidos": apellidos,
                 "password": password,
-                "tipo_usuario": tipo_usuario,
-                "rostro": image_base64
+                "tipo_usuario": tipo_usuario
             }
 
 
@@ -64,10 +62,12 @@ def registrar_rutas(app):
             if not registro:
                 return jsonify({"code": 0, "message": "No se encontró un código asociado a este correo."}), 404
 
+            # Verificar expiración
             if time.time() > registro["expiracion"]:
                 codigos_verificacion.pop(email, None)
                 return jsonify({"code": 0, "message": "El código ha expirado. Regístrate nuevamente."}), 400
 
+            # Validar código
             if registro["codigo"] != codigo:
                 return jsonify({"code": 0, "message": "Código incorrecto."}), 400
 
@@ -76,22 +76,16 @@ def registrar_rutas(app):
             tipo_usuario = registro.get("tipo_usuario", "docente")
 
             if tipo_usuario == "docente":
-                embedding = None
-                if registro.get("rostro"):
-                    from controladores.reconocimiento_facial import generar_embedding_facial
-                    embedding = generar_embedding_facial(registro["rostro"])
-
-                    response = registrar_docente(
-                            registro_email,
-                            registro["password"],
-                            registro.get("nombres", ""),
-                            registro.get("apellidos", ""),
-                            embedding  
-                        )
+                response = registrar_docente(
+                    registro_email,
+                    registro["password"],
+                    registro.get("nombres", ""),
+                    registro.get("apellidos", "")
+                )
             else:
                 response = registrar_jugador(
-                registro_email,
-                registro["password"]
+                    registro_email,
+                    registro["password"]
                 )
 
 

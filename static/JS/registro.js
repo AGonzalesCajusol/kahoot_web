@@ -70,41 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("btnDocente").classList.remove("active");
         mostrarCampos();
     });
-    const registrarRostroBtn = document.getElementById('registrar-rostro-btn');
-    const videoContainer = document.getElementById('video-container');
-    const video = document.getElementById('video');
-    const captureBtn = document.getElementById('capture-btn');
-    const canvas = document.getElementById('canvas');
-    let capturedImage = null;  // aquí guardamos el base64
-
-    if (registrarRostroBtn) {
-        registrarRostroBtn.addEventListener('click', () => {
-            videoContainer.style.display = 'block';
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    video.srcObject = stream;
-                })
-                .catch(err => {
-                    console.error("Error al acceder a la cámara: ", err);
-                    showAlert('danger', 'No se pudo acceder a la cámara. Asegúrate de dar los permisos necesarios.');
-                });
-        });
-    }
-
-    if (captureBtn) {
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            capturedImage = canvas.toDataURL('image/jpeg');
-            showAlert('success', 'Rostro capturado exitosamente.');
-            videoContainer.style.display = 'none';
-            // detener cámara
-            video.srcObject.getTracks().forEach(track => track.stop());
-        });
-    }
 
     form.addEventListener("submit", async (event) => {
         event.preventDefault();
@@ -136,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         if (!valid) return;
 
-
+        // Confirmación con SweetAlert2
         Swal.fire({
             text: `¿Quieres registrarte como ${tipoUsuario}?`,
             icon: 'warning',
@@ -146,6 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }).then(async (result) => {
             if (!result.isConfirmed) return;
 
+            // --- VALIDAR CORREO ANTES DE ENVIAR EL CÓDIGO ---
             try {
                 const respValid = await fetch("/validar_correo", {
                     method: "POST",
@@ -156,18 +122,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (dataValid.code === 0) {
                     showAlert("danger", dataValid.message || "Este correo ya está registrado.");
-                    return; 
+                    return; // detener flujo
                 }
             } catch (e) {
                 showAlert("danger", "Error al validar el correo. Intenta nuevamente.");
                 return;
             }
 
+            // Construir payload según tipo
             let payload = { email, password, tipo_usuario: tipoUsuario };
             if (tipoUsuario === "docente") {
                 payload.nombres = nombres;
                 payload.apellidos = apellidos;
-                payload.rostro = capturedImage; 
             }
 
             // UI: deshabilitar botón
