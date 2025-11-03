@@ -20,8 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-function confirmarCerrarSesion() {
-    // Usar SweetAlert2 para la confirmación
+function confirmarCerrarSesion() {    
     Swal.fire({
         text: '¿Quieres cerrar sesión?',
         icon: 'warning',
@@ -29,11 +28,9 @@ function confirmarCerrarSesion() {
         confirmButtonText: 'Sí, cerrar sesión',
         cancelButtonText: 'Cancelar'
     }).then((result) => {
-        if (result.isConfirmed) {
-            // Si el usuario confirma, redirigir al logout
+        if (result.isConfirmed) {        
             window.location.href = "/logout"; 
-        } else {
-            // Si el usuario cancela, no hacer nada
+        } else {            
             console.log('El usuario canceló el cierre de sesión.');
         }
     });
