@@ -1,9 +1,67 @@
 import conexion
 import random
 
+def fnmodificardetalleformulario(data):
+    print(data)
+    try:
+        conn = conexion.conectarbd()
+        with conn.cursor() as cursor:
+            consulta = '''
+                UPDATE Cuestionario 
+                SET nombre = %s,
+                    estado = %s,
+                    tipo_cuestionario = %s,
+                    descripcion = %s
+                WHERE id_cuestionario = %s;
+            ''' 
+            cursor.execute(consulta, (
+                data.get('nombre_formulario'),
+                data.get('estado'),
+                data.get('tipo_formulario'),
+                data.get('descripcion_formulario'),
+                data.get('id_formulario')
+            ))
+            conn.commit()
+        return {'estado': True, 'mensaje': 'Se modificó correctamente'}
+    except Exception as e:
+        print("Error en fnmodificardetalleformulario:", e)
+        return {'estado': False, 'mensaje': 'No se pudo modificar'}
+
+
+def datos_cuestionario1(id_for):
+    conn = conexion.conectarbd()
+    with conn.cursor() as cursor:
+        sql = '''
+            SELECT 
+                pr.id_pregunta,
+                pr.pregunta,        -- texto de la preguntanombre_formularionombre_formulario
+                pr.puntaje,
+                pr.tiempo_respuesta,
+                JSON_ARRAYAGG(JSON_OBJECT(
+                    'id_alternativa', al.id_alternativa,
+                    'respuesta', al.respuesta,
+                    'estado_alternativa', al.estado_alternativa
+                )) AS alternativas
+            FROM Pregunta pr
+            INNER JOIN Alternativa al ON pr.id_pregunta = al.id_pregunta
+            WHERE pr.id_cuestionario = %s
+            GROUP BY pr.id_pregunta, pr.pregunta, pr.puntaje;
+        '''
+        cursor.execute(sql,(id_for))
+        respuestas = cursor.fetchall()
+        sql2 = '''
+            select id_cuestionario, nombre, estado, tipo_cuestionario, descripcion from  Cuestionario where id_cuestionario = %s;
+
+        '''
+        cursor.execute(sql2,(id_for))
+        detalle = cursor.fetchone()
+    return {
+        "detalle": detalle,
+        "respuestas": respuestas
+    }
+
 def datos_cuestionario(id_for):
     conn = conexion.conectarbd()
-    print(id_for)
     with conn.cursor() as cursor:
         sql = '''
             SELECT 
@@ -175,8 +233,6 @@ def crear_pin():
 def registrar_cuestionarioSPDF(datos, id_docente):
     detalle = datos.get('detalle', {})
     preguntas = datos.get('preguntas', [])
-    print("📘 Detalle:", detalle)
-    print("❓ Preguntas:", preguntas)
 
     connection = None
     try:
@@ -195,8 +251,8 @@ def registrar_cuestionarioSPDF(datos, id_docente):
                 estado = 'R'
 
             cursor.execute(query, (
-                detalle.get('nombre_cuestionario'),  # ✅ corregido
-                detalle.get('tipo_formulario'),      # ✅ sin [0]
+                detalle.get('nombre_cuestionario'), 
+                detalle.get('tipo_formulario'),    
                 detalle.get('descripcion_formulario'),
                 crear_pin(),
                 estado,
@@ -204,10 +260,8 @@ def registrar_cuestionarioSPDF(datos, id_docente):
             ))
 
             id_cuestionario = cursor.lastrowid
-            print(f"✅ Cuestionario creado con ID: {id_cuestionario}")
 
             for pregunta in preguntas:
-                print("🟢 Insertando pregunta:", pregunta.get('nombre_pregunta'))
 
                 query = """
                     INSERT INTO Pregunta (pregunta, puntaje, tiempo_respuesta, tipo_pregunta, id_cuestionario)
@@ -222,10 +276,9 @@ def registrar_cuestionarioSPDF(datos, id_docente):
                 ))
 
                 id_pregunta = cursor.lastrowid
-                print(f"   ↳ ID pregunta: {id_pregunta}")
 
                 respuestas = pregunta.get('alternativas', [])
-                respuesta = pregunta.get('respuesta')  # ✅ corregido
+                respuesta = pregunta.get('respuesta')
 
                 for rpt in respuestas:
                     query = """
@@ -234,19 +287,15 @@ def registrar_cuestionarioSPDF(datos, id_docente):
                     """
                     estado_alt = 1 if str(rpt).strip() == str(respuesta).strip() else 0
                     cursor.execute(query, (rpt, estado_alt, id_pregunta))
-                    print(f"      ↳ Alternativa: {rpt} ({'Correcta' if estado_alt else 'Incorrecta'})")
 
             connection.commit()
-            print("✅ Todo insertado correctamente.")
             return True
         else:
-            print("⚠️ No se pudo conectar a la base de datos.")
             return 3
 
     except Exception as e:
         if connection:
             connection.rollback()
-        print("❌ Error:", e)
         return False
 
     finally:
