@@ -2,6 +2,7 @@ from pydoc import text
 from flask import jsonify, render_template, request, redirect, session, url_for, flash
 from controladores.login import validar_docente, verificar_correo_existente
 from controladores.docente import registrar_docente 
+
 def registrar_rutas(app):
     @app.route('/login', methods=['GET', 'POST'])
     def login():
@@ -12,12 +13,16 @@ def registrar_rutas(app):
             docente = validar_docente(correo, password)
 
             if docente:
+                # Guardar datos de sesión
+                session['docente_id'] = docente['id_docente']
+                session['nombres'] = docente['nombres']
                 return redirect(url_for('dashboard'))
             else:
-                flash("Correo o contraseña incorrectos. Intenta nuevamente.", "danger") 
+                flash("Correo o contraseña incorrectos. Intenta nuevamente.", "danger")
                 return render_template('login.html', error="Credenciales incorrectas")
 
         return render_template('login.html')
+
     
     @app.route('/registrarusuario', methods = ['POST'])
     def registrarusuario():
