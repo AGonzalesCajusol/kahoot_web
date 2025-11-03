@@ -30,3 +30,29 @@ def validar_docente(correo, password):
         
     except Exception as e:
         return None  
+
+
+def verificar_correo_existente(email):
+    try:
+        connection = conectarbd()
+        if connection:
+            cursor = connection.cursor(dictionary=True)
+
+            query_docente = "SELECT 1 FROM Docente WHERE correo = %s LIMIT 1"
+            cursor.execute(query_docente, (email,))
+            existe_docente = cursor.fetchone()
+
+            query_jugador = "SELECT 1 FROM Jugador WHERE email = %s LIMIT 1"
+            cursor.execute(query_jugador, (email,))
+            existe_jugador = cursor.fetchone()
+
+            connection.close()
+
+            if existe_docente or existe_jugador:
+                return True
+            else:
+                return False
+
+    except Exception as e:
+        print(f"Error al verificar correo: {e}")
+        return False

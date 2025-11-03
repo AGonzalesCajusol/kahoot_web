@@ -1,5 +1,6 @@
-from flask import render_template, request, redirect, session, url_for, flash
-from controladores.login import validar_docente
+from pydoc import text
+from flask import jsonify, render_template, request, redirect, session, url_for, flash
+from controladores.login import validar_docente, verificar_correo_existente
 from controladores.docente import registrar_docente 
 
 def registrar_rutas(app):
@@ -37,6 +38,14 @@ def registrar_rutas(app):
             return redirect(url_for('login'))
 
         flash(response, "danger")  
-        return render_template('registro.html') 
-    
-    
+        return render_template('registro.html')
+
+    @app.route('/verificar_correo')
+    def verificar_correo():
+        email = request.args.get('email')
+
+        if not email:
+            return jsonify({'error': 'Falta el parámetro email'}), 400
+
+        existe = verificar_correo_existente(email)
+        return jsonify({'existe': existe})
