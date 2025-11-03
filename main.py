@@ -20,22 +20,38 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def home():
     return render_template('pin_estudiante.html')
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     return render_template('registro.html')
 
+# @app.route('/dashboard')
+# def dashboard():
+#     if 'docente_id' not in session:
+#         return redirect(url_for('login'))  
+#     return render_template('dashboard.html', id_docente=session['docente_id'])
+
 @app.route('/dashboard')
 def dashboard():
-    if 'docente_id' not in session:
-        return redirect(url_for('login'))  # Si no está logueado, redirigir al login
-    return render_template('dashboard.html', id_docente=session['docente_id'])
+    id_docente = session.get('docente_id')
+    nombres = session.get('nombres')
+
+    # Renderiza igual, pero pasando si hay sesión o no
+    return render_template('dashboard.html', id_docente=id_docente, nombres=nombres)
+
+
+# @app.route('/logout')
+# def logout():    
+#     session.clear()  
+#     flash("Has cerrado sesión exitosamente", "success")  
+#     return redirect(url_for('login'))
 
 
 @app.route('/logout')
-def logout():    
-    session.clear()  
-    flash("Has cerrado sesión exitosamente", "success")  
-    return redirect(url_for('login'))
+def logout():
+    session.clear()
+    return redirect(url_for('dashboard'))
+
 
 @app.route('/nuevo_cuestionario')
 def nuevo_cuestionario():    

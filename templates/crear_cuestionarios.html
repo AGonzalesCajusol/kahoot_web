@@ -47,18 +47,13 @@ block search %} {% endblock%} {% block contenido %}
                     <option value="G">Grupal</option>
                 </select>
 
-                <label for="pin" class="fw-bold mb-2">
-                    <i class="bi bi-key"></i> PIN
+                 <label for="estado" class="fw-bold mb-2">
+                    <i class="bi bi-check-circle"></i> Estado
                 </label>
-                <input id="pin" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático"
-                    readonly />
-
-                <label for="fecha_programacion" class="fw-bold mb-2">
-                    <i class="bi bi-calendar"></i> Fecha de Programación
-                </label>
-                <input id="fecha_programacion" class="form-control mb-3" name="fecha_programacion"
-                    type="datetime-local" />
-
+                <select id="estado" class="form-select mb-3" name="estado">
+                    <option value="P">Público</option>
+                    <option value="R">Privado</option>
+                </select>
             </div>
 
             <div class="d-flex flex-column flex-grow-1">
@@ -68,14 +63,6 @@ block search %} {% endblock%} {% block contenido %}
                 </label>
                 <textarea id="descripcion" class="form-control" name="descripcion" rows="7"
                     placeholder="Ingrese la descripción del cuestionario"></textarea>
-
-                <label for="estado" class="fw-bold mb-2">
-                    <i class="bi bi-check-circle"></i> Estado
-                </label>
-                <select id="estado" class="form-select mb-3" name="estado">
-                    <option value="P">Público</option>
-                    <option value="R">Privado</option>
-                </select>
             </div>
 
 

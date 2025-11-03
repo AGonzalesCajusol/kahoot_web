@@ -6,8 +6,7 @@ const cuerpo_json = {
         tipo_formulario: "",
         descripcion_formulario: "",
         estado: "",
-        pin: "",
-        fecha_programacion: ""
+        pin: ""
     },
     preguntas: [],
 };
@@ -18,26 +17,14 @@ const guardar_detalle = (ss) => {
     const descripcion_formulario = document.getElementById("descripcion");
     const estado = document.getElementById("estado");
     const pin_f = document.getElementById('pin');
-    const f_pro = document.getElementById('fecha_programacion');
 
-    const fecha_actual = new Date();
-    const fecha_programacion = new Date(f_pro.value);
-
-    if (fecha_programacion < fecha_actual) {
-        Swal.fire({
-            icon: 'error',
-            title: '¡Error!',
-            text: 'La fecha de programación no puede ser un día anterior al día actual.',
-        });
-        return;
-    }
+    
 
     cuerpo_json.detalle.nombre_cuestionario = nombre_cuestionario.value;
     cuerpo_json.detalle.tipo_formulario = tipo_formulario.value;
     cuerpo_json.detalle.descripcion_formulario = descripcion_formulario.value;
     cuerpo_json.detalle.estado = estado.value;
-    cuerpo_json.detalle.pin = pin_f.value;
-    cuerpo_json.detalle.fecha_programacion = f_pro.value;
+    cuerpo_json.detalle.pin = pin_f.value;    
     contenido.innerHTML = '';
     if (!ss) {
         contenido.innerHTML = `
@@ -132,11 +119,7 @@ const detalle = () => {
                     </label>
                     <input id="pin" value="${cuerpo_json.detalle.pin}" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
 
-                    <label for="fecha_programacion" class="fw-bold mb-2">
-                        <i class="bi bi-calendar"></i> Fecha de Programación
-                    </label>
-                    <input id="fecha_programacion" value="${cuerpo_json.detalle.fecha_programacion}"   class="form-control mb-3" name="fecha_programacion" type="datetime-local" />
-                     
+                                    
                 </div>
 
                 <div class="d-flex flex-column flex-grow-1">
