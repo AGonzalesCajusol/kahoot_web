@@ -33,10 +33,15 @@ def retornar_dartosformuario(id_formulario):
         datos_frm = cursor.fetchone()
     return datos_frm
 
+import random
+def crear_pin():
+    pin = str(random.randint(10000, 99999))
+    return pin
 
 def registrar_cuestionario(datos,id_docente):
     detalle = datos.get('detalle', {})
     preguntas = datos.get('preguntas', [])
+    print(preguntas)
     connection = None
     try:
         connection = conexion.conectarbd()
@@ -44,18 +49,25 @@ def registrar_cuestionario(datos,id_docente):
             cursor = connection.cursor()
 
             query = """
-                INSERT INTO Cuestionario (nombre, tipo_cuestionario, descripcion, estado, pin, fecha_programacion, id_docente)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO Cuestionario (nombre, tipo_cuestionario, descripcion, pin, estado, id_docente)
+                VALUES (%s, %s, %s, %s, %s, %s)
             """
+            estado = detalle.get('estado')
+            if (estado == 'Público'):
+                estado = "P"
+            elif (estado == 'Privado'):
+                estado = 'R'
+        
+
             cursor.execute(query, (
-                detalle.get('nombre_cuestionario'),
-                detalle.get('tipo_formulario'),
+                detalle.get('nombre_formulario'),
+                detalle.get('tipo_formulario')[0],
                 detalle.get('descripcion_formulario'),
-                detalle.get('estado'),
-                detalle.get('pin'),
-                detalle.get('fecha_programacion'),
+                crear_pin(),
+                estado,
                 id_docente
             ))
+
             id_cuestionario = cursor.lastrowid
             for pregunta in preguntas:
                 query = """
@@ -72,7 +84,7 @@ def registrar_cuestionario(datos,id_docente):
                 id_pregunta = cursor.lastrowid 
 
                 respuestas = pregunta.get('alternativas')
-                respuesta = pregunta.get('respuesta')
+                respuesta = pregunta.get('respuesta_correcta')
                 for rpt in respuestas:
                     query = """
                             INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta)

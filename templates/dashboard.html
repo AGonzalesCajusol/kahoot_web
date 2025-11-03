@@ -52,14 +52,25 @@
 
                 </ul>
             </div>
-        </div>
-    </nav>
 
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center text-center" style="padding-top: 100px; padding-bottom: 80px;">
-        <div class="container">
-            <header class="mb-5">
-                <h1 class="fw-bold text-primary display-6 mb-3">{% block titulo_pagina %}Mis Cuestionarios{% endblock %}</h1>
+            <nav class="sidebar-nav">
+                <a href="/dashboard" class="nav-item"><i class="bi bi-file-text"></i> Mis cuestionarios</a>
+                <a href="/nuevo_cuestionario" class="nav-item"><i class="bi bi-file-diff"></i> Crear Cuestionario</a>
+                <a href="/repositorio" class="nav-item"><i class="bi bi-file-break"></i>Repositorio</a>
+                <!-- <a href="/estadisticas" class="nav-item"><i class="bi bi-file-bar-graph"></i>Estadísticas</a> -->
+                <a href="/perfil" class="nav-item"><i class="bi bi-person"></i>Perfil</a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" class="btn btn-danger w-100" onclick="confirmarCerrarSesion()"><i class="bi bi-door-closed-fill"></i> Cerrar sesión</a>
+            </div>
+            {%block css%}
+            {% endblock %}
+        </aside>
+
+        <!-- Contenido Principal -->
+        <main class="main-content min-vh-100">
+            <header class="main-header ">
+                <h1>{% block titulo_pagina %}Mis Cuestionarios{% endblock %}</h1>
 
                 {% block search %}
                 <div class="d-flex justify-content-center">
@@ -68,6 +79,44 @@
                         <button class="btn btn-primary rounded-pill"><i class="bi bi-search"></i></button>
                     </form>
                 </div>
+                <button type="button" class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#abrirmodal">
+                    <i class="bi bi-plus-lg"></i> Subir cuestionario
+                </button>
+                <a href="/static/uploads/formato_export.xlsx" type="button" class="btn btn-outline-success mt-3" >
+                    <i class="bi bi-file-earmark-arrow-down-fill"></i> Descargar plantilla
+                </a>
+                
+
+                <!-- Modal -->
+                <div class="modal fade" id="abrirmodal" tabindex="-1" aria-labelledby="abrirmodalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content ">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="abrirmodalLabel">Subir Cuestionario Excel</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                
+                            </div>
+                            <div class="modal-body">
+                                <form  id="form_cuestionario">
+                                    <div class="mb-3">
+                                        <label for="archexcel" class="form-label">Seleccionar archivo Excel</label>
+                                        <input type="file" class="form-control" id="archexcel" name="excel_archivo" accept=".xlsx,.xls" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" id="btn_subir">Subir</button>
+                                </form>
+                                <div>
+                                    <div class="progress d-none" id="progreso_br">
+                                        <div class="progress-bar" id="valor_br" ></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
                 {% endblock %}
             </header>
 
@@ -103,6 +152,46 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const docenteId = "{{ session['docente_id'] }}";  // Pasar desde Flask a la plantilla
+
+        document.getElementById('form_cuestionario').addEventListener('submit', async(event) => {
+            event.preventDefault();
+
+            const formulario = event.target;
+            const formulario_dato = new FormData(formulario);
+            formulario.classList.add('d-none');
+            const div_bar = document.getElementById('progreso_br');
+            const progress = document.getElementById('valor_br');
+            div_bar.classList.remove('d-none');
+            let tm = 20;
+            progress.style.width = `${tm}%`;
+            progress.textContent = `${tm}%`;
+
+            //enviamos 
+            const response = await fetch('/subirformulario_excel', {
+                method: 'POST',
+                body: formulario_dato
+            });
+            tm = 60;
+            progress.style.width = `${tm}%`;
+            progress.textContent = `${tm}%`;
+            //procesamos mensaje 
+            const respuesta = await response.json();
+            tm = 100;
+            progress.style.width = `${tm}%`;
+            progress.textContent = `${tm}%`;
+
+            if(respuesta.estado == true){
+                const interval = setInterval(() => {
+                    alert(estado.mensaje);
+                }, 1000);
+                window.location.reload();
+            }else{
+                formulario.classList.remove('d-none');      
+                div_bar.classList.add('d-none');
+                alert(estado.mensaje);
+            }
+        });
+
 
         // Cargar cuestionarios activos
         fetch(`/cuestionarios_activos?id_docente=${docenteId}`)

@@ -46,6 +46,7 @@ def dashboard():
 #     flash("Has cerrado sesión exitosamente", "success")  
 #     return redirect(url_for('login'))
 
+
 @app.route('/logout')
 def logout():
     session.clear()
