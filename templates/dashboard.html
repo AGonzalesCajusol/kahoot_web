@@ -204,8 +204,8 @@
             const progress = document.getElementById('valor_br');
             div_bar.classList.remove('d-none');
             let tm = 20;
-            progress.style.width = ${tm}%;
-            progress.textContent = ${tm}%;
+            progress.style.width = $`{tm}%`;
+            progress.textContent = $`{tm}%`;
 
             //enviamos 
             const response = await fetch('/subirformulario_excel', {
@@ -213,13 +213,13 @@
                 body: formulario_dato
             });
             tm = 60;
-            progress.style.width = ${tm}%;
-            progress.textContent = ${tm}%;
+            progress.style.width = $`{tm}%`;
+            progress.textContent = $`{tm}%`;
             //procesamos mensaje 
             const respuesta = await response.json();
             tm = 100;
-            progress.style.width = ${tm}%;
-            progress.textContent = ${tm}%;
+            progress.style.width = $`{tm}%`;
+            progress.textContent = $`{tm}%`;
 
             if(respuesta.estado == true){
                 const interval = setInterval(() => {
