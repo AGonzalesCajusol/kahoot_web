@@ -18,12 +18,15 @@ block search %} {% endblock%} {% block contenido %}
             <button class="btn btn-primary btn-sm w-100" onclick="agg_pr()">
                 <i class="bi bi-plus-circle me-2"></i>Agregar pregunta
             </button>
-            <button class="btn btn-secondary btn-sm w-100 mt-2" onclick="confirmarEnvio()">
-                <i class="bi bi-plus-circle me-2"></i> Crear formulario
-            </button>
-
+            {% if request.path == '/nuevo_cuestionario' %}
+                <button class="btn btn-secondary btn-sm w-100 mt-2" onclick="confirmarEnvio()">
+                    <i class="bi bi-plus-circle me-2"></i> Crear formulario
+                </button>
+            {% endif %}
         </div>
-        <div class="cards_continue mt-2"></div>
+        <div class="cards_continue mt-2">
+            
+        </div>
     </div>
 
     <form class="cont_formulario card shadow-lg p-4 overflow-y-scroll" style="padding: 2rem" id="form_cuestionario"> 
@@ -68,16 +71,32 @@ block search %} {% endblock%} {% block contenido %}
 
         </div>
         <div class="mb-1 mt-4">
-            <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()">
-                <i class="bi bi-save"></i> Guardar detalle
-            </button>
+       
         </div>
+            {% if request.path == '/nuevo_cuestionario' %}
+                <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()" >
+                    <i class="bi bi-save"></i> Guardar detalle
+                </button>
+            {% else %}
+                <button type="button" class="btn btn-warning w-100" onclick="modificar_detalle()" >
+                    <i class="bi bi-save"></i> Modificar detalle
+                </button>
+            {% endif %}
     </form>
 </div>
 
-{% endblock %} {% block scripts %}
-<script src="/static/JS/nuevo_cuestionario.js"></script>
-<!-- SweetAlert2 CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{% endblock %} 
 
+
+{% block scripts %}
+    {% if request.path == '/nuevo_cuestionario' %}
+        <script src="/static/JS/nuevo_cuestionario.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% else %}
+    <script>
+        let datos = {{ datos | tojson }};
+    </script>
+        <script src="{{ url_for('static', filename='js/modificar.js') }}"></script>
+
+    {% endif %}
 {% endblock %}

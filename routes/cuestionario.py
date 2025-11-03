@@ -5,6 +5,20 @@ from controladores import docente
 
 
 def registrar_rutas(app):
+    @app.route('/fn_modificar', methods = ['POST'])
+    def fn_modificar():
+        datos = request.get_json()
+        respuesta = cuestionario.fnmodificardetalleformulario(datos)
+        return jsonify(respuesta)
+
+    @app.route('/modificar_cuestionario/<int:id>')
+    def modificar_cuestionario(id):
+        #verificamos si ese id le pertenece
+        respuesta = cuestionario.datos_cuestionario1(id)
+        print(respuesta)
+        return render_template('crear_cuestionarios.html', datos = respuesta)
+
+
     @app.route('/registrar_respuestasform', methods=['POST'])
     def registrar_respuestasform():
         id_participante = session['id_usuario']
