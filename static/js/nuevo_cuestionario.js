@@ -2,11 +2,10 @@ const contenido = document.querySelector(".cont_formulario");
 
 const cuerpo_json = {
     detalle: {
-        nombre_cuestionario: "",
+        nombre_formulario: "",
         tipo_formulario: "",
         descripcion_formulario: "",
         estado: "",
-        pin: ""
     },
     preguntas: [],
 };
@@ -16,15 +15,13 @@ const guardar_detalle = (ss) => {
     const tipo_formulario = document.getElementById("tipo_cuestionario");
     const descripcion_formulario = document.getElementById("descripcion");
     const estado = document.getElementById("estado");
-    const pin_f = document.getElementById('pin');
 
     
 
-    cuerpo_json.detalle.nombre_cuestionario = nombre_cuestionario.value;
+    cuerpo_json.detalle.nombre_formulario = nombre_cuestionario.value;
     cuerpo_json.detalle.tipo_formulario = tipo_formulario.value;
     cuerpo_json.detalle.descripcion_formulario = descripcion_formulario.value;
     cuerpo_json.detalle.estado = estado.value;
-    cuerpo_json.detalle.pin = pin_f.value;    
     contenido.innerHTML = '';
     if (!ss) {
         contenido.innerHTML = `
@@ -102,7 +99,7 @@ const detalle = () => {
                         <i class="bi bi-pencil-square"></i>
                         Nombre del formulario
                     </label>
-                    <input value ="${cuerpo_json.detalle.nombre_cuestionario}" id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text" placeholder="Ingrese el nombre del cuestionario" >
+                    <input value ="${cuerpo_json.detalle.nombre_formulario}" id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text" placeholder="Ingrese el nombre del cuestionario" >
                 
                     <label for="tipo_cuestionario" class="fw-bold mb-2">
                         <i class="bi bi-info-circle"></i>
@@ -113,12 +110,6 @@ const detalle = () => {
                         <option value="I" ${cuerpo_json.detalle.tipo_formulario === "I" ? "selected" : ""}>Individual</option>
                         <option value="G" ${cuerpo_json.detalle.tipo_formulario === "G" ? "selected" : ""}>Grupal</option>
                     </select>
-
-                    <label for="pin" class="fw-bold mb-2">
-                        <i class="bi bi-key"></i> PIN
-                    </label>
-                    <input id="pin" value="${cuerpo_json.detalle.pin}" class="form-control mb-3" name="pin" type="text" placeholder="PIN automático" readonly />
-
                                     
                 </div>
 
@@ -141,7 +132,7 @@ const detalle = () => {
                 
             </div>
             <div class="mb-1 mt-4">
-                ${cuerpo_json.detalle.nombre_cuestionario ? `
+                ${cuerpo_json.detalle.nombre_formulario ? `
                         <button type="button" class="btn btn-warning w-100" onclick="guardar_detalle()">
                             <i class="bi bi-save"></i> Modificar detalle
                         </button>
@@ -492,15 +483,6 @@ const guardar_pregunta = (ss) => {
 
 
 
-const pin = () => {
-    var numero = Math.floor(10000 + Math.random() * 90000);
-    document.getElementById('pin').value = numero;
-    cuerpo_json.detalle.pin = numero
-
-}
-pin();
-
-
 const eliminar_pr = (el, indice) => {
     // Mostrar un cuadro de confirmación con SweetAlert2
     Swal.fire({
@@ -568,7 +550,7 @@ const enviar_datos = async () => {
 
     const resp = await response.json();
 
-    if (resp) {
+    if (resp.estado) {
         Swal.fire({
             icon: 'success',
             title: 'Formulario creado',

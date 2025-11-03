@@ -139,60 +139,62 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         const docenteId = "{{ session['docente_id'] }}";  // Pasar desde Flask a la plantilla
-
-        // Cargar cuestionarios activos
-        fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
-            .then(response => response.json())
-            .then(data => {
-                const activosContainer = document.getElementById('cuestionarios-activos');
-                if (!Array.isArray(data) || data.length === 0) {
-                    activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
-                    return;
-                }
-                activosContainer.innerHTML = data.map(q => {
-                    return `
-                    <article class="questionnaire-card active">
-                        <div class="card-content">
-                            <h4>${q.nombre}</h4>
-                            <span class="status">Activo</span>
-                            <div class="button-group">
-                                <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
-                                <form action="/iniciar_juego" method="POST" style="display:inline;">
-                                    <input type="hidden" name="id_cuestionario" value="${q.id_cuestionario}">
-                                    <button type="submit" class="btn btn-success">Iniciar Juego</button>
-                                </form>
+        if (window.location.pathname === '/dashboard') {        // Cargar cuestionarios activos
+            fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const activosContainer = document.getElementById('cuestionarios-activos');
+                    if (!Array.isArray(data) || data.length === 0) {
+                        activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
+                        return;
+                    }
+                    activosContainer.innerHTML = data.map(q => {
+                        return `
+                        <article class="questionnaire-card active">
+                            <div class="card-content">
+                                <h4>${q.nombre}</h4>
+                                <span class="status">Activo</span>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                                    <form action="/iniciar_juego" method="POST" style="display:inline;">
+                                        <input type="hidden" name="id_cuestionario" value="${q.id_cuestionario}">
+                                        <button type="submit" class="btn btn-success">Iniciar Juego</button>
+                                    </form>
+                                </div>
                             </div>
-                        </div>
-                    </article>
-                `;
-                }).join('');
-            })
-            .catch(error => console.error('Error al cargar los cuestionarios activos:', error));
+                        </article>
+                    `;
+                    }).join('');
+                })
+                .catch(error => console.error('Error al cargar los cuestionarios activos:', error));
 
-        // Cargar cuestionarios archivados
-        fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
-            .then(response => response.json())
-            .then(data => {
-                const archivadosContainer = document.getElementById('cuestionarios-archivados');
-                if (!Array.isArray(data) || data.length === 0) {
-                    archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
-                    return;
-                }
-                archivadosContainer.innerHTML = data.map(q => {
-                    return `
-                    <article class="questionnaire-card archived">
-                        <div class="card-content">
-                            <h4>${q.nombre}</h4>
-                            <span class="status">Archivado</span>
-                            <div class="button-group">
-                                <button class="btn btn-warning" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+            // Cargar cuestionarios archivados
+            fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const archivadosContainer = document.getElementById('cuestionarios-archivados');
+                    if (!Array.isArray(data) || data.length === 0) {
+                        archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
+                        return;
+                    }
+                    archivadosContainer.innerHTML = data.map(q => {
+                        return `
+                        <article class="questionnaire-card archived">
+                            <div class="card-content">
+                                <h4>${q.nombre}</h4>
+                                <span class="status">Archivado</span>
+                                <div class="button-group">
+                                    <button class="btn btn-warning" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                                </div>
                             </div>
-                        </div>
-                    </article>
-                `;
-                }).join('');
-            })
-            .catch(error => console.error('Error al cargar los cuestionarios archivados:', error));
+                        </article>
+                    `;
+                    }).join('');
+                })
+                .catch(error => console.error('Error al cargar los cuestionarios archivados:', error));
+
+        }
+
 
         document.getElementById('form_cuestionario').addEventListener('submit', async(event) => {
             event.preventDefault();

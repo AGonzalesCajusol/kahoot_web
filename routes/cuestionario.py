@@ -21,11 +21,10 @@ def registrar_rutas(app):
         tipo = datos.get('tipo')
         descripcion = datos.get('descripcion')
         estado = datos.get('estado')
-        pin = datos.get('pin')
         fecha_programacion = datos.get('fecha_programacion')
         id_docente = datos.get('id_docente')
 
-        response = cuestionario.registrar_cuestionario(nombre, tipo, descripcion, estado, pin, fecha_programacion, id_docente)
+        response = cuestionario.registrar_cuestionario(nombre, tipo, descripcion, estado, fecha_programacion, id_docente)
 
         if "exitosamente" in response:
             return jsonify({"message": response}), 201  
@@ -36,8 +35,9 @@ def registrar_rutas(app):
     @app.route('/registrar_pregunta', methods=['POST'])
     def registrar_pregunta():
         datos = request.get_json()
+        print("estos son los datos", datos)
         id_docente = session['docente_id']
-        response = cuestionario.registrar_cuestionario(datos, id_docente)
+        response = cuestionario.registrar_cuestionarioSPDF(datos, id_docente)
         if response:
             return jsonify({'estado': True})
         

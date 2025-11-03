@@ -33,64 +33,6 @@ def retornar_dartosformuario(id_formulario):
         datos_frm = cursor.fetchone()
     return datos_frm
 
-def registrar_cuestionario(datos,id_docente):
-    detalle = datos.get('detalle', {})
-    preguntas = datos.get('preguntas', [])
-    connection = None
-    try:
-        connection = conexion.conectarbd()
-        if connection:
-            cursor = connection.cursor()
-
-            query = """
-                INSERT INTO Cuestionario (nombre, tipo_cuestionario, descripcion, estado, pin, fecha_programacion, id_docente)
-                VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """
-            cursor.execute(query, (
-                detalle.get('nombre_cuestionario'),
-                detalle.get('tipo_formulario'),
-                detalle.get('descripcion_formulario'),
-                detalle.get('estado'),
-                detalle.get('pin'),
-                detalle.get('fecha_programacion'),
-                id_docente
-            ))
-            id_cuestionario = cursor.lastrowid
-            for pregunta in preguntas:
-                query = """
-                    INSERT INTO Pregunta (pregunta, puntaje, tiempo_respuesta, tipo_pregunta, id_cuestionario)
-                    VALUES (%s, %s, %s, %s, %s)
-                """
-                cursor.execute(query, (
-                    pregunta.get('nombre_pregunta'),
-                    pregunta.get('puntos'),
-                    pregunta.get('tiempo'),
-                    pregunta.get('tipo_pregunta'),
-                    id_cuestionario
-                ))
-                id_pregunta = cursor.lastrowid 
-
-                respuestas = pregunta.get('alternativas')
-                respuesta = pregunta.get('respuesta')
-                for rpt in respuestas:
-                    query = """
-                            INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta)
-                            VALUES (%s, %s, %s)
-                        """
-                    estado = 1 if str(rpt).strip() == respuesta  else 0
-                    cursor.execute(query, (rpt, estado ,id_pregunta))
-            connection.commit()  
-            return True
-        else:
-            return 3
-    except Exception as e:
-        connection.rollback()
-        print(e)
-        return False
-    finally:
-        if connection:
-            connection.close()
-
 def obtener_cuestionarios_activos(id_docente):
     connection = None
     try:
@@ -230,11 +172,92 @@ def actualizar_estado_juego(id_cuestionario, nuevo_estado):
 def crear_pin():
     pin = str(random.randint(10000, 99999))
     return pin
+def registrar_cuestionarioSPDF(datos, id_docente):
+    detalle = datos.get('detalle', {})
+    preguntas = datos.get('preguntas', [])
+    print("📘 Detalle:", detalle)
+    print("❓ Preguntas:", preguntas)
+
+    connection = None
+    try:
+        connection = conexion.conectarbd()
+        if connection:
+            cursor = connection.cursor()
+
+            query = """
+                INSERT INTO Cuestionario (nombre, tipo_cuestionario, descripcion, pin, estado, id_docente)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            estado = detalle.get('estado')
+            if estado == 'Público':
+                estado = 'P'
+            elif estado == 'Privado':
+                estado = 'R'
+
+            cursor.execute(query, (
+                detalle.get('nombre_cuestionario'),  # ✅ corregido
+                detalle.get('tipo_formulario'),      # ✅ sin [0]
+                detalle.get('descripcion_formulario'),
+                crear_pin(),
+                estado,
+                id_docente
+            ))
+
+            id_cuestionario = cursor.lastrowid
+            print(f"✅ Cuestionario creado con ID: {id_cuestionario}")
+
+            for pregunta in preguntas:
+                print("🟢 Insertando pregunta:", pregunta.get('nombre_pregunta'))
+
+                query = """
+                    INSERT INTO Pregunta (pregunta, puntaje, tiempo_respuesta, tipo_pregunta, id_cuestionario)
+                    VALUES (%s, %s, %s, %s, %s)
+                """
+                cursor.execute(query, (
+                    pregunta.get('nombre_pregunta'),
+                    pregunta.get('puntos'),
+                    pregunta.get('tiempo'),
+                    pregunta.get('tipo_pregunta'),
+                    id_cuestionario
+                ))
+
+                id_pregunta = cursor.lastrowid
+                print(f"   ↳ ID pregunta: {id_pregunta}")
+
+                respuestas = pregunta.get('alternativas', [])
+                respuesta = pregunta.get('respuesta')  # ✅ corregido
+
+                for rpt in respuestas:
+                    query = """
+                        INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta)
+                        VALUES (%s, %s, %s)
+                    """
+                    estado_alt = 1 if str(rpt).strip() == str(respuesta).strip() else 0
+                    cursor.execute(query, (rpt, estado_alt, id_pregunta))
+                    print(f"      ↳ Alternativa: {rpt} ({'Correcta' if estado_alt else 'Incorrecta'})")
+
+            connection.commit()
+            print("✅ Todo insertado correctamente.")
+            return True
+        else:
+            print("⚠️ No se pudo conectar a la base de datos.")
+            return 3
+
+    except Exception as e:
+        if connection:
+            connection.rollback()
+        print("❌ Error:", e)
+        return False
+
+    finally:
+        if connection:
+            connection.close()
 
 def registrar_cuestionario(datos,id_docente):
     detalle = datos.get('detalle', {})
     preguntas = datos.get('preguntas', [])
-    print(preguntas)
+    print("detalle" , detalle)
+    print("pregfunta" , preguntas)
     connection = None
     try:
         connection = conexion.conectarbd()
