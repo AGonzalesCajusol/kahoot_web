@@ -2,7 +2,7 @@ from flask import redirect, render_template, request, jsonify, session, url_for
 import conexion
 from controladores import cuestionario
 from controladores import docente
-
+import pandas as pd
 
 def registrar_rutas(app):
     @app.route('/registrar_respuestasform', methods=['POST'])
@@ -11,6 +11,41 @@ def registrar_rutas(app):
         datos = request.get_json()
         cuestionario.actualizar_puntaje_usuario(id_participante, datos.get('puntaje'))
         return {'puntaje': 12}
+    
+    @app.route('/subirformulario_excel', methods=['POST'])
+    def subirformulario_excel():
+        excel = request.files['excel_archivo']
+        df = pd.read_excel(excel)
+
+        # Dividir por columnas
+        formulario_cols = df.columns[0:4]   # A–D
+        pregunta_cols = df.columns[4:10]     # E–I
+
+        # Crear JSON del formulario (usamos la primera fila)
+        formulario = df[formulario_cols].iloc[0].to_dict()
+
+        # Crear JSON de preguntas (todas las filas)
+        preguntas = df[pregunta_cols].to_dict(orient='records')
+
+        # Limpiar respuestas (separar por comas)
+        for p in preguntas:
+            if isinstance(p.get('respuestas'), str):
+                p['respuestas'] = [x.strip() for x in p['respuestas'].split(',')]
+
+        resultado = {
+            "detalle": formulario,
+            "preguntas": preguntas
+        }
+        print(resultado)
+
+        id_docente = session['docente_id']
+        response = cuestionario.registrar_cuestionario(resultado, id_docente)
+        if(response):
+            return jsonify({'estado': True, 'mensaje': 'se registro con éxito!!, la página se actualizara..'})
+        elif(response== False):
+            return jsonify({'estado': False, 'mensaje': 'No cumple con el formato el excel revise el formato de guía'})
+        #error de bd
+        return 'asdnas'
 
 
     @app.route('/registrar_cuestionario', methods=['POST'])
@@ -205,4 +240,3 @@ def registrar_rutas(app):
             usuarios=usuarios
         )
 
-    

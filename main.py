@@ -30,6 +30,7 @@ def dashboard():
         return redirect(url_for('login'))  # Si no está logueado, redirigir al login
     return render_template('dashboard.html', id_docente=session['docente_id'])
 
+
 @app.route('/logout')
 def logout():    
     session.clear()  
