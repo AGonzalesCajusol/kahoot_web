@@ -34,11 +34,9 @@ def correo_disponible(correo):
             return False
         
         with connection.cursor() as cursor:
-            # Buscar en Docente
             cursor.execute("SELECT id_docente FROM Docente WHERE correo = %s", (correo,))
             if cursor.fetchone():
                 return False
-            # Buscar en Jugador
             cursor.execute("SELECT id_jugador FROM Jugador WHERE email = %s", (correo,))
             if cursor.fetchone():
                 return False
@@ -49,7 +47,7 @@ def correo_disponible(correo):
         print("Error en correo_disponible:", e)
         return False
     
-def registrar_docente(correo, password, nombres, apellidos):
+def registrar_docente(correo, password, nombres, apellidos, rostro=None):
     try:
         hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
@@ -57,11 +55,11 @@ def registrar_docente(correo, password, nombres, apellidos):
         if connection:
             cursor = connection.cursor()
 
-            query = "INSERT INTO Docente (correo, password, nombres, apellidos) VALUES (%s, %s, %s, %s)"
-            cursor.execute(query, (correo, hashed_password, nombres, apellidos))
-            connection.commit()  # Guardar los cambios
+            query = "INSERT INTO Docente (correo, password, nombres, apellidos, rostro) VALUES (%s, %s, %s, %s, %s)"
+            cursor.execute(query, (correo, hashed_password, nombres, apellidos, rostro))
+            connection.commit() 
             connection.close()
-            return "Docente registrado exitosamente"  # Mensaje de éxito
+            return "Docente registrado exitosamente"  
         else:
             return "Error al conectar con la base de datos"
 
@@ -89,7 +87,6 @@ def modificar_docente(correo, nuevo_nombre, nuevo_apellido, nuevo_correo=None, n
             params.append(nuevo_correo)
         
         if nueva_contrasena:
-            # Hash de la nueva contraseña
             hashed_password = hashlib.sha256(nueva_contrasena.encode('utf-8')).hexdigest()
             update_query += ", password = %s"
             params.append(hashed_password)
