@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Grupos</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #00c6ff, #0072ff);
+      min-height: 100vh;
+      padding: 40px 20px;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .card {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .grupo-card {
+      border: 2px solid #e0e0e0;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .grupo-card:hover {
+      border-color: #0072ff;
+      box-shadow: 0 4px 12px rgba(0,114,255,0.2);
+    }
+    
+    .grupo-card.active {
+      border-color: #28a745;
+      background: #f0fff4;
+    }
+    
+    .miembro-badge {
+      display: inline-block;
+      background: #0072ff;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      margin: 4px;
+    }
+    
+    .lider-badge {
+      background: #ffc107;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h2 class="text-center mb-4">
+        <i class="bi bi-people-fill text-primary"></i> Gestión de Grupos
+      </h2>
+      
+      <!-- Si el usuario ya está en un grupo -->
+      {% if grupo_usuario %}
+      <div id="grupoActual" class="grupo-card active">
+        <h4>
+          <i class="bi bi-star-fill text-warning"></i> Tu Grupo: {{ grupo_usuario.nombre_grupo }}
+          {% if grupo_usuario.id_lider == id_jugador_cuestionario %}
+            <span class="badge bg-warning text-dark ms-2">Líder</span>
+          {% endif %}
+        </h4>
+        
+        <div id="miembrosGrupo" class="mt-3">
+          <strong>Miembros:</strong>
+          <div id="listaMiembros"></div>
+        </div>
+        
+        {% if grupo_usuario.id_lider == id_jugador_cuestionario %}
+        <div class="mt-3">
+          <label class="form-label"><strong>Método de Evaluación:</strong></label>
+          <select id="metodoEvaluacion" class="form-select">
+            <option value="votacion" {% if grupo_usuario.metodo_evaluacion == 'votacion' %}selected{% endif %}>
+              Votación (Mayoría)
+            </option>
+            <option value="consenso" {% if grupo_usuario.metodo_evaluacion == 'consenso' %}selected{% endif %}>
+              Consenso (Unanimidad)
+            </option>
+            <option value="lider" {% if grupo_usuario.metodo_evaluacion == 'lider' %}selected{% endif %}>
+              Decisión del Líder
+            </option>
+          </select>
+          <button class="btn btn-primary mt-2" onclick="guardarMetodoEvaluacion()">
+            <i class="bi bi-save"></i> Guardar Método
+          </button>
+        </div>
+        
+        <div class="mt-3">
+          <button class="btn btn-danger" onclick="disolverGrupo()">
+            <i class="bi bi-x-circle"></i> Disolver Grupo
+          </button>
+        </div>
+        {% else %}
+        <div class="mt-3">
+          <strong>Método de Evaluación:</strong>
+          <span class="badge bg-info">
+            {% if grupo_usuario.metodo_evaluacion == 'votacion' %}Votación (Mayoría)
+            {% elif grupo_usuario.metodo_evaluacion == 'consenso' %}Consenso (Unanimidad)
+            {% elif grupo_usuario.metodo_evaluacion == 'lider' %}Decisión del Líder
+            {% else %}Votación (Mayoría){% endif %}
+          </span>
+        </div>
+        <div class="mt-3">
+          <button class="btn btn-warning" onclick="salirGrupo()">
+            <i class="bi bi-box-arrow-right"></i> Salir del Grupo
+          </button>
+        </div>
+        {% endif %}
+        
+        <div class="mt-4 text-center">
+          <button class="btn btn-success btn-lg" onclick="irASalaEspera()">
+            <i class="bi bi-check-circle"></i> Listo para Jugar
+          </button>
+        </div>
+      </div>
+      {% else %}
+      
+      <!-- Crear nuevo grupo -->
+      <div class="card mb-4">
+        <h5><i class="bi bi-plus-circle"></i> Crear Nuevo Grupo</h5>
+        <form id="crearGrupoForm">
+          <div class="mb-3">
+            <label class="form-label">Nombre del Grupo</label>
+            <input type="text" class="form-control" id="nombreGrupo" 
+                   placeholder="Ej: Los Genios" maxlength="100" required>
+            <small class="text-muted">Mínimo 2 caracteres</small>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Crear Grupo
+          </button>
+        </form>
+      </div>
+      
+      <!-- Grupos disponibles -->
+      <div class="card">
+        <h5><i class="bi bi-people"></i> Grupos Disponibles</h5>
+        <div id="gruposDisponibles">
+          {% if grupos_disponibles %}
+            {% for grupo in grupos_disponibles %}
+            <div class="grupo-card">
+              <h6>{{ grupo.nombre_grupo }}</h6>
+              <p class="text-muted mb-2">
+                <i class="bi bi-person-fill"></i> Líder: {{ grupo.lider_alias or 'N/A' }}
+                <br>
+                <i class="bi bi-people"></i> Miembros: {{ grupo.num_miembros }}/5
+              </p>
+              <button class="btn btn-success btn-sm" onclick="unirseGrupo({{ grupo.id_grupo }})">
+                <i class="bi bi-person-plus"></i> Unirse
+              </button>
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="text-muted">No hay grupos disponibles. ¡Crea uno nuevo!</p>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  
+  <script>
+    const socket = io();
+    const idCuestionario = {{ id_cuestionario | tojson }};
+    const idJugadorCuestionario = {{ id_jugador_cuestionario | tojson }};
+    const idGrupo = {{ grupo_usuario.id_grupo if grupo_usuario else 'null' | tojson }};
+    
+    // Cargar miembros del grupo si está en uno
+    {% if grupo_usuario %}
+    cargarMiembrosGrupo({{ grupo_usuario.id_grupo }});
+    {% endif %}
+    
+    // Socket.IO para actualizar grupos en tiempo real
+    socket.on('actualizar_grupos', (data) => {
+      console.log('Grupos actualizados:', data);
+      location.reload(); // Recargar para mostrar cambios
+    });
+    
+    // Formulario crear grupo
+    document.getElementById('crearGrupoForm')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombreGrupo = document.getElementById('nombreGrupo').value.trim();
+      
+      if (nombreGrupo.length < 2) {
+        Swal.fire('Error', 'El nombre del grupo debe tener al menos 2 caracteres', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/crear_grupo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre_grupo: nombreGrupo, id_cuestionario: idCuestionario })
+        });
+        
+        const data = await response.json();
+        
+        if (data.code === 1) {
+          Swal.fire('¡Éxito!', data.message, 'success').then(() => {
+            location.reload();
+          });
+        } else {
+          Swal.fire('Error', data.message, 'error');
+        }
+      } catch (error) {
+        Swal.fire('Error', 'Error al crear el grupo', 'error');
+      }
+    });
+    
+    function unirseGrupo(idGrupo) {
+      Swal.fire({
+        title: '¿Unirse a este grupo?',
+        text: 'Te unirás al grupo seleccionado',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, unirme',
+        cancelButtonText: 'Cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/unirse_grupo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_grupo: idGrupo })
+            });
+            
+            const data = await response.json();
+            
+            if (data.code === 1) {
+              Swal.fire('¡Éxito!', data.message, 'success').then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire('Error', data.message, 'error');
+            }
+          } catch (error) {
+            Swal.fire('Error', 'Error al unirse al grupo', 'error');
+          }
+        }
+      });
+    }
+    
+    function salirGrupo() {
+      Swal.fire({
+        title: '¿Salir del grupo?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, salir',
+        cancelButtonText: 'Cancelar'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/salir_grupo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_grupo: idGrupo })
+            });
+            
+            const data = await response.json();
+            
+            if (data.code === 1) {
+              Swal.fire('¡Éxito!', data.message, 'success').then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire('Error', data.message, 'error');
+            }
+          } catch (error) {
+            Swal.fire('Error', 'Error al salir del grupo', 'error');
+          }
+        }
+      });
+    }
+    
+    function disolverGrupo() {
+      Swal.fire({
+        title: '¿Disolver el grupo?',
+        text: 'Todos los miembros serán removidos y el grupo se cerrará',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, disolver',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#dc3545'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          try {
+            const response = await fetch('/disolver_grupo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ id_grupo: idGrupo })
+            });
+            
+            const data = await response.json();
+            
+            if (data.code === 1) {
+              Swal.fire('¡Éxito!', data.message, 'success').then(() => {
+                location.reload();
+              });
+            } else {
+              Swal.fire('Error', data.message, 'error');
+            }
+          } catch (error) {
+            Swal.fire('Error', 'Error al disolver el grupo', 'error');
+          }
+        }
+      });
+    }
+    
+    async function cargarMiembrosGrupo(idGrupo) {
+      try {
+        const response = await fetch(`/miembros_grupo/${idGrupo}`);
+        const data = await response.json();
+        
+        if (data.code === 1) {
+          const lista = document.getElementById('listaMiembros');
+          lista.innerHTML = '';
+          
+          data.miembros.forEach(miembro => {
+            const badge = document.createElement('span');
+            badge.className = `miembro-badge ${miembro.es_lider ? 'lider-badge' : ''}`;
+            badge.textContent = `${miembro.alias} ${miembro.es_lider ? '👑' : ''}`;
+            lista.appendChild(badge);
+          });
+        }
+      } catch (error) {
+        console.error('Error al cargar miembros:', error);
+      }
+    }
+    
+    async function guardarMetodoEvaluacion() {
+      const metodo = document.getElementById('metodoEvaluacion').value;
+      
+      try {
+        const response = await fetch('/establecer_metodo_evaluacion', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_grupo: idGrupo, metodo_evaluacion: metodo })
+        });
+        
+        const data = await response.json();
+        
+        if (data.code === 1) {
+          Swal.fire('¡Éxito!', data.message, 'success');
+        } else {
+          Swal.fire('Error', data.message, 'error');
+        }
+      } catch (error) {
+        Swal.fire('Error', 'Error al guardar método', 'error');
+      }
+    }
+    
+    function irASalaEspera() {
+      window.location.href = `/sala_espera/${idCuestionario}`;
+    }
+  </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

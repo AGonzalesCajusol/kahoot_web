@@ -1,0 +1,44 @@
+/* Layout base */
+body {
+  background-color: #f7f7f9;
+  margin: 0;
+  padding: 0;
+}
+
+header .navbar .nav-link {
+  color: #4a5568;
+}
+header .navbar .nav-link.active,
+header .navbar .nav-link:hover {
+  color: #0d6efd;
+}
+
+footer {
+  font-size: 0.9rem;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+footer > div:last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+body.d-flex.flex-column.min-vh-100 {
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+/* Contenedores comunes */
+.container-narrow {
+  max-width: 800px;
+}
+
+

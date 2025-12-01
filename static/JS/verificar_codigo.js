@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputCodigo = document.getElementById("codigo");
     const alertContainer = document.getElementById("alertContainer");
     const submitBtn = form.querySelector("button[type='submit']");
+    const btnReenviar = document.getElementById("btnReenviar");
 
     const showAlert = (type, message) => {
         alertContainer.innerHTML = `
@@ -11,6 +12,43 @@ document.addEventListener("DOMContentLoaded", () => {
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>`;
     };
+
+    // Funcionalidad de reenvío de código
+    if (btnReenviar) {
+        btnReenviar.addEventListener("click", async () => {
+            const email = sessionStorage.getItem("pending_email");
+            
+            if (!email) {
+                showAlert("danger", "No se encontró el correo asociado. Regístrate nuevamente.");
+                return;
+            }
+
+            btnReenviar.disabled = true;
+            btnReenviar.textContent = "Enviando...";
+
+            try {
+                const response = await fetch("/reenviar_codigo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.code === 1) {
+                    showAlert("success", data.message || "Código reenviado correctamente.");
+                } else {
+                    showAlert("danger", data.message || "No se pudo reenviar el código. Intenta nuevamente.");
+                }
+            } catch (error) {
+                console.error("Error al reenviar código:", error);
+                showAlert("danger", "Ocurrió un error al reenviar el código.");
+            } finally {
+                btnReenviar.disabled = false;
+                btnReenviar.textContent = "Reenviar código";
+            }
+        });
+    }
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();

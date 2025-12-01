@@ -1,7 +1,8 @@
-from flask import render_template, request, redirect, session, url_for, flash, jsonify
-from controladores.login import validar_docente
+from flask import render_template, request, redirect, session, url_for, flash, jsonify, make_response
+from controladores.login import validar_docente, validar_docente_facial, validar_jugador_facial
 from controladores.docente import registrar_docente 
 from controladores.jugador import validar_jugador
+from controladores.cookies_utils import establecer_cookie_encriptada
 
 def registrar_rutas(app):
     @app.route('/login', methods=['GET', 'POST'])
@@ -15,14 +16,34 @@ def registrar_rutas(app):
                 session['docente_id'] = docente['id_docente']
                 session['nombres'] = docente['nombres']
                 session['tipo_usuario'] = 'docente'
-                return redirect(url_for('dashboard'))
+                
+                # Crear cookies encriptadas (similar al ejemplo)
+                response = make_response(redirect(url_for('dashboard')))
+                id_usuario = str(docente['id_docente'])
+                nombre_usuario = docente['nombres']
+                
+                # Establecer cookies encriptadas con SHA256 (como en el ejemplo)
+                establecer_cookie_encriptada(response, 'id_usuario', id_usuario)
+                establecer_cookie_encriptada(response, 'nombre_usuario', nombre_usuario)
+                
+                return response
 
             jugador = validar_jugador(correo, password)
             if jugador:
                 session['jugador_id'] = jugador['id_jugador']
                 session['email'] = jugador['email']
                 session['tipo_usuario'] = 'jugador'
-                return redirect(url_for('dashboard'))
+                
+                # Crear cookies encriptadas (similar al ejemplo)
+                response = make_response(redirect(url_for('dashboard')))
+                id_usuario = str(jugador['id_jugador'])
+                nombre_usuario = jugador.get('email', 'Jugador')  # Usar email como nombre si no hay nombre
+                
+                # Establecer cookies encriptadas con SHA256 (como en el ejemplo)
+                establecer_cookie_encriptada(response, 'id_usuario', id_usuario)
+                establecer_cookie_encriptada(response, 'nombre_usuario', nombre_usuario)
+                
+                return response
 
             flash("Correo o contraseña incorrectos. Intenta nuevamente.", "danger")
             return render_template('login.html')
@@ -44,20 +65,64 @@ def registrar_rutas(app):
             return redirect(url_for('login'))
 
         flash(response, "danger")  
-        return render_template('registro.html') 
+        return render_template('registro.html')
+
     @app.route('/login_facial', methods=['POST'])
-    def login_facial_route():
-        data = request.get_json()
-        image_base64 = data.get('image')
+    def login_facial():
+        try:
+            data = request.get_json()
+            rostro_data = data.get('rostro')
 
-        if not image_base64:
-            return jsonify({"success": False, "message": "Faltan datos."}), 400
+            if not rostro_data:
+                return jsonify({
+                    'success': False,
+                    'message': 'No se proporcionaron datos faciales'
+                }), 400
 
-        from controladores.login import login_facial
-        resultado = login_facial(image_base64)
+            docente = validar_docente_facial(rostro_data)
+            if docente:
+                session['docente_id'] = docente['id_docente']
+                session['nombres'] = docente['nombres']
+                session['apellidos'] = docente.get('apellidos', '')
+                session['correo'] = docente['correo']
+                session['tipo_usuario'] = 'docente'
 
-        if resultado['success']:
-            return jsonify(resultado)
-        else:
-            return jsonify(resultado), 401    
+                response = make_response(jsonify({
+                    'success': True,
+                    'message': 'Login exitoso',
+                    'redirect': url_for('dashboard')
+                }))
+
+                establecer_cookie_encriptada(response, 'id_usuario', str(docente['id_docente']))
+                establecer_cookie_encriptada(response, 'nombre_usuario', docente['nombres'])
+
+                return response
+
+            jugador = validar_jugador_facial(rostro_data)
+            if jugador:
+                session['jugador_id'] = jugador['id_jugador']
+                session['email'] = jugador['email']
+                session['tipo_usuario'] = 'jugador'
+
+                response = make_response(jsonify({
+                    'success': True,
+                    'message': 'Login exitoso',
+                    'redirect': url_for('dashboard')
+                }))
+
+                establecer_cookie_encriptada(response, 'id_usuario', str(jugador['id_jugador']))
+                establecer_cookie_encriptada(response, 'nombre_usuario', jugador.get('email', 'Jugador'))
+
+                return response
+
+            return jsonify({
+                'success': False,
+                'message': 'Rostro no reconocido. No se encontró una coincidencia con los usuarios registrados. Por favor, intenta nuevamente o usa tu correo y contraseña.'
+            }), 401
+
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'message': 'Error interno del servidor'
+            }), 500
     

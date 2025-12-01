@@ -1,0 +1,823 @@
+/* ============================================
+   MEJORAS DE USABILIDAD - HEURÍSTICAS DE NIELSEN
+   ============================================ */
+
+/* ============================================
+   HEURÍSTICA 1: VISIBILIDAD DEL ESTADO DEL SISTEMA
+   ============================================ */
+
+/* Indicadores de carga */
+.loading-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #0072ff, #00c6ff);
+    z-index: 9999;
+    animation: loading-bar 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-bar {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* Breadcrumbs para navegación */
+.breadcrumb-container {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.breadcrumb-item {
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "/";
+    padding: 0 0.5rem;
+    color: #6c757d;
+}
+
+.breadcrumb-item.active {
+    color: #495057;
+    font-weight: 600;
+}
+
+.breadcrumb-item a {
+    color: #0072ff;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.breadcrumb-item a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Indicadores de progreso */
+.progress-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin: 2rem 0;
+    position: relative;
+}
+
+.progress-step {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-step::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    width: 100%;
+    height: 2px;
+    background: #dee2e6;
+    z-index: -1;
+}
+
+.progress-step:first-child::before {
+    left: 50%;
+}
+
+.progress-step:last-child::before {
+    width: 0;
+}
+
+.progress-step.active::before {
+    background: #0072ff;
+}
+
+.progress-step.completed::before {
+    background: #28a745;
+}
+
+.progress-step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #dee2e6;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.progress-step.active .progress-step-number {
+    background: #0072ff;
+    color: white;
+    box-shadow: 0 0 0 4px rgba(0, 114, 255, 0.2);
+}
+
+.progress-step.completed .progress-step-number {
+    background: #28a745;
+    color: white;
+}
+
+.progress-step.completed .progress-step-number::after {
+    content: '✓';
+    font-size: 1.2rem;
+}
+
+/* Feedback de acciones */
+.action-feedback {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    animation: slideInRight 0.3s ease-out;
+    max-width: 400px;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.action-feedback.success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.action-feedback.error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.action-feedback.info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+.action-feedback.warning {
+    background: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+}
+
+/* Estado de formularios */
+.form-status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.form-status-indicator.saved {
+    background: #28a745;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2);
+}
+
+.form-status-indicator.unsaved {
+    background: #ffc107;
+    box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
+}
+
+.form-status-indicator.error {
+    background: #dc3545;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2);
+}
+
+/* ============================================
+   HEURÍSTICA 2: CORRESPONDENCIA SISTEMA-MUNDO REAL
+   ============================================ */
+
+/* Iconos familiares y lenguaje claro */
+.icon-with-text {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.icon-with-text i {
+    font-size: 1.2rem;
+}
+
+/* Metáforas visuales */
+.card-metaphor {
+    border-left: 4px solid #0072ff;
+    transition: all 0.3s;
+}
+
+.card-metaphor:hover {
+    border-left-width: 6px;
+    transform: translateX(4px);
+}
+
+/* ============================================
+   HEURÍSTICA 3: CONTROL Y LIBERTAD DEL USUARIO
+   ============================================ */
+
+/* Botones de cancelar/deshacer */
+.btn-cancel {
+    background: #6c757d;
+    color: white;
+    border: none;
+}
+
+.btn-cancel:hover {
+    background: #5a6268;
+    color: white;
+}
+
+.btn-undo {
+    background: #ffc107;
+    color: #212529;
+    border: none;
+}
+
+.btn-undo:hover {
+    background: #e0a800;
+    color: #212529;
+}
+
+/* Confirmaciones de acciones destructivas */
+.destructive-action {
+    border: 2px solid #dc3545;
+    background: #fff;
+    color: #dc3545;
+}
+
+.destructive-action:hover {
+    background: #dc3545;
+    color: white;
+}
+
+/* Botón de salida de emergencia */
+.emergency-exit {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+    transition: all 0.3s;
+}
+
+.emergency-exit:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.6);
+}
+
+/* ============================================
+   HEURÍSTICA 4: CONSISTENCIA Y ESTÁNDARES
+   ============================================ */
+
+/* Paleta de colores consistente */
+:root {
+    --primary-color: #0072ff;
+    --primary-hover: #0056b3;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --secondary-color: #6c757d;
+}
+
+/* Botones consistentes */
+.btn-primary {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-success {
+    background: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    border-color: var(--danger-color);
+}
+
+/* Iconos consistentes */
+.icon-action {
+    font-size: 1rem;
+    margin-right: 0.5rem;
+}
+
+/* Espaciado consistente */
+.section-spacing {
+    margin-bottom: 2rem;
+}
+
+.card-spacing {
+    margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   HEURÍSTICA 5: PREVENCIÓN DE ERRORES
+   ============================================ */
+
+/* Validación en tiempo real */
+.form-control.is-valid {
+    border-color: #28a745;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-2.18 1.5-1.78l1.34.56 2.04-2.04c.78-.78 2.05-.78 2.83 0L8 2.5l-5.7 4.23z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    padding-right: calc(1.5em + 0.75rem);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3cpath d='M6 2L2 6l4 4 4-4-4-4z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+/* Mensajes de ayuda preventivos */
+.help-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+}
+
+.help-text::before {
+    content: "💡 ";
+}
+
+/* Confirmaciones antes de acciones críticas */
+.confirmation-dialog {
+    background: white;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    max-width: 500px;
+}
+
+.confirmation-dialog .icon-warning {
+    font-size: 3rem;
+    color: #ffc107;
+    margin-bottom: 1rem;
+}
+
+/* ============================================
+   HEURÍSTICA 6: RECONOCIMIENTO ANTES QUE RECUERDO
+   ============================================ */
+
+/* Tooltips mejorados */
+.tooltip-enhanced {
+    position: relative;
+    cursor: help;
+}
+
+.tooltip-enhanced::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem 1rem;
+    background: #333;
+    color: white;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 1000;
+    margin-bottom: 0.5rem;
+}
+
+.tooltip-enhanced:hover::after {
+    opacity: 1;
+}
+
+/* Labels claros y descriptivos */
+.label-enhanced {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.label-enhanced .required-indicator {
+    color: #dc3545;
+}
+
+/* Sugerencias contextuales */
+.contextual-suggestion {
+    background: #e7f3ff;
+    border-left: 4px solid #0072ff;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-top: 1rem;
+}
+
+.contextual-suggestion::before {
+    content: "💡 Sugerencia: ";
+    font-weight: 600;
+    color: #0072ff;
+}
+
+/* ============================================
+   HEURÍSTICA 7: FLEXIBILIDAD Y EFICIENCIA DE USO
+   ============================================ */
+
+/* Atajos de teclado */
+.keyboard-shortcut {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.keyboard-shortcut kbd {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 0.125rem 0.375rem;
+    font-family: monospace;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+}
+
+/* Acciones rápidas */
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.quick-action-btn {
+    padding: 0.5rem 1rem;
+    border: 1px solid #dee2e6;
+    background: white;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.quick-action-btn:hover {
+    background: #f8f9fa;
+    border-color: #0072ff;
+    color: #0072ff;
+}
+
+/* Búsqueda rápida */
+.quick-search {
+    position: relative;
+}
+
+.quick-search input {
+    padding-left: 2.5rem;
+}
+
+.quick-search::before {
+    content: "🔍";
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+/* ============================================
+   HEURÍSTICA 8: DISEÑO ESTÉTICO Y MINIMALISTA
+   ============================================ */
+
+/* Eliminar elementos innecesarios */
+.hide-when-not-needed {
+    display: none;
+}
+
+/* Espaciado limpio */
+.clean-layout {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Jerarquía visual clara */
+.hierarchy-primary {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #212529;
+    margin-bottom: 1rem;
+}
+
+.hierarchy-secondary {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.75rem;
+}
+
+.hierarchy-tertiary {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+/* Contraste adecuado */
+.text-high-contrast {
+    color: #212529;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+}
+
+/* ============================================
+   HEURÍSTICA 9: AYUDAR A RECONOCER Y RECUPERARSE DE ERRORES
+   ============================================ */
+
+/* Mensajes de error claros y constructivos */
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.error-message::before {
+    content: "⚠️";
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.error-message .error-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.error-message .error-description {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-message .error-solution {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: #856404;
+    background: #fff3cd;
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    margin-top: 0.5rem;
+}
+
+.error-message .error-solution::before {
+    content: "💡 Solución: ";
+    font-weight: 600;
+}
+
+/* Mensajes de éxito */
+.success-message {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    margin: 1rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.success-message::before {
+    content: "✅";
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+/* Validación inline mejorada */
+.validation-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.validation-feedback.invalid-feedback {
+    color: #dc3545;
+}
+
+.validation-feedback.valid-feedback {
+    color: #28a745;
+}
+
+/* ============================================
+   HEURÍSTICA 10: AYUDA Y DOCUMENTACIÓN
+   ============================================ */
+
+/* Ayuda contextual */
+.help-contextual {
+    position: relative;
+    display: inline-block;
+}
+
+.help-contextual .help-icon {
+    color: #0072ff;
+    cursor: help;
+    margin-left: 0.25rem;
+}
+
+.help-contextual .help-content {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 250px;
+    max-width: 400px;
+    z-index: 1000;
+    display: none;
+    margin-bottom: 0.5rem;
+}
+
+.help-contextual:hover .help-content {
+    display: block;
+}
+
+/* Guía paso a paso */
+.step-guide {
+    background: #f8f9fa;
+    border-left: 4px solid #0072ff;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin: 1rem 0;
+}
+
+.step-guide .step-title {
+    font-weight: 600;
+    color: #0072ff;
+    margin-bottom: 0.5rem;
+}
+
+.step-guide .step-content {
+    color: #495057;
+    line-height: 1.6;
+}
+
+/* FAQ mejorado */
+.faq-item {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1rem 0;
+}
+
+.faq-question {
+    font-weight: 600;
+    color: #212529;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.faq-question::after {
+    content: "▼";
+    transition: transform 0.3s;
+}
+
+.faq-question.active::after {
+    transform: rotate(180deg);
+}
+
+.faq-answer {
+    margin-top: 0.75rem;
+    color: #6c757d;
+    display: none;
+    line-height: 1.6;
+}
+
+.faq-answer.show {
+    display: block;
+}
+
+/* Botón de ayuda flotante */
+.help-floating-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: #0072ff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    box-shadow: 0 4px 12px rgba(0, 114, 255, 0.4);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.help-floating-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 114, 255, 0.6);
+}
+
+/* ============================================
+   MEJORAS ADICIONALES
+   ============================================ */
+
+/* Accesibilidad */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Focus visible para accesibilidad */
+*:focus-visible {
+    outline: 2px solid #0072ff;
+    outline-offset: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .action-feedback {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+    
+    .help-floating-btn,
+    .emergency-exit {
+        width: 50px;
+        height: 50px;
+        bottom: 10px;
+    }
+    
+    .progress-indicator {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .progress-step::before {
+        display: none;
+    }
+}
+
+
+
+
+
+
+
+
+
+

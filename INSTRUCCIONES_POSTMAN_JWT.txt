@@ -1,0 +1,245 @@
+================================================================================
+INSTRUCCIONES PARA GENERAR TOKEN JWT EN POSTMAN
+================================================================================
+
+Las APIs de Docente requieren autenticación JWT. Sigue estos pasos para obtener
+un token y usarlo en tus peticiones.
+
+================================================================================
+PASO 1: OBTENER EL TOKEN JWT
+================================================================================
+
+1. Abre Postman y crea una nueva petición (Request)
+
+2. Configura la petición:
+   - Método: POST
+   - URL: http://localhost:5000/auth
+     (Ajusta el puerto si tu aplicación usa otro, por ejemplo: 5001, 8080, etc.)
+
+3. Ve a la pestaña "Headers" y agrega:
+   - Key: Content-Type
+   - Value: application/json
+
+4. Ve a la pestaña "Body", selecciona "raw" y luego "JSON"
+
+5. Ingresa el siguiente JSON con tus credenciales:
+   {
+       "correo": "tu_correo@ejemplo.com",
+       "password": "tu_contraseña"
+   }
+   
+   O también puedes usar:
+   {
+       "username": "tu_correo@ejemplo.com",
+       "password": "tu_contraseña"
+   }
+
+   ⚠️ IMPORTANTE - LEE ESTO:
+   - Puedes usar "correo" o "username" (ambos funcionan)
+   - Debe ser el correo del docente o jugador registrado en la base de datos
+   - "password" DEBE ser la contraseña en TEXTO PLANO (sin encriptar)
+   - El servidor encriptará automáticamente la contraseña para compararla
+   - NO envíes el hash SHA256, envía la contraseña original
+   
+   Ejemplo CORRECTO:
+   {
+       "correo": "mixdjangel7@gmail.com",
+       "password": "Chuimix@16"
+   }
+   
+   Ejemplo INCORRECTO (NO hagas esto):
+   {
+       "correo": "mixdjangel7@gmail.com",
+       "password": "b2ab0ab5438c6ea60625516e95dc976afe7daf9beccf7c06cf2a3ddbed237420"
+   }
+   
+   NOTA: El campo "rostro" ya no se usa (reconocimiento facial deshabilitado)
+
+6. Haz clic en "Send"
+
+7. Si las credenciales son correctas, recibirás una respuesta como esta:
+   {
+       "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc..."
+   }
+
+8. Copia el valor de "access_token" (todo el token completo)
+
+================================================================================
+PASO 2: USAR EL TOKEN EN LAS APIs
+================================================================================
+
+Ahora que tienes el token, debes incluirlo en todas las peticiones a las APIs
+protegidas.
+
+Para cada API que quieras usar (api_registrar_docente, api_actualizar_docente,
+etc.):
+
+1. Crea una nueva petición en Postman
+
+2. Configura el método y URL según la API:
+   
+   - Registrar docente:
+     POST http://localhost:5000/api_registrar_docente
+   
+   - Actualizar docente:
+     POST http://localhost:5000/api_actualizar_docente
+   
+   - Obtener docente por ID:
+     GET http://localhost:5000/api_obtener_docente_id?id_docente=1
+   
+   - Obtener todos los docentes:
+     GET http://localhost:5000/api_obtener_docentes
+   
+   - Eliminar docente:
+     DELETE http://localhost:5000/api_eliminar_docente
+
+3. Ve a la pestaña "Headers" y agrega:
+   - Key: Authorization
+   - Value: JWT <tu_token_aqui>
+   
+   IMPORTANTE: 
+   - Debes incluir la palabra "JWT" seguida de un espacio y luego el token
+   - Ejemplo: JWT eyJ0eXAiOiJKV1QiLCJhbGc...
+
+4. Si la API requiere datos (POST, PUT, DELETE):
+   - Ve a la pestaña "Body"
+   - Selecciona "raw" y luego "JSON"
+   - Ingresa los datos necesarios según la API
+
+5. Haz clic en "Send"
+
+================================================================================
+EJEMPLOS DE PETICIONES
+================================================================================
+
+EJEMPLO 1: Obtener todos los docentes
+-------------------------------------
+Método: GET
+URL: http://localhost:5000/api_obtener_docentes
+Headers:
+  Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGc...
+Body: (vacío)
+
+EJEMPLO 2: Obtener un docente por ID
+-------------------------------------
+Método: GET
+URL: http://localhost:5000/api_obtener_docente_id?id_docente=1
+Headers:
+  Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGc...
+Body: (vacío)
+
+EJEMPLO 3: Registrar un nuevo docente
+--------------------------------------
+Método: POST
+URL: http://localhost:5000/api_registrar_docente
+Headers:
+  Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGc...
+  Content-Type: application/json
+Body (raw JSON):
+{
+    "correo": "nuevo_docente@ejemplo.com",
+    "password": "MiPassword123!",
+    "nombres": "Juan",
+    "apellidos": "Pérez"
+}
+
+EJEMPLO 4: Actualizar un docente
+----------------------------------
+Método: POST
+URL: http://localhost:5000/api_actualizar_docente
+Headers:
+  Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGc...
+  Content-Type: application/json
+Body (raw JSON):
+{
+    "id_docente": 1,
+    "nombres": "Juan Carlos",
+    "apellidos": "Pérez García"
+}
+
+EJEMPLO 5: Eliminar un docente
+-------------------------------
+Método: DELETE
+URL: http://localhost:5000/api_eliminar_docente
+Headers:
+  Authorization: JWT eyJ0eXAiOiJKV1QiLCJhbGc...
+  Content-Type: application/json
+Body (raw JSON):
+{
+    "id_docente": 1
+}
+
+================================================================================
+CONFIGURACIÓN DE VARIABLES EN POSTMAN (OPCIONAL PERO RECOMENDADO)
+================================================================================
+
+Para facilitar el uso del token, puedes configurar variables en Postman:
+
+1. Ve a "Environments" en Postman (icono de engranaje)
+
+2. Crea un nuevo Environment o selecciona uno existente
+
+3. Agrega una variable:
+   - Variable: token
+   - Initial Value: (déjalo vacío)
+   - Current Value: (déjalo vacío)
+
+4. En la petición de autenticación (/auth), ve a la pestaña "Tests"
+
+5. Agrega este código para guardar automáticamente el token:
+   
+   var jsonData = pm.response.json();
+   pm.environment.set("token", jsonData.access_token);
+
+6. Ahora en tus otras peticiones, en el Header "Authorization", usa:
+   - Key: Authorization
+   - Value: JWT {{token}}
+   
+   Postman reemplazará automáticamente {{token}} con el valor guardado.
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. El token JWT expira después de 4 horas (configurado en main.py)
+
+2. Si recibes un error 401 (Unauthorized), significa que:
+   - El token ha expirado (debes obtener uno nuevo)
+   - El token es inválido
+   - No incluiste el token en el header Authorization
+
+3. El formato del header Authorization debe ser exactamente:
+   "JWT <token>" (con un espacio entre JWT y el token)
+
+4. Puedes autenticarte como docente o como jugador, ambos funcionan con
+   las mismas credenciales que usas en el login web.
+
+5. Si cambias de servidor o puerto, actualiza las URLs en todas las peticiones.
+
+================================================================================
+SOLUCIÓN DE PROBLEMAS
+================================================================================
+
+ERROR: "Invalid credentials"
+- Verifica que el correo y contraseña sean correctos
+- Asegúrate de que el usuario exista en la base de datos
+
+ERROR: 401 Unauthorized
+- Verifica que el token esté en el header Authorization
+- Verifica que el formato sea "JWT <token>" (con espacio)
+- El token puede haber expirado, obtén uno nuevo
+
+ERROR: 500 Internal Server Error
+- Revisa los logs del servidor Flask
+- Verifica que la base de datos esté conectada
+- Verifica que todos los campos requeridos estén presentes
+
+ERROR: Connection refused
+- Verifica que el servidor Flask esté corriendo
+- Verifica que el puerto sea correcto
+- Verifica que no haya firewall bloqueando la conexión
+
+================================================================================
+FIN DE LAS INSTRUCCIONES
+================================================================================
+

@@ -1,0 +1,520 @@
+{% extends 'base.html' %}
+{% block title %}GoQuiz - Transforma el aprendizaje en una aventura{% endblock %}
+{% block head_extra %}
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 1.5rem;
+        font-family: 'Georgia', serif;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    .hero-subtitle {
+        font-size: 1.5rem;
+        color: #fff;
+        max-width: 800px;
+        margin: 0 auto;
+        font-family: 'Georgia', serif;
+        line-height: 1.6;
+    }
+    .feature-section {
+        padding: 4rem 2rem;
+        background: #f8f9fa;
+    }
+    .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        height: 100%;
+        transition: transform 0.3s;
+    }
+    .feature-card:hover {
+        transform: translateY(-5px);
+    }
+    .feature-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-family: 'Georgia', serif;
+    }
+    .feature-text {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.1rem;
+    }
+    .feature-illustration {
+        text-align: center;
+        padding: 2rem;
+    }
+    .cta-section {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+    }
+    .cta-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    .cta-button {
+        background: white;
+        color: #0072ff;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1.5rem;
+        margin-right: 0.5rem;
+        transition: transform 0.3s;
+    }
+    .cta-button:hover {
+        transform: scale(1.05);
+        color: #0072ff;
+    }
+    .cta-button-secondary {
+        background: transparent;
+        color: white;
+        border: 2px solid white;
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1.5rem;
+        margin-left: 0.5rem;
+        transition: transform 0.3s;
+    }
+    .cta-button-secondary:hover {
+        transform: scale(1.05);
+        color: white;
+        background: rgba(255,255,255,0.1);
+    }
+    /* Animaciones */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+    
+    @keyframes float {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-20px);
+        }
+    }
+    
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    
+    /* Aplicar animaciones */
+    .hero-title {
+        animation: fadeInDown 1s ease-out;
+    }
+    
+    .hero-subtitle {
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+    
+    .feature-card {
+        animation: fadeInUp 0.8s ease-out both;
+    }
+    
+    .feature-card:nth-child(1) {
+        animation-delay: 0.1s;
+    }
+    
+    .feature-card:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .feature-card:nth-child(3) {
+        animation-delay: 0.3s;
+    }
+    
+    .feature-illustration {
+        animation: fadeInUp 0.8s ease-out both;
+    }
+    
+    .feature-illustration:nth-child(1) {
+        animation-delay: 0.2s;
+    }
+    
+    .feature-illustration:nth-child(2) {
+        animation-delay: 0.3s;
+    }
+    
+    .feature-illustration:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    /* Animaciones de hover mejoradas */
+    .feature-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .cta-button, .cta-button-secondary {
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+    }
+    
+    .cta-button:hover, .cta-button-secondary:hover {
+        animation: pulse 0.6s ease-in-out;
+    }
+    
+    /* Animación para iconos */
+    .feature-illustration i {
+        transition: transform 0.3s ease;
+    }
+    
+    .feature-illustration:hover i.bi-controller {
+        animation: float 2s ease-in-out infinite;
+    }
+    
+    .feature-illustration:hover i.bi-rocket-takeoff {
+        animation: fadeInUp 1s ease-out infinite;
+    }
+    
+    .feature-illustration:hover i.bi-laptop {
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    /* Animación para estrellas */
+    .feature-illustration:hover i.bi-star-fill {
+        animation: rotate 2s linear infinite;
+    }
+    
+    /* Animación para el PIN */
+    .feature-illustration:hover div[style*="background: #FFD700"] {
+        animation: pulse 1s ease-in-out infinite;
+    }
+    
+    /* Animación de entrada para secciones */
+    .feature-section {
+        opacity: 0;
+        animation: fadeInUp 1s ease-out forwards;
+    }
+    
+    .feature-section:nth-of-type(1) {
+        animation-delay: 0.2s;
+    }
+    
+    .feature-section:nth-of-type(2) {
+        animation-delay: 0.4s;
+    }
+    
+    .feature-section:nth-of-type(3) {
+        animation-delay: 0.6s;
+    }
+    
+    .cta-section {
+        opacity: 0;
+        animation: fadeInUp 1s ease-out 0.8s forwards;
+    }
+    
+    /* Animación para botones */
+    .btn {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+    
+    .btn:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn-primary {
+        position: relative;
+        z-index: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        .hero-subtitle {
+            font-size: 1.2rem;
+        }
+        .feature-title {
+            font-size: 1.5rem;
+        }
+        
+        /* Reducir animaciones en móvil para mejor rendimiento */
+        .feature-section {
+            animation-duration: 0.6s;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <h1 class="hero-title">GoQuiz</h1>
+        <p class="hero-subtitle">
+            La plataforma educativa interactiva que revoluciona el aprendizaje. Crea cuestionarios dinámicos, participa en juegos en vivo y transforma cada clase en una experiencia memorable.
+        </p>
+    </div>
+</section>
+
+<!-- Feature 1: Crear Cuestionarios -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <h2 class="feature-title">Crea Cuestionarios en Minutos</h2>
+                    <p class="feature-text">
+                        Usa nuestro editor intuitivo para diseñar cuestionarios interactivos. Elige entre opción múltiple, selección simple o verdadero/falso. ¡La creatividad no tiene límites!
+                    </p>
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="/register" class="btn btn-primary">Registrarse como Docente</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-illustration">
+                    <div class="bg-light rounded p-4" style="min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                        <div class="text-center">
+                            <i class="bi bi-laptop" style="font-size: 5rem; color: #0072ff;"></i>
+                            <div class="mt-3">
+                                <span class="badge bg-warning text-dark me-2">?</span>
+                                <span class="badge bg-success me-2">✓</span>
+                                <span class="badge bg-info">!</span>
+                            </div>
+                            <div class="mt-3">
+                                <i class="bi bi-book" style="font-size: 2rem; color: #0072ff;"></i>
+                                <i class="bi bi-lightbulb ms-3" style="font-size: 2rem; color: #00c6ff;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 2: Juega en Vivo -->
+<section class="feature-section" style="background: white;">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 order-lg-2">
+                <div class="feature-card">
+                    <h2 class="feature-title">Juega y Aprende en Vivo</h2>
+                    <p class="feature-text">
+                        Comparte un PIN único con tus estudiantes para iniciar una partida en tiempo real. Fomenta la competencia sana y haz que el aprendizaje sea una experiencia emocionante.
+                    </p>
+                    <a href="/register_jugador" class="btn btn-primary mt-3">Unirse</a>
+                </div>
+            </div>
+            <div class="col-lg-6 order-lg-1">
+                <div class="feature-illustration">
+                    <div class="rounded p-4" style="background: #2c3e50; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <div class="text-center" style="margin-bottom: 2rem;">
+                            <i class="bi bi-controller" style="font-size: 5rem; color: #FFD700;"></i>
+                        </div>
+                        <div class="mt-3" style="background: #FFD700; padding: 0.75rem 1.5rem; border-radius: 8px;">
+                            <span style="color: #000; font-weight: 600; font-size: 1.1rem;">PIN: 123456</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Feature 3: Explora y Descubre -->
+<section class="feature-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <h2 class="feature-title">Explora y Descubre</h2>
+                    <p class="feature-text">
+                        Navega por una amplia biblioteca de cuestionarios públicos creados por otros usuarios. Encuentra nuevo material de estudio y desafía tus conocimientos.
+                    </p>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="feature-illustration">
+                    <div class="rounded p-4" style="background: #ffffff; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #e0e0e0;">
+                        <div class="text-center" style="margin-bottom: 1.5rem;">
+                            <i class="bi bi-rocket-takeoff" style="font-size: 5rem; color: #d3d3d3;"></i>
+                        </div>
+                        <div class="mt-3">
+                            <i class="bi bi-star-fill me-2" style="color: #FFD700; font-size: 1.5rem;"></i>
+                            <i class="bi bi-star-fill me-2" style="color: #FFD700; font-size: 1.5rem;"></i>
+                            <i class="bi bi-star-fill" style="color: #FFD700; font-size: 1.5rem;"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <h2 class="cta-title">¿Listo para comenzar?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 0;">Únete a miles de educadores que ya están transformando sus clases</p>
+        <div>
+            <a href="/register" class="cta-button">Registrarse como Docente</a>
+            <a href="/register_jugador" class="cta-button-secondary">Registrar Jugador</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    // Animación al hacer scroll (Scroll Reveal)
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    // Observar elementos al cargar la página
+    document.addEventListener('DOMContentLoaded', () => {
+        const animatedElements = document.querySelectorAll('.feature-card, .feature-illustration');
+        animatedElements.forEach(el => {
+            observer.observe(el);
+        });
+
+        // Animación para el controlador
+        const controller = document.querySelector('.bi-controller');
+        if (controller) {
+            setInterval(() => {
+                controller.style.transform = 'rotate(5deg)';
+                setTimeout(() => {
+                    controller.style.transform = 'rotate(-5deg)';
+                }, 200);
+            }, 2000);
+        }
+
+        // Animación suave para las estrellas
+        const stars = document.querySelectorAll('.bi-star-fill');
+        stars.forEach((star, index) => {
+            setInterval(() => {
+                star.style.transform = 'scale(1.2)';
+                star.style.opacity = '0.8';
+                setTimeout(() => {
+                    star.style.transform = 'scale(1)';
+                    star.style.opacity = '1';
+                }, 300);
+            }, 1500 + (index * 200));
+        });
+    });
+
+    // Efecto parallax suave para el hero (solo en desktop)
+    if (window.innerWidth > 768) {
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrolled = window.pageYOffset;
+                    const hero = document.querySelector('.hero-section');
+                    if (hero && scrolled < 600) {
+                        hero.style.transform = `translateY(${scrolled * 0.3}px)`;
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+    }
+</script>
+{% endblock %}
+

@@ -1,0 +1,292 @@
+{% extends 'base.html' %}
+{% block title %}Mis Recompensas - GoQuiz{% endblock %}
+
+{% block head_extra %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+    }
+
+    .recompensas-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .header-section {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
+        margin-bottom: 2rem;
+        color: #333;
+        box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        text-align: center;
+    }
+
+    .header-section h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .header-section p {
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 0;
+    }
+
+    .recompensa-bar-container {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        color: #333;
+    }
+
+    .recompensa-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .recompensa-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .recompensa-puntos {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #333;
+    }
+
+    .progress-container {
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
+        padding: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .progress-bar-custom {
+        background: linear-gradient(90deg, #ff6b35 0%, #ffd700 50%, #ffed4e 100%);
+        height: 30px;
+        border-radius: 15px;
+        transition: width 1s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 10px rgba(255, 107, 53, 0.3);
+    }
+
+    .progress-text {
+        text-align: center;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #555;
+        font-weight: 600;
+    }
+
+    .recompensas-list-container {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    .recompensas-list-container h3 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .recompensa-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+        transition: background-color 0.2s ease;
+    }
+
+    .recompensa-item:last-child {
+        border-bottom: none;
+    }
+
+    .recompensa-item:hover {
+        background-color: #f8f9fa;
+    }
+
+    .recompensa-info {
+        flex: 1;
+    }
+
+    .recompensa-cuestionario {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #2c3e50;
+        margin-bottom: 0.25rem;
+    }
+
+    .recompensa-fecha {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .recompensa-puntos-badge {
+        background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+        color: #333;
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        box-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #666;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+
+    .btn-volver {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-volver:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 114, 255, 0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="recompensas-container">
+    <!-- Header -->
+    <div class="header-section">
+        <h1>
+            <i class="bi bi-trophy-fill"></i>
+            Mis Recompensas
+        </h1>
+        <p>Gestiona y visualiza tus puntos de recompensa obtenidos en los cuestionarios</p>
+    </div>
+
+    <!-- Barra de Progreso de Recompensas -->
+    <div class="recompensa-bar-container">
+        <div class="recompensa-header">
+            <div class="recompensa-title">
+                <i class="bi bi-trophy-fill"></i>
+                <span>Progreso de Recompensas</span>
+            </div>
+            <div class="recompensa-puntos">
+                {{ puntos_recompensa|default(0) }} / 1000
+            </div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar-custom" role="progressbar" 
+                 style="width: {{ ((puntos_recompensa|default(0) / 1000) * 100)|round }}%; min-width: 5%;"
+                 aria-valuenow="{{ puntos_recompensa|default(0) }}" 
+                 aria-valuemin="0" 
+                 aria-valuemax="1000">
+                {% if puntos_recompensa|default(0) > 0 %}
+                    {{ ((puntos_recompensa|default(0) / 1000) * 100)|round }}%
+                {% endif %}
+            </div>
+        </div>
+        <div class="progress-text">
+            {% if puntos_recompensa|default(0) >= 1000 %}
+                <i class="bi bi-star-fill text-warning"></i> ¡Felicidades! Has alcanzado el máximo de puntos de recompensa
+            {% else %}
+                {{ 1000 - puntos_recompensa|default(0) }} puntos para alcanzar el máximo
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Lista de Recompensas -->
+    <div class="recompensas-list-container">
+        <h3>
+            <i class="bi bi-list-check"></i>
+            Historial de Recompensas
+        </h3>
+        {% if recompensas and recompensas|length > 0 %}
+            {% for r in recompensas %}
+            <div class="recompensa-item">
+                <div class="recompensa-info">
+                    <div class="recompensa-cuestionario">{{ r.nombre_cuestionario }}</div>
+                    <div class="recompensa-fecha">
+                        {% if r.fecha_recompensa %}
+                            {% if r.fecha_recompensa is string %}
+                                {{ r.fecha_recompensa }}
+                            {% else %}
+                                {{ r.fecha_recompensa.strftime('%d/%m/%Y %H:%M') }}
+                            {% endif %}
+                        {% else %}
+                            <span class="text-muted">Fecha no disponible</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="recompensa-puntos-badge">
+                    <i class="bi bi-star-fill me-1"></i>{{ r.puntos }} pts
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <h3>No tienes recompensas aún</h3>
+                <p>Participa en cuestionarios y obtén recompensas según tu posición en el ranking.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Botón Volver -->
+    <div class="text-center mt-4">
+        <a href="/dashboard" class="btn-volver">
+            <i class="bi bi-arrow-left me-2"></i>Volver a Mis Juegos
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

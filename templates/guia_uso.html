@@ -1,0 +1,296 @@
+{% extends 'base.html' %}
+{% block title %}Guía de Uso - GoQuiz{% endblock %}
+
+{% block head_extra %}
+<style>
+    .guide-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: calc(100vh - 200px);
+        padding: 4rem 2rem;
+    }
+    
+    .guide-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .guide-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #fff;
+    }
+    
+    .guide-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .guide-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .guide-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .guide-card h3 {
+        color: #667eea;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+    
+    .guide-card h4 {
+        color: #764ba2;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .guide-card ul, .guide-card ol {
+        padding-left: 1.5rem;
+    }
+    
+    .guide-card li {
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+    }
+    
+    .step-number {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 30px;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+    
+    .highlight-box {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .guide-title {
+            font-size: 2.5rem;
+        }
+        
+        .guide-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="guide-section">
+    <div class="guide-container">
+        <div class="guide-header">
+            <h1 class="guide-title">
+                <i class="bi bi-book-fill"></i> Guía de Uso
+            </h1>
+            <p class="guide-subtitle">
+                Aprende a usar GoQuiz paso a paso. Desde crear tu cuenta hasta gestionar cuestionarios y jugar.
+            </p>
+        </div>
+        
+        <!-- Guía para Docentes -->
+        <div class="guide-card">
+            <h3><i class="bi bi-person-badge"></i> Para Docentes</h3>
+            
+            <h4>1. Registro y Acceso</h4>
+            <ol>
+                <li>Ve a la página de inicio y haz clic en "Registrarse como Docente"</li>
+                <li>Completa el formulario con tus datos (correo, contraseña, nombres, apellidos)</li>
+                <li>Verifica tu correo con el código que recibirás</li>
+                <li>Inicia sesión con tus credenciales</li>
+            </ol>
+            
+            <h4>2. Crear un Cuestionario</h4>
+            <div class="highlight-box">
+                <strong>Método 1: Creación Manual</strong>
+            </div>
+            <ol>
+                <li>Desde el dashboard, haz clic en "Crear Cuestionario"</li>
+                <li>Completa los datos básicos:
+                    <ul>
+                        <li>Nombre del cuestionario</li>
+                        <li>Tipo: Individual o Grupal</li>
+                        <li>Descripción (opcional)</li>
+                        <li>Estado: Público o Privado</li>
+                    </ul>
+                </li>
+                <li>Agrega preguntas:
+                    <ul>
+                        <li>Haz clic en "Agregar Pregunta"</li>
+                        <li>Escribe el texto de la pregunta</li>
+                        <li>Selecciona el tipo: Verdadero/Falso o Alternativa Múltiple</li>
+                        <li>Establece los puntos (1-1000) y tiempo (2-300 segundos)</li>
+                        <li>Agrega las alternativas y marca la correcta</li>
+                    </ul>
+                </li>
+                <li>Guarda el cuestionario</li>
+            </ol>
+            
+            <div class="highlight-box">
+                <strong>Método 2: Importar desde Excel</strong>
+            </div>
+            <ol>
+                <li>Descarga la plantilla Excel desde el dashboard</li>
+                <li>Completa la plantilla con tus preguntas siguiendo el formato</li>
+                <li>Haz clic en "Subir cuestionario" en el dashboard</li>
+                <li>Selecciona el archivo Excel y haz clic en "Importar"</li>
+                <li>Revisa los errores si los hay y corrige</li>
+            </ol>
+            
+            <h4>3. Gestionar Cuestionarios</h4>
+            <ul>
+                <li><strong>Modificar:</strong> Haz clic en "Modificar" en cualquier cuestionario para editarlo</li>
+                <li><strong>Eliminar:</strong> Usa el botón "Eliminar" para borrar un cuestionario permanentemente</li>
+                <li><strong>Archivar:</strong> Cambia el estado a "Privado" para archivar</li>
+                <li><strong>Reutilizar:</strong> Desde el repositorio, puedes copiar cuestionarios de otros docentes</li>
+            </ul>
+            
+            <h4>4. Iniciar un Juego</h4>
+            <ol>
+                <li>Selecciona un cuestionario activo desde tu dashboard</li>
+                <li>Haz clic en "Iniciar Juego"</li>
+                <li>Comparte el PIN con tus estudiantes</li>
+                <li>Espera a que los estudiantes se unan en la sala de espera</li>
+                <li>Cuando estés listo, inicia la partida</li>
+                <li>Controla el ritmo del juego desde tu panel</li>
+                <li>Al finalizar, revisa los resultados y estadísticas</li>
+            </ol>
+            
+            <h4>5. Ver Resultados</h4>
+            <ul>
+                <li>Accede a "Ver Resultados" desde el cuestionario finalizado</li>
+                <li>Revisa el ranking de participantes</li>
+                <li>Analiza estadísticas de respuestas correctas/incorrectas</li>
+                <li>Exporta los datos si es necesario</li>
+            </ul>
+        </div>
+        
+        <!-- Guía para Jugadores -->
+        <div class="guide-card">
+            <h3><i class="bi bi-joystick"></i> Para Jugadores</h3>
+            
+            <h4>1. Registro (Opcional)</h4>
+            <ul>
+                <li>Puedes jugar sin registrarte (como invitado) o crear una cuenta</li>
+                <li>Si te registras, podrás ver tu historial de juegos y recompensas</li>
+                <li>Regístrate desde "Registrar Jugador" en la página principal</li>
+            </ul>
+            
+            <h4>2. Unirse a un Juego</h4>
+            <ol>
+                <li>Obtén el PIN del cuestionario de tu docente</li>
+                <li>Ve a "Unirse a un juego" o ingresa directamente el PIN</li>
+                <li>Ingresa el PIN de 5 dígitos</li>
+                <li>Si el PIN es válido, serás redirigido a crear tu alias</li>
+            </ol>
+            
+            <h4>3. Crear Alias</h4>
+            <ul>
+                <li>Elige un alias único (2-20 caracteres)</li>
+                <li>El alias debe ser diferente a los otros participantes</li>
+                <li>Si ya tienes un alias para este cuestionario, serás redirigido directamente</li>
+            </ul>
+            
+            <h4>4. Formar Grupo (Solo para Cuestionarios Grupales)</h4>
+            <ol>
+                <li>Si el cuestionario es grupal, verás la opción de formar grupos</li>
+                <li>Puedes crear un nuevo grupo o unirte a uno existente</li>
+                <li>Los grupos tienen un máximo de 5 miembros</li>
+                <li>El creador del grupo es el líder y puede establecer el método de evaluación</li>
+            </ol>
+            
+            <h4>5. Jugar</h4>
+            <ol>
+                <li>Espera en la sala de espera hasta que el docente inicie el juego</li>
+                <li>Cuando comience, verás las preguntas en tiempo real</li>
+                <li>Selecciona tu respuesta antes de que se acabe el tiempo</li>
+                <li>Observa el ranking en tiempo real</li>
+                <li>Al finalizar, revisa tu posición y puntaje</li>
+            </ol>
+            
+            <h4>6. Recompensas</h4>
+            <ul>
+                <li>Recibirás puntos según tu posición en el ranking</li>
+                <li>Top 1: 100 puntos | Top 2: 75 puntos | Top 3: 50 puntos</li>
+                <li>Top 10%: 25 puntos | Resto: 10 puntos</li>
+                <li>Accede a "Mis Recompensas" para ver tu historial</li>
+            </ul>
+        </div>
+        
+        <!-- Consejos y Mejores Prácticas -->
+        <div class="guide-card">
+            <h3><i class="bi bi-lightbulb-fill"></i> Consejos y Mejores Prácticas</h3>
+            
+            <h4>Para Docentes:</h4>
+            <ul>
+                <li>Mantén los cuestionarios entre 10-30 preguntas para mantener el interés</li>
+                <li>Usa tiempos de respuesta apropiados (30-60 segundos para la mayoría)</li>
+                <li>Varía los tipos de preguntas (VF y alternativas múltiples)</li>
+                <li>Revisa el repositorio público para inspirarte</li>
+                <li>Prueba tus cuestionarios antes de usarlos en clase</li>
+                <li>Usa imágenes en los cuestionarios para hacerlos más atractivos</li>
+            </ul>
+            
+            <h4>Para Jugadores:</h4>
+            <ul>
+                <li>Elige un alias fácil de recordar</li>
+                <li>Lee cuidadosamente cada pregunta antes de responder</li>
+                <li>Gestiona tu tiempo: no te apresures pero tampoco esperes demasiado</li>
+                <li>En grupos, comunícate con tus compañeros para mejores resultados</li>
+                <li>Revisa tus resultados para aprender de tus errores</li>
+            </ul>
+        </div>
+        
+        <!-- Solución de Problemas -->
+        <div class="guide-card">
+            <h3><i class="bi bi-tools"></i> Solución de Problemas</h3>
+            
+            <h4>Problemas Comunes:</h4>
+            <ul>
+                <li><strong>PIN no válido:</strong> Verifica que hayas ingresado el PIN correcto de 5 dígitos</li>
+                <li><strong>Alias ya en uso:</strong> Elige otro alias, debe ser único por cuestionario</li>
+                <li><strong>No puedo unirme al grupo:</strong> Verifica que el grupo no esté lleno (máx. 5 miembros)</li>
+                <li><strong>El juego no inicia:</strong> Espera a que el docente inicie la partida</li>
+                <li><strong>Error al importar Excel:</strong> Verifica que sigas el formato de la plantilla</li>
+            </ul>
+            
+            <p class="mt-3">
+                Si tienes más dudas, consulta nuestra sección de 
+                <a href="/preguntas_frecuentes">Preguntas Frecuentes</a> o 
+                <a href="/contactanos">contáctanos</a>.
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

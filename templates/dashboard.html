@@ -1,234 +1,326 @@
-<!DOCTYPE html>
-<html lang="es">
+{% extends 'base.html' %}
+{% block title %}GoQuiz | Panel de Administración{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GoQuiz | Panel de Administración</title>
+{% block head_extra %}
+<!-- Fuentes y estilos -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
+    rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='CSS/dashboard.css') }}">
+<style>
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    <!-- Fuentes y estilos -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap"
-        rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../static/CSS/dashboard.css">
-</head>
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
 
-<body
-    style="font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f5f8f8; min-height: 100vh; display: flex; flex-direction: column;">
+    @keyframes slideInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-    <!-- ===== NAVBAR SUPERIOR ===== -->
-    <nav class="navbar navbar-expand-lg bg-white shadow-sm py-3 fixed-top border-bottom">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-primary d-flex align-items-center gap-2" href="/dashboard">
-                <img src="../static/IMG/GoQuiz.png" alt="Logo" height="34">
-                <span>GoQuiz</span>
-            </a>
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarGoQuiz">
-                <i class="bi bi-list text-primary fs-2"></i>
-            </button>
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
 
-            <div class="collapse navbar-collapse justify-content-end" id="navbarGoQuiz">
-                <ul class="navbar-nav align-items-center gap-3">
-                    <li><a class="nav-link fw-semibold" href="/dashboard"><i
-                                class="bi bi-journal-text me-1"></i>Cuestionarios</a></li>
-                    <li><a class="nav-link fw-semibold" href="/nuevo_cuestionario"><i
-                                class="bi bi-plus-circle me-1"></i>Crear</a></li>
-                    <li><a class="nav-link fw-semibold" href="/repositorio"><i
-                                class="bi bi-archive me-1"></i>Repositorio</a></li>
-                    {% if session.get('docente_id') %}
-                    <!-- Docente logueado -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                            data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle fs-4 text-primary me-2"></i>
-                            <span class="fw-bold">{{ session['nombres'] }}</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
-                            <li><a class="dropdown-item" href="/perfil"><i class="bi bi-person me-2"></i>Mi perfil</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item text-danger" href="/logout"><i
-                                        class="bi bi-box-arrow-right me-2"></i>Salir</a></li>
-                        </ul>
-                    </li>
-                    {% elif session.get('jugador_id') %}
-                    <!-- Jugador logueado -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#"
-                            data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle fs-4 text-primary me-2"></i>
-                            <span class="fw-bold">{{ session['email'] }}</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
-                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Mi perfil</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item text-danger" href="/logout"><i
-                                        class="bi bi-box-arrow-right me-2"></i>Salir</a></li>
-                        </ul>
-                    </li>
-                    {% else %}
-                    <!-- Usuario NO logueado -->
-                    <li><a class="nav-link fw-semibold" href="/login"><i
-                                class="bi bi-box-arrow-in-right me-1"></i>Iniciar sesión</a></li>
-                    <li><a class="btn btn-primary rounded-pill fw-semibold px-3 py-1" href="/register"><i
-                                class="bi bi-person-plus me-1"></i>Registrarse</a></li>
-                    {% endif %}
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background-color: #f5f8f8;
+        animation: fadeIn 0.8s ease-in;
+    }
 
+    main {
+        padding-top: 2rem;
+        padding-bottom: 0;
+        width: 100%;
+        margin-bottom: 0;
+        animation: fadeIn 0.8s ease-in;
+    }
 
-                </ul>
+    header {
+        animation: slideInDown 0.8s ease-out;
+    }
+
+    header h1 {
+        animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+
+    .container-fluid {
+        max-width: 100%;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .form-control {
+        animation: fadeInUp 0.6s ease-out 0.4s both;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 0.2rem rgba(0, 114, 255, 0.25);
+    }
+
+    .btn {
+        animation: fadeInUp 0.6s ease-out 0.5s both;
+        transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn:active {
+        animation: pulse 0.3s ease;
+    }
+
+    #cuestionarios-activos, #cuestionarios-archivados {
+        animation: fadeIn 0.8s ease-out 0.6s both;
+    }
+
+    .questionnaire-card {
+        animation: scaleIn 0.6s ease-out both;
+    }
+
+    .questionnaire-card:nth-child(1) {
+        animation-delay: 0.7s;
+    }
+
+    .questionnaire-card:nth-child(2) {
+        animation-delay: 0.8s;
+    }
+
+    .questionnaire-card:nth-child(3) {
+        animation-delay: 0.9s;
+    }
+
+    .questionnaire-card:nth-child(4) {
+        animation-delay: 1s;
+    }
+
+    .questionnaire-card:hover {
+        animation: pulse 0.5s ease;
+    }
+
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ===== CONTENIDO PRINCIPAL ===== -->
+<main class="flex-grow-1">
+    <div class="container-fluid px-4">
+        <header class="mb-5 text-center">
+            <h1 class="fw-bold text-primary display-6 mb-3">Mis Cuestionarios</h1>
+
+            {% block search %}
+            {% if session.get('docente_id') %}
+            <div class="d-flex justify-content-center mb-3">
+                <form class="d-flex justify-content-center w-100" style="max-width: 420px;">
+                    <input class="form-control me-2 rounded-pill shadow-sm" type="search"
+                        placeholder="Buscar cuestionarios..." aria-label="Buscar">
+                    <button class="btn btn-primary rounded-pill"><i class="bi bi-search"></i></button>
+                </form>
             </div>
-        </div>
-    </nav>
-
-    <!-- ===== CONTENIDO PRINCIPAL ===== -->
-    <main class="flex-grow-1 d-flex align-items-center justify-content-center text-center"
-        style="padding-top: 100px; padding-bottom: 80px;">
-        <div class="container">
-            <header class="mb-5">
-                <h1 class="fw-bold text-primary display-6 mb-3">{% block titulo_pagina %}Mis Cuestionarios{% endblock %}
-                </h1>
-
-                {% block search %}
-                <div class="d-flex justify-content-center">
-                    <form class="d-flex justify-content-center w-100" style="max-width: 420px;">
-                        <input class="form-control me-2 rounded-pill shadow-sm" type="search"
-                            placeholder="Buscar cuestionarios..." aria-label="Buscar">
-                        <button class="btn btn-primary rounded-pill"><i class="bi bi-search"></i></button>
-                    </form>
-                </div>
-                <button type="button" class="btn btn-outline-primary mt-3" data-bs-toggle="modal"
+            <div class="d-flex gap-2 justify-content-center flex-wrap">
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
                     data-bs-target="#abrirmodal">
                     <i class="bi bi-plus-lg"></i> Subir cuestionario
                 </button>
-                <a href="/static/uploads/formato_export.xlsx" type="button" class="btn btn-outline-success mt-3">
+                <a href="/descargar_plantilla_excel" class="btn btn-outline-success">
                     <i class="bi bi-file-earmark-arrow-down-fill"></i> Descargar plantilla
                 </a>
+            </div>
 
-
-                <!-- Modal -->
-                <div class="modal fade" id="abrirmodal" tabindex="-1" aria-labelledby="abrirmodalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content ">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="abrirmodalLabel">Subir Cuestionario Excel</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-
+            <!-- Modal -->
+            <div class="modal fade" id="abrirmodal" tabindex="-1" aria-labelledby="abrirmodalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content ">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="abrirmodalLabel">Importar Cuestionario desde Excel</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="alert alert-info mb-3">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <strong>Formato requerido:</strong> El Excel debe contener en la primera fila los datos del cuestionario (nombre, tipo, descripción, estado) y desde la segunda fila las preguntas con sus alternativas.
                             </div>
-                            <div class="modal-body">
-                                <form id="form_cuestionario">
-                                    <div class="mb-3">
-                                        <label for="archexcel" class="form-label">Seleccionar archivo Excel</label>
-                                        <input type="file" class="form-control" id="archexcel" name="excel_archivo"
-                                            accept=".xlsx,.xls" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary" id="btn_subir">Subir</button>
-                                </form>
-                                <div>
-                                    <div class="progress d-none" id="progreso_br">
-                                        <div class="progress-bar" id="valor_br"></div>
-                                    </div>
-
+                            <form id="form_cuestionario">
+                                <div class="mb-3">
+                                    <label for="archexcel" class="form-label">Seleccionar archivo Excel</label>
+                                    <input type="file" class="form-control" id="archexcel" name="excel_archivo"
+                                        accept=".xlsx,.xls" required>
+                                    <small class="text-muted">Formatos permitidos: .xlsx, .xls</small>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="btn_subir">
+                                    <i class="bi bi-upload me-2"></i>Importar
+                                </button>
+                            </form>
+                            <div>
+                                <div class="progress d-none" id="progreso_br">
+                                    <div class="progress-bar" id="valor_br"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                {% endblock %}
-            </header>
-
-            {% block contenido %}
-            <section id="contenido-principal" class="mt-4 text-start mx-auto" style="max-width: 1100px;">
-                <h3 class="fw-semibold text-secondary mb-3">Cuestionarios Activos</h3>
-                <div class="row g-4 justify-content-center" id="cuestionarios-activos">
-                    <!-- Tarjetas dinámicas -->
-                </div>
-
-                <h3 class="fw-semibold text-secondary mt-5 mb-3">Cuestionarios Archivados</h3>
-                <div class="row g-4 justify-content-center" id="cuestionarios-archivados">
-                    <!-- Tarjetas dinámicas -->
-                </div>
-            </section>
-
-            <div id="sin-contenido" class="text-muted py-5 d-none">
-                <i class="bi bi-clipboard-x fs-1 mb-2 d-block"></i>
-                <p class="fw-semibold">Aún no tienes cuestionarios registrados.</p>
             </div>
+            {% endif %}
             {% endblock %}
+        </header>
+
+        {% block contenido %}
+        <section id="contenido-principal" class="mt-4 text-start">
+            <h3 class="fw-semibold text-secondary mb-3">Cuestionarios Activos</h3>
+            <div class="row g-4" id="cuestionarios-activos">
+                <!-- Tarjetas dinámicas -->
+            </div>
+
+            <h3 class="fw-semibold text-secondary mt-5 mb-3">Cuestionarios Archivados</h3>
+            <div class="row g-4" id="cuestionarios-archivados">
+                <!-- Tarjetas dinámicas -->
+            </div>
+        </section>
+
+        <div id="sin-contenido" class="text-muted py-5 d-none text-center">
+            <i class="bi bi-clipboard-x fs-1 mb-2 d-block"></i>
+            <p class="fw-semibold">Aún no tienes cuestionarios registrados.</p>
         </div>
-    </main>
+        {% endblock %}
+    </div>
+</main>
+{% endblock %}
 
-    <!-- ===== FOOTER ===== -->
-    <footer class="text-center text-muted py-4 border-top bg-white small mt-auto">
-        © {{ current_year or "2025" }} <strong>GoQuiz</strong> — Todos los derechos reservados.
-    </footer>
-
-
-    <script>
-        const docenteId = "{{ session['docente_id'] }}";  // Pasar desde Flask a la plantilla
-        if (window.location.pathname === '/dashboard') {        // Cargar cuestionarios activos
-            fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const activosContainer = document.getElementById('cuestionarios-activos');
-                    if (!Array.isArray(data) || data.length === 0) {
-                        activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
-                        return;
-                    }
-                    activosContainer.innerHTML = data.map(q => {
-                        return `
+{% block scripts_extra %}
+<script>
+    // Obtener ID del docente desde la sesión
+    const docenteId = "{{ session.get('docente_id') }}";
+    
+    if (window.location.pathname === '/dashboard' && docenteId) {
+        // Cargar cuestionarios activos
+        fetch(`/cuestionarios_activos?id_docente=${docenteId}`)
+            .then(response => response.json())
+            .then(data => {
+                const activosContainer = document.getElementById('cuestionarios-activos');
+                if (!Array.isArray(data) || data.length === 0) {
+                    activosContainer.innerHTML = '<p>No se encontraron cuestionarios activos.</p>';
+                    return;
+                }
+                activosContainer.innerHTML = data.map(q => {
+                    const tipoTexto = q.tipo_cuestionario === 'G' ? 'Grupal' : 'Individual';
+                    const tipoIcono = q.tipo_cuestionario === 'G' ? 'bi-people-fill' : 'bi-person-fill';
+                    const tipoBadge = q.tipo_cuestionario === 'G' ? 'bg-info' : 'bg-secondary';
+                    const imagenHtml = q.imagen_url ? `<img src="/${q.imagen_url}" alt="${q.nombre}" class="card-imagen">` : '';
+                    return `
                         <article class="questionnaire-card active">
+                            ${imagenHtml}
                             <div class="card-content">
                                 <h4>${q.nombre}</h4>
-                                <span class="status">Activo</span>
+                                <span class="status ${q.estado_juego === 'FN' ? 'finalizado' : ''}">${q.estado_juego === 'FN' ? 'Finalizado' : 'Activo'}</span>
+                                <p class="mt-2 mb-2">
+                                    <span class="badge ${tipoBadge}">
+                                        <i class="bi ${tipoIcono}"></i> ${tipoTexto}
+                                    </span>
+                                    ${q.tipo_cuestionario === 'G' ? '<small class="text-muted ms-2">Los estudiantes forman grupos</small>' : ''}
+                                </p>
                                 <div class="button-group">
-                                    <button class="btn btn-primary" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
-                                    <form action="/iniciar_juego" method="POST" style="display:inline;">
-                                        <input type="hidden" name="id_cuestionario" value="${q.id_cuestionario}">
-                                        <button type="submit" class="btn btn-success">Iniciar Juego</button>
-                                    </form>
+                                    <button class="btn btn-primary btn-sm" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                                    ${q.tipo_cuestionario === 'G' ? `<button class="btn btn-info btn-sm" onclick="location.href='/ver_grupos/${q.id_cuestionario}'">Ver Grupos</button>` : ''}
+                                    ${q.estado_juego === 'FN' 
+                                        ? `<button class="btn btn-info btn-sm" onclick="location.href='/resultados_inter/${q.id_cuestionario}'">
+                                            <i class="bi bi-bar-chart-line"></i> Ver Resultados
+                                           </button>`
+                                        : `<form action="/iniciar_juego" method="POST" style="display:inline;">
+                                             <input type="hidden" name="id_cuestionario" value="${q.id_cuestionario}">
+                                             <button type="submit" class="btn btn-success btn-sm">Iniciar Juego</button>
+                                           </form>`
+                                    }
+                                    <button class="btn btn-danger btn-sm" onclick="eliminarCuestionario(${q.id_cuestionario}, '${q.nombre.replace(/'/g, "\\'")}')">
+                                        <i class="bi bi-trash3"></i> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </article>
                     `;
-                    }).join('');
-                })
-                .catch(error => console.error('Error al cargar los cuestionarios activos:', error));
+                }).join('');
+            })
+            .catch(error => console.error('Error al cargar cuestionarios activos:', error));
 
-            // Cargar cuestionarios archivados
-            fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
-                .then(response => response.json())
-                .then(data => {
-                    const archivadosContainer = document.getElementById('cuestionarios-archivados');
-                    if (!Array.isArray(data) || data.length === 0) {
-                        archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
-                        return;
-                    }
-                    archivadosContainer.innerHTML = data.map(q => {
-                        return `
+        // Cargar cuestionarios archivados
+        fetch(`/cuestionarios_archivados?id_docente=${docenteId}`)
+            .then(response => response.json())
+            .then(data => {
+                const archivadosContainer = document.getElementById('cuestionarios-archivados');
+                if (!Array.isArray(data) || data.length === 0) {
+                    archivadosContainer.innerHTML = '<p>No se encontraron cuestionarios archivados.</p>';
+                    return;
+                }
+                archivadosContainer.innerHTML = data.map(q => {
+                    const imagenHtml = q.imagen_url ? `<img src="/${q.imagen_url}" alt="${q.nombre}" class="card-imagen">` : '';
+                    return `
                         <article class="questionnaire-card archived">
+                            ${imagenHtml}
                             <div class="card-content">
                                 <h4>${q.nombre}</h4>
-                                <span class="status">Archivado</span>
+                                <span class="status ${q.estado_juego === 'FN' ? 'finalizado' : ''}">${q.estado_juego === 'FN' ? 'Finalizado' : 'Activo'}</span>
                                 <div class="button-group">
-                                    <button class="btn btn-warning" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                                    <button class="btn btn-warning btn-sm" onclick="location.href='/modificar_cuestionario/${q.id_cuestionario}'">Modificar</button>
+                                    <button class="btn btn-danger btn-sm" onclick="eliminarCuestionario(${q.id_cuestionario}, '${q.nombre.replace(/'/g, "\\'")}')">
+                                        <i class="bi bi-trash3"></i> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </article>
                     `;
-                    }).join('');
-                })
-                .catch(error => console.error('Error al cargar los cuestionarios archivados:', error));
+                }).join('');
+            })
+            .catch(error => console.error('Error al cargar cuestionarios archivados:', error));
 
-            document.getElementById('form_cuestionario').addEventListener('submit', async (event) => {
+        const formCuestionario = document.getElementById('form_cuestionario');
+        if (formCuestionario) {
+            formCuestionario.addEventListener('submit', async (event) => {
                 event.preventDefault();
 
                 const formulario = event.target;
@@ -237,28 +329,27 @@
                 const div_bar = document.getElementById('progreso_br');
                 const progress = document.getElementById('valor_br');
                 div_bar.classList.remove('d-none');
-                let tm = 20;
-                progress.style.width = `${tm}%`;
-                progress.textContent = `${tm}%`;
+                let porcentaje = 20;
+                progress.style.width = `${porcentaje}%`;
+                progress.textContent = `${porcentaje}%`;
 
-                //enviamos 
+                // Enviar formulario
                 const response = await fetch('/subirformulario_excel', {
                     method: 'POST',
                     body: formulario_dato
                 });
-                tm = 60;
-                progress.style.width = `${tm}%`;
-                progress.textContent = `${tm}%`;
-                //procesamos mensaje 
+                
+                porcentaje = 60;
+                progress.style.width = `${porcentaje}%`;
+                progress.textContent = `${porcentaje}%`;
+                
+                // Procesar respuesta
                 const respuesta = await response.json();
-                tm = 100;
-                progress.style.width = `${tm}%`;
-                progress.textContent = `${tm}%`;
+                porcentaje = 100;
+                progress.style.width = `${porcentaje}%`;
+                progress.textContent = `${porcentaje}%`;
 
                 if (respuesta.estado == true) {
-                    const interval = setInterval(() => {
-                        alert(estado.mensaje);
-                    }, 1000);
                     window.location.reload();
                 } else {
                     formulario.classList.remove('d-none');
@@ -266,18 +357,84 @@
                     alert(respuesta.mensaje);
                 }
             });
-
         }
-
-
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    {% block scripts %}
-    <!-- ===== SCRIPTS ===== -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../static/JS/dashboard.js"></script>
-    {% endblock %}
-</body>
-
-</html>
+    }
+    
+    // Función para eliminar cuestionario
+    async function eliminarCuestionario(id_cuestionario, nombre) {
+        const resultado = await Swal.fire({
+            title: '¿Eliminar cuestionario?',
+            html: `¿Estás seguro de que deseas eliminar el cuestionario "<strong>${nombre}</strong>"?<br><br>
+                   <small class="text-danger">Esta acción eliminará permanentemente:<br>
+                   • El cuestionario y su detalle<br>
+                   • Todas las preguntas y alternativas<br>
+                   • Todos los participantes<br>
+                   • Todos los grupos y respuestas<br>
+                   • Esta acción no se puede deshacer</small>`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true
+        });
+        
+        if (!resultado.isConfirmed) {
+            return;
+        }
+        
+        // Mostrar loading
+        Swal.fire({
+            title: 'Eliminando...',
+            text: 'Por favor espera',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        try {
+            const response = await fetch(`/eliminar_cuestionario/${id_cuestionario}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.estado) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Eliminado!',
+                    text: data.mensaje || 'El cuestionario ha sido eliminado correctamente',
+                    confirmButtonText: 'Aceptar',
+                    timer: 2000,
+                    timerProgressBar: true
+                }).then(() => {
+                    // Recargar la página para actualizar la lista
+                    window.location.reload();
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.mensaje || 'No se pudo eliminar el cuestionario',
+                    confirmButtonText: 'Aceptar'
+                });
+            }
+        } catch (error) {
+            console.error('Error al eliminar cuestionario:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor. Intenta nuevamente.',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='JS/dashboard.js') }}"></script>
+{% endblock %}

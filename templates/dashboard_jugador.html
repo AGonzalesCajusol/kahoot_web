@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}Mis juegos{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 mb-4">
+            <div>
+                <h1 class="h3 fw-bold mb-1">Mis juegos</h1>
+                <p class="text-muted mb-0">Aquí encontrarás los cuestionarios en los que has participado y tus puntajes.</p>
+            </div>
+            <div class="text-md-end">
+                <span class="badge bg-primary-subtle text-primary">
+                    <i class="bi bi-person-circle me-1"></i>{{ email }}
+                </span>
+            </div>
+        </div>
+
+        {% if juegos and juegos|length > 0 %}
+        <div class="table-responsive shadow-sm rounded-4 bg-white">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th scope="col">Cuestionario</th>
+                        <th scope="col">Alias</th>
+                        <th scope="col" class="text-center">Puntaje</th>
+                        <th scope="col" class="text-center">Participación</th>
+                        <th scope="col" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for juego in juegos %}
+                    <tr>
+                        <td>
+                            <div class="fw-semibold">{{ juego.nombre_cuestionario }}</div>
+                            <small class="text-muted">
+                                PIN: {{ juego.pin }} •
+                                {{ 'Grupal' if juego.tipo_cuestionario == 'G' else 'Individual' }}
+                            </small>
+                        </td>
+                        <td>{{ juego.alias }}</td>
+                        <td class="text-center">
+                            <span class="badge bg-success-subtle text-success px-3">{{ juego.puntaje }} pts</span>
+                        </td>
+                        <td class="text-center">
+                            {% if juego.fecha_registro %}
+                                {{ juego.fecha_registro.strftime('%d/%m/%Y %H:%M') if juego.fecha_registro is not string else juego.fecha_registro }}
+                            {% else %}
+                                <span class="text-muted">No disponible</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="/resultados_inter/{{ juego.id_cuestionario }}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-bar-chart-line"></i> Ver resultados
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="card border-0 shadow-sm text-center py-5">
+            <div class="card-body">
+                <i class="bi bi-emoji-neutral fs-1 text-muted mb-3 d-block"></i>
+                <h2 class="h5 fw-semibold">Aún no has participado en ningún juego</h2>
+                <p class="text-muted mb-0">Ingresa un PIN válido desde la página principal para unirte a un cuestionario.</p>
+                <a href="/" class="btn btn-primary mt-3"><i class="bi bi-play-circle"></i> Ingresar PIN</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
+
+
+

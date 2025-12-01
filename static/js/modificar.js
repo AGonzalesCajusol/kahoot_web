@@ -43,6 +43,7 @@ const llenar_formato = () => {
     cuerpo_json.detalle.tipo_formulario = detalle.tipo_cuestionario || "";
     cuerpo_json.detalle.descripcion_formulario = detalle.descripcion || "";
     cuerpo_json.detalle.estado = detalle.estado || "";
+    cuerpo_json.detalle.imagen_url = detalle.imagen_url || null;
 
     // Normalizar preguntas: si backend envía alternativas como string JSON, parsear
     cuerpo_json.preguntas = (respuestas || []).map(r => {
@@ -51,12 +52,33 @@ const llenar_formato = () => {
             try { cop.alternativas = JSON.parse(cop.alternativas); }
             catch (e) { cop.alternativas = []; }
         }
+        // Si alternativas es un array de objetos, mantener los objetos completos para preservar estado_alternativa
+        if (Array.isArray(cop.alternativas) && cop.alternativas.length > 0 && typeof cop.alternativas[0] === 'object') {
+            // Mantener los objetos completos para poder marcar la respuesta correcta
+            // No convertir a strings aquí, se hará en render_form_pregunta si es necesario
+            // Encontrar la respuesta correcta
+            const altCorrectaObj = cop.alternativas.find(alt => alt.estado_alternativa == 1);
+            if (altCorrectaObj && !cop.respuesta) {
+                cop.respuesta = altCorrectaObj.respuesta || altCorrectaObj.texto || '';
+            }
+        } else if (Array.isArray(cop.alternativas) && cop.alternativas.length > 0) {
+            // Si ya son strings, buscar la respuesta correcta en el array original
+            // Necesitamos buscar en el array original antes de convertirlo
+            const alternativasOriginales = r.alternativas;
+            if (Array.isArray(alternativasOriginales) && alternativasOriginales.length > 0 && typeof alternativasOriginales[0] === 'object') {
+                const altCorrectaObj = alternativasOriginales.find(alt => alt.estado_alternativa == 1);
+                if (altCorrectaObj && !cop.respuesta) {
+                    cop.respuesta = altCorrectaObj.respuesta || altCorrectaObj.texto || '';
+                }
+            }
+        }
         // nombres distintos posible: normalizar a nombre_pregunta / pregunta
         cop.nombre_pregunta = cop.nombre_pregunta || cop.pregunta || "";
         cop.puntaje = cop.puntaje || cop.puntos || 0;
         cop.tiempo = cop.tiempo || cop.tiempo_respuesta || 0;
         cop.respuesta = cop.respuesta || cop.respuesta_correcta || "";
         cop.id_pregunta = cop.id_pregunta || cop.id || null;
+        cop.tipo_pregunta = cop.tipo_pregunta || 'ALT'; // Default a ALT si no viene
         return cop;
     });
 
@@ -68,15 +90,77 @@ const llenar_detalle = () => {
     descripcion_formulario.value = cuerpo_json.detalle.descripcion_formulario;
     ttipo_formulario.value = cuerpo_json.detalle.tipo_formulario;
     estado_formulario.value = cuerpo_json.detalle.estado;
+    
+    // Mostrar imagen existente si hay una
+    if (cuerpo_json.detalle.imagen_url) {
+        const previewDiv = document.getElementById('preview_imagen_cuestionario');
+        const imgPreview = document.getElementById('img_preview_cuestionario');
+        if (previewDiv && imgPreview) {
+            imgPreview.src = '/' + cuerpo_json.detalle.imagen_url;
+            previewDiv.classList.remove('d-none');
+        }
+    }
+    
     dibujar_preguntas();
 };
 
 // ---------- MODIFICAR DETALLE ----------
 const fn_modificardetalle = async () => {
+    // Subir imagen si existe una nueva
+    const imagenInput = document.getElementById('imagen_cuestionario');
+    let imagenUrl = cuerpo_json.detalle.imagen_url || null; // Mantener la imagen actual si no hay nueva
+    
+    if (imagenInput && imagenInput.files && imagenInput.files[0]) {
+        try {
+            Swal.fire({
+                title: 'Subiendo imagen...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const formData = new FormData();
+            formData.append('imagen', imagenInput.files[0]);
+            
+            const imagenResponse = await fetch('/subir_imagen_cuestionario', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const imagenData = await imagenResponse.json();
+            
+            if (imagenData.estado) {
+                imagenUrl = imagenData.ruta;
+                Swal.close();
+            } else {
+                await Swal.fire({
+                    icon: 'warning',
+                    title: 'Advertencia',
+                    text: imagenData.mensaje || 'No se pudo subir la imagen, pero puedes continuar sin ella.',
+                    confirmButtonText: 'Continuar'
+                });
+            }
+        } catch (error) {
+            console.error('Error al subir imagen:', error);
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Advertencia',
+                text: 'No se pudo subir la imagen, pero puedes continuar sin ella.',
+                confirmButtonText: 'Continuar'
+            });
+        }
+    }
+    
     cuerpo_json.detalle.nombre_formulario = nombre_formulario.value;
     cuerpo_json.detalle.tipo_formulario = ttipo_formulario.value;
     cuerpo_json.detalle.descripcion_formulario = descripcion_formulario.value;
     cuerpo_json.detalle.estado = estado_formulario.value;
+    cuerpo_json.detalle.imagen_url = imagenUrl; // Incluir imagen_url en los datos
+    
+    console.log('[DEBUG] Datos a enviar al backend:', cuerpo_json.detalle);
+    console.log('[DEBUG] imagen_url que se enviará:', imagenUrl);
 
     try {
         const respuesta = await fetch('/fn_modificar', {
@@ -87,8 +171,35 @@ const fn_modificardetalle = async () => {
         const rpt = await respuesta.json();
 
         if (rpt.estado === true) {
-            Swal.fire('Éxito', rpt.mensaje || 'Formulario modificado correctamente', 'success');
-            // opcional: actualizar id si backend devuelve algo
+            // Recargar los datos del cuestionario desde el backend para sincronizar imagen_url
+            const idFormulario = cuerpo_json.detalle.id_formulario;
+            try {
+                const datosResponse = await fetch(`/api_obtener_cuestionario_modificar/${idFormulario}`);
+                if (datosResponse.ok) {
+                    const datosActualizados = await datosResponse.json();
+                    console.log('[DEBUG] Datos actualizados después de guardar:', datosActualizados);
+                    if (datosActualizados && datosActualizados.detalle) {
+                        // Actualizar cuerpo_json con los datos actualizados del backend
+                        cuerpo_json.detalle.imagen_url = datosActualizados.detalle.imagen_url || null;
+                        console.log('[DEBUG] cuerpo_json.detalle.imagen_url actualizado a:', cuerpo_json.detalle.imagen_url);
+                    }
+                }
+            } catch (e) {
+                console.error('[DEBUG] Error al recargar datos después de guardar:', e);
+            }
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: rpt.mensaje || 'Formulario modificado correctamente',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                // Recargar el detalle para mostrar la nueva imagen si se subió una
+                if (typeof detalle === 'function') {
+                    detalle();
+                }
+            });
         } else {
             Swal.fire('Error', rpt.mensaje || 'No se pudo modificar', 'error');
         }
@@ -158,23 +269,53 @@ const render_form_pregunta = (pr = null, index = null) => {
     const puntos = pr ? (pr.puntaje || pr.puntos || 0) : 0;
     const tiempo = pr ? (pr.tiempo || pr.tiempo_respuesta || 0) : 10;
     const archivoVal = pr ? (pr.archivo || '') : '';
-    const alternativas = pr ? (Array.isArray(pr.alternativas) ? pr.alternativas : (pr.alternativas ? pr.alternativas : [])) : [];
+    // Normalizar alternativas: mantener objetos completos para preservar estado_alternativa
+    let alternativas = [];
+    if (pr && pr.alternativas) {
+        if (Array.isArray(pr.alternativas)) {
+            // Mantener objetos completos si vienen como objetos, para preservar estado_alternativa
+            alternativas = pr.alternativas.map(alt => {
+                if (typeof alt === 'object' && alt !== null) {
+                    // Mantener el objeto completo con estado_alternativa
+                    return {
+                        respuesta: alt.respuesta || alt.texto || '',
+                        estado_alternativa: alt.estado_alternativa || 0,
+                        id_alternativa: alt.id_alternativa || null
+                    };
+                }
+                // Si es string, crear objeto básico
+                return {
+                    respuesta: alt,
+                    estado_alternativa: 0
+                };
+            }).filter(alt => alt && alt.respuesta); // Filtrar vacíos
+        } else if (typeof pr.alternativas === 'string') {
+            try {
+                const parsed = JSON.parse(pr.alternativas);
+                alternativas = Array.isArray(parsed) ? parsed.map(alt => {
+                    if (typeof alt === 'object') {
+                        return {
+                            respuesta: alt.respuesta || alt.texto || '',
+                            estado_alternativa: alt.estado_alternativa || 0,
+                            id_alternativa: alt.id_alternativa || null
+                        };
+                    }
+                    return {
+                        respuesta: alt,
+                        estado_alternativa: 0
+                    };
+                }).filter(alt => alt && alt.respuesta) : [];
+            } catch (e) {
+                alternativas = [];
+            }
+        }
+    }
 
     // construir HTML del formulario de pregunta
     contenido.innerHTML = `
         <div class="d-flex align-items-center mb-3">
             <i class="bi bi-question-circle-fill fs-2 text-primary me-2"></i>
             <h3 class="fw-bold mb-0">${pr ? 'Editar pregunta' : 'Agregar pregunta'}</h3>
-        </div>
-
-        <div class="mb-3">
-            <div class="d-flex align-items-center justify-content-center">
-                <div class="subir btn btn-outline-secondary d-flex flex-column align-items-center" onclick="document.getElementById('archivo_pregunta').click()" style="cursor:pointer;">
-                    <i class="bi bi-upload fs-3 mb-1"></i>
-                    <span class="fs-6">Puedes subir un archivo (opcional)</span>
-                </div>
-                <input type="file" id="archivo_pregunta" name="archivo_pregunta" class="d-none" accept=".mp3, .jpg, .jpeg, .png">
-            </div>
         </div>
 
         <div class="mb-3">
@@ -219,8 +360,8 @@ const render_form_pregunta = (pr = null, index = null) => {
         </div>
 
         <div class="d-grid gap-2">
-            <button class="btn ${pr ? 'btn-warning' : 'btn-primary'}" onclick="guardar_pregunta(${index !== null ? index : -1})">${pr ? 'Guardar cambios' : 'Agregar pregunta'}</button>
-            <button class="btn btn-secondary" onclick="detalle()">Cancelar</button>
+            <button type="button" class="btn ${pr ? 'btn-warning' : 'btn-primary'}" onclick="if(window.guardar_pregunta) guardar_pregunta(${index !== null ? index : -1}); else console.error('guardar_pregunta no disponible');">${pr ? 'Guardar cambios' : 'Agregar pregunta'}</button>
+            <button type="button" class="btn btn-secondary" onclick="if(window.detalle) detalle(); else console.error('detalle no disponible');">Cancelar</button>
         </div>
     `;
 };
@@ -278,13 +419,34 @@ const guardar_pregunta = async (index) => {
         alternativas = ['Verdadero', 'Falso'];
     } else {
         const elems = document.querySelectorAll('.alterantivas_form .alter');
+        let encontradaCorrecta = false;
+        
         elems.forEach(el => {
-            const val = el.querySelector('input')?.value?.trim() || '';
-            if (val) alternativas.push(val);
-            if (el.querySelector('input')?.classList.contains('border-success')) {
-                respuesta_correcta = val;
+            const input = el.querySelector('input');
+            const btn = el.querySelector('button.cl');
+            const val = input?.value?.trim() || '';
+            
+            if (val) {
+                alternativas.push(val);
+                // Verificar si esta alternativa está marcada como correcta
+                // Verificar tanto el input (border-success) como el botón (btn-success)
+                const esCorrecta = input?.classList.contains('border-success') || btn?.classList.contains('btn-success');
+                if (esCorrecta && !encontradaCorrecta) {
+                    respuesta_correcta = val;
+                    encontradaCorrecta = true;
+                    console.log('Respuesta correcta encontrada:', val);
+                }
             }
         });
+        
+        // Debug: mostrar qué alternativas se encontraron
+        console.log('Alternativas capturadas:', alternativas);
+        console.log('Respuesta correcta capturada:', respuesta_correcta);
+    }
+    
+    // Validar que se haya encontrado una respuesta correcta
+    if (!respuesta_correcta && tipo === 'ALT') {
+        return Swal.fire('Error', 'Debes marcar una alternativa como respuesta correcta. Haz clic en el botón ✓ verde de la alternativa correcta.', 'error');
     }
 
     if (tipo === 'ALT' && alternativas.length < 2) {
@@ -303,7 +465,7 @@ const guardar_pregunta = async (index) => {
 
     // construir payload
     const payload = {
-        id_formulario: cuerpo_json.detalle.id_formulario,
+        id_formulario: cuerpo_json.detalle.id_formulario || cuerpo_json.detalle.id_cuestionario,
         nombre_pregunta: nombre,
         tipo_pregunta: tipo,
         alternativas: alternativas, // array de strings
@@ -335,7 +497,10 @@ const guardar_pregunta = async (index) => {
                 };
                 dibujar_preguntas();
                 Swal.fire('Guardado', data.mensaje || 'Pregunta actualizada', 'success');
-                detalle(); // volver al detalle o a la lista
+                // Volver al detalle después de guardar
+                setTimeout(() => {
+                    if (window.detalle) detalle();
+                }, 1000);
             } else {
                 Swal.fire('Error', data.mensaje || 'No se pudo actualizar la pregunta', 'error');
             }
@@ -361,7 +526,10 @@ const guardar_pregunta = async (index) => {
                 cuerpo_json.preguntas.push(nueva);
                 dibujar_preguntas();
                 Swal.fire('Creado', data.mensaje || 'Pregunta creada', 'success');
-                detalle(); // regresar a pantalla principal o lo que prefieras
+                // Volver al detalle después de guardar
+                setTimeout(() => {
+                    if (window.detalle) detalle();
+                }, 1000);
             } else {
                 Swal.fire('Error', data.mensaje || 'No se pudo crear la pregunta', 'error');
             }
@@ -424,7 +592,27 @@ const agregar_alternativas = () => {
 };
 
 const eliminar_alternativa = (btn) => {
-    btn.closest('.alter')?.remove();
+    // Heurística 3: Control y libertad - Confirmación antes de eliminar
+    Swal.fire({
+        title: '¿Eliminar esta alternativa?',
+        text: 'Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#dc3545',
+        cancelButtonColor: '#6c757d'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            btn.closest('.alter')?.remove();
+            Swal.fire({
+                icon: 'success',
+                title: 'Alternativa eliminada',
+                timer: 1500,
+                showConfirmButton: false
+            });
+        }
+    });
 };
 
 const marcar_correcta = (btn) => {
@@ -433,12 +621,26 @@ const marcar_correcta = (btn) => {
     items.forEach(el => {
         const b = el.querySelector('button.cl');
         const inp = el.querySelector('input');
-        if (b) { b.classList.remove('btn-success'); b.classList.add('btn-primary'); }
-        if (inp) inp.classList.remove('border-success');
+        if (b) { 
+            b.classList.remove('btn-success'); 
+            b.classList.add('btn-primary'); 
+        }
+        if (inp) {
+            inp.classList.remove('border-success');
+        }
     });
-    btn.classList.remove('btn-primary');
-    btn.classList.add('btn-success');
-    btn.closest('.alter').querySelector('input')?.classList.add('border-success');
+    
+    // Marcar la alternativa seleccionada
+    const alterDiv = btn.closest('.alter');
+    if (alterDiv) {
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-success');
+        const input = alterDiv.querySelector('input');
+        if (input) {
+            input.classList.add('border-success');
+            console.log('Alternativa marcada como correcta:', input.value);
+        }
+    }
 };
 
 const mostrar_VF = () => {
@@ -466,6 +668,92 @@ const mostrar_ALT = () => {
     document.getElementById('btn_add')?.classList.remove('d-none');
 };
 
+// ---------- FUNCIÓN PARA ELIMINAR IMAGEN ACTUAL (definida globalmente) ----------
+window.eliminarImagenActual = async function() {
+    const idFormulario = cuerpo_json.detalle.id_formulario;
+    if (!idFormulario) {
+        Swal.fire('Error', 'No se encontró el ID del cuestionario', 'error');
+        return;
+    }
+    
+    const result = await Swal.fire({
+        title: '¿Eliminar imagen?',
+        text: 'Esta acción eliminará la imagen del cuestionario. ¿Estás seguro?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d'
+    });
+    
+    if (result.isConfirmed) {
+        try {
+            Swal.fire({
+                title: 'Eliminando imagen...',
+                text: 'Por favor espera',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            
+            const response = await fetch(`/eliminar_imagen_cuestionario/${idFormulario}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.estado) {
+                // Actualizar cuerpo_json localmente
+                cuerpo_json.detalle.imagen_url = null;
+                
+                // Recargar los datos del cuestionario desde el backend para sincronizar
+                try {
+                    const datosResponse = await fetch(`/api_obtener_cuestionario_modificar/${idFormulario}`);
+                    if (datosResponse.ok) {
+                        const datosActualizados = await datosResponse.json();
+                        console.log('[DEBUG] Datos actualizados del backend:', datosActualizados);
+                        if (datosActualizados && datosActualizados.detalle) {
+                            // Actualizar cuerpo_json con los datos actualizados del backend
+                            const nuevaImagenUrl = datosActualizados.detalle.imagen_url;
+                            console.log('[DEBUG] Nueva imagen_url del backend:', nuevaImagenUrl);
+                            cuerpo_json.detalle.imagen_url = nuevaImagenUrl || null;
+                            console.log('[DEBUG] cuerpo_json.detalle.imagen_url actualizado a:', cuerpo_json.detalle.imagen_url);
+                        }
+                    } else {
+                        console.error('[DEBUG] Error al obtener datos actualizados:', datosResponse.status, datosResponse.statusText);
+                    }
+                } catch (e) {
+                    console.error('[DEBUG] Error al recargar datos:', e);
+                    // Si falla, mantener el valor null que ya establecimos
+                }
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Imagen eliminada',
+                    text: 'La imagen ha sido eliminada correctamente.',
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Recargar el detalle para actualizar la vista
+                    if (typeof detalle === 'function') {
+                        detalle();
+                    }
+                });
+            } else {
+                Swal.fire('Error', data.mensaje || 'No se pudo eliminar la imagen', 'error');
+            }
+        } catch (error) {
+            console.error('Error al eliminar imagen:', error);
+            Swal.fire('Error', 'Error de conexión al eliminar la imagen', 'error');
+        }
+    }
+};
+
 // ---------- UTILIDADES ----------
 function escapeHtml(text) {
     if (!text) return '';
@@ -480,3 +768,248 @@ function escapeHtml(text) {
 function escapeAttr(text) {
     return escapeHtml(text).replace(/"/g, '&quot;');
 }
+
+// ---------- FUNCIÓN PARA MOSTRAR DETALLE ----------
+const detalle = () => {
+    if (!contenido) return;
+    contenido.innerHTML = `
+        <h3 class="fw-bold mb-3">Paso 1: Detalle del formulario</h3>
+        <p class="text-secondary separador mb-4">Define la información básica de tu formulario</p>
+        
+        <!-- Campo para subir/cambiar imagen del cuestionario -->
+        <div class="mb-4">
+            <label class="fw-bold mb-2">
+                <i class="bi bi-image"></i>
+                Imagen del cuestionario
+                <i class="bi bi-info-circle text-primary ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Opcional: Sube o cambia la imagen de tu cuestionario"></i>
+            </label>
+            <div class="mb-3">
+                ${cuerpo_json.detalle.imagen_url ? `
+                    <div class="mb-2" id="imagen_actual_container">
+                        <p class="text-muted small mb-2">Imagen actual:</p>
+                        <img src="/${cuerpo_json.detalle.imagen_url}" alt="Imagen actual" 
+                             class="img-thumbnail" 
+                             style="max-width: 200px; max-height: 150px; object-fit: contain; border-radius: 8px;">
+                        <button type="button" id="btn_eliminar_imagen_actual" class="btn btn-sm btn-danger mt-2">
+                            <i class="bi bi-trash"></i> Eliminar imagen
+                        </button>
+                    </div>
+                ` : ''}
+                <div class="d-flex align-items-center justify-content-center border rounded p-3" style="background-color: #f8f9fa; cursor: pointer;" onclick="document.getElementById('imagen_cuestionario').click()">
+                    <div class="text-center">
+                        <i class="bi bi-upload fs-3 mb-1 text-muted"></i>
+                        <p class="text-muted mb-0 small">${cuerpo_json.detalle.imagen_url ? 'Cambiar imagen' : 'Subir una imagen (opcional)'}</p>
+                        <p class="text-muted mb-0" style="font-size: 0.75rem;">JPG, PNG, GIF</p>
+                    </div>
+                </div>
+                <input type="file" id="imagen_cuestionario" name="imagen_cuestionario" class="d-none" accept=".jpg,.jpeg,.png,.gif" onchange="previewImagenCuestionarioModificar(this)">
+                <div id="preview_imagen_cuestionario" class="mt-2 d-none">
+                    <p class="text-muted small mb-2">Nueva imagen seleccionada:</p>
+                    <img id="img_preview_cuestionario" src="" alt="Vista previa" class="img-thumbnail" style="max-width: 200px; max-height: 150px;">
+                    <button type="button" class="btn btn-sm btn-danger mt-2" onclick="eliminarImagenCuestionarioModificar()">
+                        <i class="bi bi-trash"></i> Cancelar cambio
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex flex-wrap align-items-start gap-4">
+            <div class="d-flex flex-column me-4" style="min-width: 300px;">
+                <label for="nombre_cuestionario" class="fw-bold mb-2">
+                    <i class="bi bi-pencil-square"></i>
+                    Nombre del formulario
+                    <span class="text-danger">*</span>
+                </label>
+                <input id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text"
+                    placeholder="Ingrese el nombre del cuestionario" maxlength="200" required>
+                
+                <label for="tipo_cuestionario" class="fw-bold mb-2">
+                    <i class="bi bi-info-circle"></i>
+                    Tipo de formulario
+                    <span class="text-danger">*</span>
+                </label>
+                <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario" required>
+                    <option value="I" ${cuerpo_json.detalle.tipo_formulario === 'I' ? 'selected' : ''}>Individual - Cada estudiante juega solo</option>
+                    <option value="G" ${cuerpo_json.detalle.tipo_formulario === 'G' ? 'selected' : ''}>Grupal - Los estudiantes forman equipos</option>
+                </select>
+                
+                <label for="estado" class="fw-bold mb-2">
+                    <i class="bi bi-check-circle"></i> Estado
+                </label>
+                <select id="estado" class="form-select mb-3" name="estado">
+                    <option value="P" ${cuerpo_json.detalle.estado === 'P' ? 'selected' : ''}>Público</option>
+                    <option value="R" ${cuerpo_json.detalle.estado === 'R' ? 'selected' : ''}>Privado</option>
+                </select>
+            </div>
+            
+            <div class="d-flex flex-column flex-grow-1">
+                <label for="descripcion" class="fw-bold mb-2">
+                    <i class="bi bi-card-text"></i>
+                    Descripción del formulario
+                </label>
+                <textarea id="descripcion" class="form-control" name="descripcion" rows="7"
+                    placeholder="Ingrese la descripción del cuestionario (opcional)" maxlength="1000">${escapeHtml(cuerpo_json.detalle.descripcion_formulario || '')}</textarea>
+                <small class="text-muted">Caracteres: <span id="contador_descripcion">${(cuerpo_json.detalle.descripcion_formulario || '').length}</span>/1000</small>
+            </div>
+        </div>
+        <div class="mb-1 mt-4">
+            <button type="button" class="btn btn-warning w-100" onclick="if(window.modificar_detalle) modificar_detalle(); else console.error('modificar_detalle no disponible');">
+                <i class="bi bi-save"></i> Modificar detalle
+            </button>
+        </div>
+    `;
+    
+    // Actualizar referencias después de renderizar
+    nombre_formulario = document.getElementById('nombre_cuestionario');
+    ttipo_formulario = document.getElementById('tipo_cuestionario');
+    estado_formulario = document.getElementById('estado');
+    descripcion_formulario = document.getElementById('descripcion');
+    
+    // Llenar valores
+    if (nombre_formulario) nombre_formulario.value = cuerpo_json.detalle.nombre_formulario;
+    if (ttipo_formulario) ttipo_formulario.value = cuerpo_json.detalle.tipo_formulario;
+    if (estado_formulario) estado_formulario.value = cuerpo_json.detalle.estado;
+    if (descripcion_formulario) descripcion_formulario.value = cuerpo_json.detalle.descripcion_formulario;
+    
+    // Contador de caracteres
+    const contador = document.getElementById('contador_descripcion');
+    if (descripcion_formulario && contador) {
+        descripcion_formulario.addEventListener('input', function() {
+            contador.textContent = this.value.length;
+        });
+    }
+    
+    // Inicializar funciones de preview de imagen si no existen
+    if (typeof window.previewImagenCuestionarioModificar === 'undefined') {
+        window.previewImagenCuestionarioModificar = function(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const imgPreview = document.getElementById('img_preview_cuestionario');
+                    const previewDiv = document.getElementById('preview_imagen_cuestionario');
+                    if (imgPreview) imgPreview.src = e.target.result;
+                    if (previewDiv) previewDiv.classList.remove('d-none');
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+    }
+    
+    if (typeof window.eliminarImagenCuestionarioModificar === 'undefined') {
+        window.eliminarImagenCuestionarioModificar = function() {
+            const imagenInput = document.getElementById('imagen_cuestionario');
+            const previewDiv = document.getElementById('preview_imagen_cuestionario');
+            if (imagenInput) imagenInput.value = '';
+            if (previewDiv) previewDiv.classList.add('d-none');
+        };
+    }
+    
+    // Asegurar que el botón de eliminar imagen actual tenga el event listener correcto
+    const btnEliminarImagen = document.getElementById('btn_eliminar_imagen_actual');
+    if (btnEliminarImagen) {
+        btnEliminarImagen.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (window.eliminarImagenActual) {
+                window.eliminarImagenActual();
+            } else {
+                console.error('eliminarImagenActual no está disponible');
+                Swal.fire('Error', 'La función para eliminar imagen no está disponible', 'error');
+            }
+        });
+    }
+};
+
+// ---------- GUARDAR Y FINALIZAR (GUARDAR TODO Y RESETEAR) ----------
+const guardar_y_finalizar = async () => {
+    // Confirmar acción
+    const confirm = await Swal.fire({
+        title: '¿Guardar todos los cambios?',
+        text: 'Se guardarán todos los cambios del cuestionario y se reseteará para reutilizarse desde cero.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar y finalizar',
+        cancelButtonText: 'Cancelar',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#6c757d'
+    });
+    
+    if (!confirm.isConfirmed) return;
+    
+    // Mostrar loading
+    Swal.fire({
+        title: 'Guardando cambios...',
+        text: 'Por favor espera',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    try {
+        // 1. Guardar el detalle del cuestionario
+        cuerpo_json.detalle.nombre_formulario = nombre_formulario.value;
+        cuerpo_json.detalle.tipo_formulario = ttipo_formulario.value;
+        cuerpo_json.detalle.descripcion_formulario = descripcion_formulario.value;
+        cuerpo_json.detalle.estado = estado_formulario.value;
+        
+        const respuestaDetalle = await fetch('/fn_modificar', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(cuerpo_json.detalle)
+        });
+        
+        const rptDetalle = await respuestaDetalle.json();
+        
+        if (rptDetalle.estado !== true) {
+            Swal.fire('Error', rptDetalle.mensaje || 'No se pudo guardar el detalle', 'error');
+            return;
+        }
+        
+        // 2. Resetear el estado del juego para que pueda reutilizarse
+        const id_cuestionario = cuerpo_json.detalle.id_formulario || cuerpo_json.detalle.id_cuestionario;
+        if (id_cuestionario) {
+            const respuestaReset = await fetch(`/resetear_cuestionario/${id_cuestionario}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            
+            const rptReset = await respuestaReset.json();
+            
+            if (rptReset.estado !== true) {
+                console.warn('No se pudo resetear el cuestionario, pero los cambios se guardaron');
+            }
+        }
+        
+        // 3. Mostrar éxito y redirigir
+        Swal.fire({
+            icon: 'success',
+            title: '¡Guardado exitosamente!',
+            text: 'Todos los cambios se han guardado. El cuestionario está listo para reutilizarse.',
+            confirmButtonText: 'Ir a mis cuestionarios',
+            timer: 2000,
+            timerProgressBar: true
+        }).then(() => {
+            window.location.href = '/dashboard';
+        });
+        
+    } catch (err) {
+        console.error('Error al guardar y finalizar:', err);
+        Swal.fire('Error', 'Fallo de conexión al guardar los cambios', 'error');
+    }
+};
+
+// ---------- EXPONER FUNCIONES GLOBALMENTE ----------
+window.modificar_detalle = modificar_detalle;
+window.agg_pr = agg_pr;
+window.detalle = detalle;
+window.mostrar_pregunta = mostrar_pregunta;
+window.guardar_pregunta = guardar_pregunta;
+window.eliminar_pr = eliminar_pr;
+window.agregar_alternativas = agregar_alternativas;
+window.eliminar_alternativa = eliminar_alternativa;
+window.marcar_correcta = marcar_correcta;
+window.mostrar_VF = mostrar_VF;
+window.mostrar_ALT = mostrar_ALT;
+window.seleccionar_VF = seleccionar_VF;
+window.guardar_y_finalizar = guardar_y_finalizar;

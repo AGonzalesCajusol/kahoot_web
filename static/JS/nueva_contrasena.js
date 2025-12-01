@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     alertContainer.innerHTML = `
       <div class="alert alert-${type} alert-dismissible fade show mt-2" role="alert">
         ${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
       </div>`;
   };
 
@@ -62,6 +62,22 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!email) {
       showAlert("danger", "Sesión de recuperación no encontrada. Repite el proceso.");
       return;
+    }
+
+    // Heurística 3: Control y libertad - Confirmación antes de cambiar contraseña
+    const confirmResult = await Swal.fire({
+      title: '¿Estás seguro de cambiar tu contraseña?',
+      text: 'Tu contraseña actual será reemplazada por la nueva.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, cambiar contraseña',
+      cancelButtonText: 'Cancelar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#6c757d'
+    });
+
+    if (!confirmResult.isConfirmed) {
+      return; // Usuario canceló
     }
 
     submitBtn.disabled = true;

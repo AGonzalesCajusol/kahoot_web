@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const form = document.querySelector("form");
-    const submitBtn = form.querySelector('button[type="submit"]');
+    const formulario = document.querySelector("form");
+    const botonEnviar = formulario.querySelector('button[type="submit"]');
 
-    const docenteFields = {
+    const camposDocente = {
         nombre: document.getElementById("nombre"),
         apellidos: document.getElementById("apellidos"),
         email: document.getElementById("email"),
@@ -13,128 +13,91 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmError: document.getElementById("confirmError")
     };
 
-    let alerts = document.getElementById("formAlerts");
-    if (!alerts) {
-        alerts = document.createElement("div");
-        alerts.id = "formAlerts";
-        alerts.className = "mt-3";
-        form.parentElement.appendChild(alerts);
+    // Alternador para mostrar/ocultar contraseñas
+    const alternarContrasena = document.getElementById('togglePassword');
+    const alternarConfirmarContrasena = document.getElementById('toggleConfirmPassword');
+    const iconoOjoContrasena = document.getElementById('passwordEyeIcon');
+    const iconoOjoConfirmarContrasena = document.getElementById('confirmPasswordEyeIcon');
+    
+    if (alternarContrasena && iconoOjoContrasena) {
+        alternarContrasena.addEventListener('click', function() {
+            const tipo = camposDocente.password.getAttribute('type') === 'password' ? 'text' : 'password';
+            camposDocente.password.setAttribute('type', tipo);
+            
+            if (tipo === 'text') {
+                iconoOjoContrasena.classList.remove('bi-eye');
+                iconoOjoContrasena.classList.add('bi-eye-slash');
+            } else {
+                iconoOjoContrasena.classList.remove('bi-eye-slash');
+                iconoOjoContrasena.classList.add('bi-eye');
+            }
+        });
+    }
+    
+    if (alternarConfirmarContrasena && iconoOjoConfirmarContrasena) {
+        alternarConfirmarContrasena.addEventListener('click', function() {
+            const tipo = camposDocente.confirm_password.getAttribute('type') === 'password' ? 'text' : 'password';
+            camposDocente.confirm_password.setAttribute('type', tipo);
+            
+            if (tipo === 'text') {
+                iconoOjoConfirmarContrasena.classList.remove('bi-eye');
+                iconoOjoConfirmarContrasena.classList.add('bi-eye-slash');
+            } else {
+                iconoOjoConfirmarContrasena.classList.remove('bi-eye-slash');
+                iconoOjoConfirmarContrasena.classList.add('bi-eye');
+            }
+        });
     }
 
-    const showAlert = (type, message) => {
-        alerts.innerHTML = `
-          <div class="alert alert-${type} alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
-            ${message}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    let alertas = document.getElementById("formAlerts");
+    if (!alertas) {
+        alertas = document.createElement("div");
+        alertas.id = "formAlerts";
+        alertas.className = "mt-3";
+        formulario.parentElement.appendChild(alertas);
+    }
+
+    const mostrarAlerta = (tipo, mensaje) => {
+        alertas.innerHTML = `
+          <div class="alert alert-${tipo} alert-dismissible fade show animate__animated animate__fadeInDown" role="alert">
+            ${mensaje}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
           </div>`;
     };
 
-    const isStrongPassword = (pwd) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(pwd);
+    const esContrasenaFuerte = (contrasena) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(contrasena);
 
-    const tipoToggle = document.createElement("div");
-    tipoToggle.className = "mb-3 text-center";
-    tipoToggle.innerHTML = `
-        <div class="btn-group w-100" role="group">
-            <button type="button" class="btn btn-outline-primary active" id="btnDocente">Docente</button>
-            <button type="button" class="btn btn-outline-primary" id="btnJugador">Jugador</button>
-        </div>`;
-    form.insertBefore(tipoToggle, form.firstChild);
+    let tipoUsuario = "docente"; // Solo docentes pueden registrarse desde aquí
 
-    let tipoUsuario = "docente"; // default
-
-    const mostrarCampos = () => {
-        if (tipoUsuario === "docente") {
-            docenteFields.nombre.parentElement.parentElement.style.display = "block";
-            docenteFields.apellidos.parentElement.parentElement.style.display = "block";
-            docenteFields.nombre.required = true;
-            docenteFields.apellidos.required = true;
-        } else {
-            docenteFields.nombre.parentElement.parentElement.style.display = "none";
-            docenteFields.apellidos.parentElement.parentElement.style.display = "none";
-            docenteFields.nombre.required = false;
-            docenteFields.apellidos.required = false;
-        }
-    };
-
-    mostrarCampos();
-
-    document.getElementById("btnDocente").addEventListener("click", () => {
-        tipoUsuario = "docente";
-        document.getElementById("btnDocente").classList.add("active");
-        document.getElementById("btnJugador").classList.remove("active");
-        mostrarCampos();
-    });
-    document.getElementById("btnJugador").addEventListener("click", () => {
-        tipoUsuario = "jugador";
-        document.getElementById("btnJugador").classList.add("active");
-        document.getElementById("btnDocente").classList.remove("active");
-        mostrarCampos();
-    });
-    const registrarRostroBtn = document.getElementById('registrar-rostro-btn');
-    const videoContainer = document.getElementById('video-container');
-    const video = document.getElementById('video');
-    const captureBtn = document.getElementById('capture-btn');
-    const canvas = document.getElementById('canvas');
-    let capturedImage = null;  // aquí guardamos el base64
-
-    if (registrarRostroBtn) {
-        registrarRostroBtn.addEventListener('click', () => {
-            videoContainer.style.display = 'block';
-            navigator.mediaDevices.getUserMedia({ video: true })
-                .then(stream => {
-                    video.srcObject = stream;
-                })
-                .catch(err => {
-                    console.error("Error al acceder a la cámara: ", err);
-                    showAlert('danger', 'No se pudo acceder a la cámara. Asegúrate de dar los permisos necesarios.');
-                });
-        });
-    }
-
-    if (captureBtn) {
-        captureBtn.addEventListener('click', () => {
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-            capturedImage = canvas.toDataURL('image/jpeg');
-            showAlert('success', 'Rostro capturado exitosamente.');
-            videoContainer.style.display = 'none';
-            // detener cámara
-            video.srcObject.getTracks().forEach(track => track.stop());
-        });
-    }
-
-    form.addEventListener("submit", async (event) => {
-        event.preventDefault();
+    formulario.addEventListener("submit", async (evento) => {
+        evento.preventDefault();
 
         // Limpiar errores
-        docenteFields.passwordError.textContent = "";
-        docenteFields.confirmError.textContent = "";
-        docenteFields.password.classList.remove("is-invalid");
-        docenteFields.confirm_password.classList.remove("is-invalid");
+        camposDocente.passwordError.textContent = "";
+        camposDocente.confirmError.textContent = "";
+        camposDocente.password.classList.remove("is-invalid");
+        camposDocente.confirm_password.classList.remove("is-invalid");
 
         // Obtener valores
-        const password = docenteFields.password.value.trim();
-        const confirmPassword = docenteFields.confirm_password.value.trim();
-        const email = docenteFields.email.value.trim();
-        const nombres = docenteFields.nombre?.value?.trim() || "";
-        const apellidos = docenteFields.apellidos?.value?.trim() || "";
+        const contrasena = camposDocente.password.value.trim();
+        const confirmarContrasena = camposDocente.confirm_password.value.trim();
+        const email = camposDocente.email.value.trim();
+        const nombres = camposDocente.nombre?.value?.trim() || "";
+        const apellidos = camposDocente.apellidos?.value?.trim() || "";
 
         // Validaciones locales
-        let valid = true;
-        if (!isStrongPassword(password)) {
-            docenteFields.passwordError.textContent = "La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y símbolo.";
-            docenteFields.password.classList.add("is-invalid");
-            valid = false;
+        let valido = true;
+        if (!esContrasenaFuerte(contrasena)) {
+            camposDocente.passwordError.textContent = "La contraseña debe tener al menos 8 caracteres, incluir mayúscula, minúscula, número y símbolo.";
+            camposDocente.password.classList.add("is-invalid");
+            valido = false;
         }
-        if (password !== confirmPassword) {
-            docenteFields.confirmError.textContent = "Las contraseñas no coinciden.";
-            docenteFields.confirm_password.classList.add("is-invalid");
-            valid = false;
+        if (contrasena !== confirmarContrasena) {
+            camposDocente.confirmError.textContent = "Las contraseñas no coinciden.";
+            camposDocente.confirm_password.classList.add("is-invalid");
+            valido = false;
         }
-        if (!valid) return;
+        if (!valido) return;
 
 
         Swal.fire({
@@ -143,62 +106,67 @@ document.addEventListener("DOMContentLoaded", () => {
             showCancelButton: true,
             confirmButtonText: 'Sí, registrarme',
             cancelButtonText: 'Cancelar'
-        }).then(async (result) => {
-            if (!result.isConfirmed) return;
+        }).then(async (resultado) => {
+            if (!resultado.isConfirmed) return;
 
             try {
-                const respValid = await fetch("/validar_correo", {
+                const respuestaValidacion = await fetch("/validar_correo", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email })
                 });
-                const dataValid = await respValid.json();
+                const datosValidacion = await respuestaValidacion.json();
 
-                if (dataValid.code === 0) {
-                    showAlert("danger", dataValid.message || "Este correo ya está registrado.");
+                if (datosValidacion.code === 0) {
+                    mostrarAlerta("danger", datosValidacion.message || "Este correo ya está registrado.");
                     return; 
                 }
-            } catch (e) {
-                showAlert("danger", "Error al validar el correo. Intenta nuevamente.");
+            } catch (error) {
+                mostrarAlerta("danger", "Error al validar el correo. Intenta nuevamente.");
                 return;
             }
 
-            let payload = { email, password, tipo_usuario: tipoUsuario };
-            if (tipoUsuario === "docente") {
-                payload.nombres = nombres;
-                payload.apellidos = apellidos;
-                payload.rostro = capturedImage; 
-            }
+            // Obtener datos faciales si fueron capturados
+            const rostroData = obtenerRostroData();
+            
+            let datosEnvio = { 
+                email, 
+                password: contrasena, 
+                tipo_usuario: "docente",
+                nombres: nombres,
+                apellidos: apellidos,
+                rostro: rostroData || null  // Agregar datos faciales (opcional)
+            };
 
-            // UI: deshabilitar botón
-            const originalText = submitBtn.innerText;
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Registrando...";
+            // Interfaz: deshabilitar botón
+            const textoOriginal = botonEnviar.innerText;
+            botonEnviar.disabled = true;
+            botonEnviar.innerText = "Registrando...";
 
             try {
-                const resp = await fetch("/enviar_codigo", {
+                const respuesta = await fetch("/enviar_codigo", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    body: JSON.stringify(datosEnvio)
                 });
 
-                const data = await resp.json();
+                const datos = await respuesta.json();
 
-                if (resp.ok && data.code === 1) {
-                    showAlert("success", data.message || "Código enviado al correo.");
+                if (respuesta.ok && datos.code === 1) {
+                    mostrarAlerta("success", datos.message || "Código enviado al correo.");
                     sessionStorage.setItem("pending_email", email);
                     sessionStorage.setItem("tipo_usuario", tipoUsuario);
                     setTimeout(() => {
                         window.location.href = "/verificarcodigo";
                     }, 800);
                 } else {
-                    showAlert("danger", data.message || "No se pudo enviar el código. Intenta nuevamente.");
+                    mostrarAlerta("danger", datos.message || "No se pudo enviar el código. Intenta nuevamente.");
                 }
-            } catch (e) {
-                showAlert("danger", "Ocurrió un error al enviar el código. Verifica tu conexión.");
+            } catch (error) {
+                mostrarAlerta("danger", "Ocurrió un error al enviar el código. Verifica tu conexión.");
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = originalText;
+                botonEnviar.disabled = false;
+                botonEnviar.innerText = textoOriginal;
             }
         });
     });

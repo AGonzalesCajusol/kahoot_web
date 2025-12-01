@@ -1,0 +1,211 @@
+{% if session.get('docente_id') %}
+<!-- Footer para Docente -->
+<footer class="mt-auto" style="margin-top: 0; margin-bottom: 0;">
+    <!-- Upper Footer Section -->
+    <div class="py-5" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
+        <div class="container">
+            <div class="row">
+                <!-- Cuestionarios Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Cuestionarios</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/dashboard" class="text-white text-decoration-none">Mis cuestionarios</a></li>
+                        <li class="mb-2"><a href="/nuevo_cuestionario" class="text-white text-decoration-none">Crear cuestionario</a></li>
+                        <li class="mb-2"><a href="/repositorio" class="text-white text-decoration-none">Repositorio</a></li>
+                        <li class="mb-2"><a href="/perfil" class="text-white text-decoration-none">Perfil</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Recursos Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Recursos</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/guia_uso" class="text-white text-decoration-none">Guía de uso</a></li>
+                        <li class="mb-2"><a href="/plantillas" class="text-white text-decoration-none">Plantillas</a></li>
+                        <li class="mb-2"><a href="/tutoriales" class="text-white text-decoration-none">Tutoriales</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Soporte Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Soporte</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/preguntas_frecuentes" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+                        <li class="mb-2"><a href="/contactanos" class="text-white text-decoration-none">Contáctanos</a></li>
+                        <li class="mb-2"><a href="/soporte_tecnico" class="text-white text-decoration-none">Soporte Técnico</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Logo and Social Media Column -->
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="/dashboard" class="text-decoration-none">
+                            <img src="{{ url_for('static', filename='IMG/GoQuiz.png') }}" alt="Logo GoQuiz" style="height: 50px; width: auto;">
+                        </a>
+                        <div class="ms-2">
+                            <div class="text-white fw-bold" style="writing-mode: vertical-rl; text-orientation: mixed; font-size: 1.2rem; letter-spacing: 2px;">GOQUIZ</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lower Footer Section -->
+    <div class="py-3" style="background: #2c3e50;">
+        <div class="container text-center">
+            <p class="text-white mb-0 small">
+                Todos los derechos reservados © Alumnos USAT Grupo 5, {{ current_year }}
+            </p>
+        </div>
+    </div>
+</footer>
+{% elif session.get('jugador_id') %}
+<!-- Footer para Jugador -->
+<footer class="mt-auto">
+    <!-- Upper Footer Section -->
+    <div class="py-5" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
+        <div class="container">
+            <div class="row">
+                <!-- Juego Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Juego</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/dashboard" class="text-white text-decoration-none">Mis juegos</a></li>
+                        <li class="mb-2"><a href="/pin_estudiante" class="text-white text-decoration-none">Unirse a un juego</a></li>
+                        <li class="mb-2"><a href="/" class="text-white text-decoration-none">Inicio</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Ayuda Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Ayuda</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/errorsistema" class="text-white text-decoration-none">Cómo jugar</a></li>
+                        <li class="mb-2"><a href="/preguntas_frecuentes" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+                        <li class="mb-2"><a href="/errorsistema" class="text-white text-decoration-none">Guía de recompensas</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Soporte Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Soporte</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/contactanos" class="text-white text-decoration-none">Contáctanos</a></li>
+                        <li class="mb-2"><a href="/soporte_tecnico" class="text-white text-decoration-none">Soporte Técnico</a></li>
+                        <li class="mb-2"><a href="/errorsistema" class="text-white text-decoration-none">Reportar problema</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Logo and Social Media Column -->
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="/dashboard" class="text-decoration-none">
+                            <img src="{{ url_for('static', filename='IMG/GoQuiz.png') }}" alt="Logo GoQuiz" style="height: 50px; width: auto;">
+                        </a>
+                        <div class="ms-2">
+                            <div class="text-white fw-bold" style="writing-mode: vertical-rl; text-orientation: mixed; font-size: 1.2rem; letter-spacing: 2px;">GOQUIZ</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lower Footer Section -->
+    <div class="py-3" style="background: #2c3e50;">
+        <div class="container text-center">
+            <p class="text-white mb-0 small">
+                Todos los derechos reservados © Alumnos USAT Grupo 5, {{ current_year }}
+            </p>
+        </div>
+    </div>
+</footer>
+{% else %}
+<!-- Footer para usuarios no logueados -->
+<footer class="mt-auto">
+    <!-- Upper Footer Section -->
+    <div class="py-5" style="background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);">
+        <div class="container">
+            <div class="row">
+                <!-- Juego Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Juego</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/" class="text-white text-decoration-none">Inicio</a></li>
+                        <li class="mb-2"><a href="/login" class="text-white text-decoration-none">Unirse</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Equipo Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Equipo</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/nuestro_equipo" class="text-white text-decoration-none">Nuestro Equipo</a></li>
+                        <li class="mb-2"><a href="/sobre_nosotros" class="text-white text-decoration-none">Sobre Nosotros</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Soporte Column -->
+                <div class="col-md-3 mb-4 mb-md-0">
+                    <h5 class="text-white fw-bold mb-3">Soporte</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="/preguntas_frecuentes" class="text-white text-decoration-none">Preguntas frecuentes</a></li>
+                        <li class="mb-2"><a href="/contactanos" class="text-white text-decoration-none">Contáctanos</a></li>
+                        <li class="mb-2"><a href="/soporte_tecnico" class="text-white text-decoration-none">Soporte Técnico</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Logo and Social Media Column -->
+                <div class="col-md-3">
+                    <div class="d-flex align-items-center mb-3">
+                        <a href="/" class="text-decoration-none">
+                            <img src="{{ url_for('static', filename='IMG/GoQuiz.png') }}" alt="Logo GoQuiz" style="height: 50px; width: auto;">
+                        </a>
+                        <div class="ms-2">
+                            <div class="text-white fw-bold" style="writing-mode: vertical-rl; text-orientation: mixed; font-size: 1.2rem; letter-spacing: 2px;">GOQUIZ</div>
+                        </div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white" style="font-size: 1.5rem;"><i class="bi bi-envelope"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Lower Footer Section -->
+    <div class="py-3" style="background: #2c3e50;">
+        <div class="container text-center">
+            <p class="text-white mb-0 small">
+                Todos los derechos reservados © Alumnos USAT Grupo 5, {{ current_year }}
+            </p>
+        </div>
+    </div>
+</footer>
+{% endif %}
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1651 @@
+{
+  "info": {
+    "_postman_id": "kahoot-web-apis-2025",
+    "name": "Kahoot Web - Todas las APIs",
+    "description": "Colección completa de APIs REST para todas las tablas del proyecto Kahoot Web",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Alternativa",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_alternativa",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_alternativa"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_alternativa\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Alternativa por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_alternativa_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_alternativa_id"
+              ],
+              "query": [
+                {
+                  "key": "id_alternativa",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Alternativas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_alternativas",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_alternativas"
+              ],
+              "query": [
+                {
+                  "key": "id_pregunta",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_alternativa",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_alternativa"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_alternativa\": 1,\n    \"respuesta\": \"Respuesta de ejemplo\",\n    \"estado_alternativa\": \"P\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_alternativa",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_alternativa"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_pregunta\": 1,\n    \"respuesta\": \"Respuesta de ejemplo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cuestionario",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_cuestionario",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_cuestionario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_cuestionario\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Cuestionario por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_cuestionario_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_cuestionario_id"
+              ],
+              "query": [
+                {
+                  "key": "id_cuestionario",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Cuestionarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_cuestionarios",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_cuestionarios"
+              ],
+              "query": [
+                {
+                  "key": "id_docente",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_cuestionario",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_cuestionario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_cuestionario\": 1,\n    \"nombre\": \"Ejemplo\",\n    \"estado\": \"P\",\n    \"tipo_cuestionario\": \"I\",\n    \"descripcion\": \"Descripción de ejemplo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_cuestionario",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_cuestionario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre\": \"Ejemplo\",\n    \"id_docente\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Docente",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_docente",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_docente"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_docente\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Docente por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_docente_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_docente_id"
+              ],
+              "query": [
+                {
+                  "key": "id_docente",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Docentes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_docentes",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_docentes"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_docente",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_docente"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_docente\": 1,\n    \"correo\": \"docente@ejemplo.com\",\n    \"password\": \"password123\",\n    \"nombres\": \"Ejemplo\",\n    \"apellidos\": \"Ejemplo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_docente",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_docente"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"correo\": \"docente@ejemplo.com\",\n    \"password\": \"password123\",\n    \"nombres\": \"Ejemplo\",\n    \"apellidos\": \"Ejemplo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Grupo",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_grupo",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_grupo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_grupo\": 1,\n    \"id_jugador_cuestionario\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Grupo por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_grupo_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_grupo_id"
+              ],
+              "query": [
+                {
+                  "key": "id_grupo",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Grupos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_grupos",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_grupos"
+              ],
+              "query": [
+                {
+                  "key": "id_cuestionario",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_grupo",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_grupo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_grupo\": 1,\n    \"metodo_evaluacion\": \"valor_ejemplo\",\n    \"id_jugador_cuestionario\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_grupo",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_grupo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"nombre_grupo\": \"Ejemplo\",\n    \"id_cuestionario\": 1,\n    \"id_lider\": \"valor_ejemplo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "GrupoMiembro",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_grupo_miembro",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_grupo_miembro"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_miembro\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los GrupoMiembros",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_grupo_miembros",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_grupo_miembros"
+              ],
+              "query": [
+                {
+                  "key": "id_grupo",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_grupo_miembro",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_grupo_miembro"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_grupo\": 1,\n    \"id_jugador_cuestionario\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jugador",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_jugador",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_jugador"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jugador\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Jugador por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_jugador_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_jugador_id"
+              ],
+              "query": [
+                {
+                  "key": "id_jugador",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Jugadors",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_jugadores",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_jugadores"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_jugador",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_jugador"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jugador\": 1,\n    \"email\": \"jugador@ejemplo.com\",\n    \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_jugador",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_jugador"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"jugador@ejemplo.com\",\n    \"password\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pregunta",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_pregunta",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_pregunta"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_pregunta\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Pregunta por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_pregunta_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_pregunta_id"
+              ],
+              "query": [
+                {
+                  "key": "id_pregunta",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Preguntas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_preguntas",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_preguntas"
+              ],
+              "query": [
+                {
+                  "key": "id_cuestionario",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_pregunta",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_pregunta"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_pregunta\": 1,\n    \"puntos\": \"valor_ejemplo\",\n    \"tiempo\": 0,\n    \"tipo_pregunta\": \"I\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_pregunta",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_pregunta"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_cuestionario\": 1,\n    \"nombre_pregunta\": \"Ejemplo\",\n    \"puntos\": \"valor_ejemplo\",\n    \"tiempo\": 0,\n    \"tipo_pregunta\": \"I\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recompensa",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_recompensa",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_recompensa"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_recompensa\": \"valor_ejemplo\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Recompensa por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_recompensa_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_recompensa_id"
+              ],
+              "query": [
+                {
+                  "key": "id_recompensa",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Recompensas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_recompensas",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_recompensas"
+              ],
+              "query": [
+                {
+                  "key": "id_cuestionario",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_recompensa",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_recompensa"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_recompensa\": \"valor_ejemplo\",\n    \"puntos\": \"valor_ejemplo\",\n    \"tipo_recompensa\": \"I\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_recompensa",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_recompensa"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_cuestionario\": 1,\n    \"id_jugador_cuestionario\": 1,\n    \"id_jugador\": 1,\n    \"puntos\": \"valor_ejemplo\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Respuesta",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_respuesta",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_respuesta"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_respuesta\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Respuesta por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_respuesta_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_respuesta_id"
+              ],
+              "query": [
+                {
+                  "key": "id_respuesta",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Respuestas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_respuestas",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_respuestas"
+              ],
+              "query": [
+                {
+                  "key": "id_jugador_cuestionario",
+                  "value": "1"
+                },
+                {
+                  "key": "id_pregunta",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_respuesta",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_respuesta"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jugador_cuestionario\": 1,\n    \"id_pregunta\": 1,\n    \"id_alternativa\": 1\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Jugador_Cuestionario",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_usuario",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_jugador_cuestionario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jugador_cuestionario\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Usuario por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_usuario_id",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_jugador_cuestionario_id"
+              ],
+              "query": [
+                {
+                  "key": "id_jugador_cuestionario",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los Usuarios",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_usuarios",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_jugadores_cuestionario"
+              ],
+              "query": [
+                {
+                  "key": "id_cuestionario",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Actualizar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_actualizar_usuario",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_actualizar_jugador_cuestionario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jugador_cuestionario\": 1,\n    \"alias\": \"alias_ejemplo\",\n    \"puntaje\": 0.0,\n    \"id_jugador\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_usuario",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_jugador_cuestionario"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_jugador\": 1,\n    \"alias\": \"alias_ejemplo\",\n    \"id_cuestionario\": 1,\n    \"puntaje\": 0.0\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "VotacionGrupo",
+      "item": [
+        {
+          "name": "Eliminar",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_eliminar_votacion_grupo",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_eliminar_votacion_grupo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_votacion\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Obtener Todos los VotacionGrupos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_obtener_votaciones_grupo",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_obtener_votaciones_grupo"
+              ],
+              "query": [
+                {
+                  "key": "id_grupo",
+                  "value": "1"
+                },
+                {
+                  "key": "id_pregunta",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Registrar",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "JWT <tu_token_aqui>",
+                "description": "Token JWT obtenido de /auth"
+              }
+            ],
+            "url": {
+              "raw": "https://grupo5daw2025.pythonanywhere.com/api_registrar_votacion_grupo",
+              "protocol": "https",
+              "host": [
+                "grupo5daw2025",
+                "pythonanywhere",
+                "com"
+              ],
+              "path": [
+                "api_registrar_votacion_grupo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"id_grupo\": 1,\n    \"id_pregunta\": 1,\n    \"id_jugador_cuestionario\": 1,\n    \"id_alternativa\": 1\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

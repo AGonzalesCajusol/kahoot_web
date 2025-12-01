@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+{% block title %}Soporte Técnico - GoQuiz{% endblock %}
+{% block head_extra %}
+<style>
+    .support-section {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        min-height: 100vh;
+        padding: 4rem 2rem;
+    }
+    
+    .support-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .support-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        color: #fff;
+    }
+    
+    .support-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        font-family: 'Georgia', serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .support-title i {
+        font-size: 3.5rem;
+        color: #ffffff;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.1);
+        }
+    }
+    
+    .support-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    .contact-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+    
+    .contact-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        transition: all 0.4s ease;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .contact-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        transform: scaleX(0);
+        transition: transform 0.4s ease;
+    }
+    
+    .contact-card:hover::before {
+        transform: scaleX(1);
+    }
+    
+    .contact-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+    }
+    
+    .contact-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2.5rem;
+        transition: all 0.4s ease;
+    }
+    
+    .contact-card:hover .contact-icon {
+        transform: rotate(360deg) scale(1.1);
+    }
+    
+    .icon-email {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+    
+    .icon-phone {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+    }
+    
+    .icon-schedule {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+    }
+    
+    .contact-card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+        font-family: 'Georgia', serif;
+    }
+    
+    .contact-card-text {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 0.5rem;
+    }
+    
+    .contact-info {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #0072ff;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .contact-info:hover {
+        color: #00c6ff;
+        transform: translateX(5px);
+    }
+    
+    .tips-section {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        margin-top: 3rem;
+    }
+    
+    .tips-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .tips-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2c3e50;
+        font-family: 'Georgia', serif;
+    }
+    
+    .tips-icon {
+        font-size: 2.5rem;
+        color: #FFD700;
+        animation: rotate 3s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    
+    .tips-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+    
+    .tip-card {
+        background: white;
+        border: 2px solid #e0e0e0;
+        border-radius: 15px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .tip-card::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #00c6ff, #0072ff);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
+    }
+    
+    .tip-card:hover::before {
+        transform: scaleY(1);
+    }
+    
+    .tip-card:hover {
+        border-color: #0072ff;
+        transform: translateX(10px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .tip-icon {
+        font-size: 2rem;
+        min-width: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .tip-icon.refresh {
+        color: #4facfe;
+    }
+    
+    .tip-icon.internet {
+        color: #00c6ff;
+    }
+    
+    .tip-icon.key {
+        color: #ff9800;
+    }
+    
+    .tip-icon.document {
+        color: #f5576c;
+    }
+    
+    .tip-text {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.6;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .support-title {
+            font-size: 2.5rem;
+        }
+        
+        .support-title i {
+            font-size: 2.5rem;
+        }
+        
+        .support-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .contact-cards {
+            grid-template-columns: 1fr;
+        }
+        
+        .tips-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .tips-section {
+            padding: 2rem 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="support-section">
+    <div class="support-container">
+        <div class="support-header">
+            <h1 class="support-title">
+                <i class="bi bi-puzzle-fill"></i>
+                Soporte Técnico
+            </h1>
+            <p class="support-subtitle">
+                Estamos aquí para ayudarte. Encuentra nuestros canales de contacto y consejos útiles para resolver cualquier inconveniente.
+            </p>
+        </div>
+        
+        <div class="contact-cards">
+            <div class="contact-card">
+                <div class="contact-icon icon-email">
+                    <i class="bi bi-envelope-fill"></i>
+                </div>
+                <h3 class="contact-card-title">Correo Electrónico</h3>
+                <p class="contact-card-text">Escríbenos a:</p>
+                <a href="mailto:mixdjangel7@gmail.com" class="contact-info">mixdjangel7@gmail.com</a>
+            </div>
+            
+            <div class="contact-card">
+                <div class="contact-icon icon-phone">
+                    <i class="bi bi-telephone-fill"></i>
+                </div>
+                <h3 class="contact-card-title">Teléfono</h3>
+                <p class="contact-card-text">Llámanos al:</p>
+                <a href="tel:+51987654321" class="contact-info">+51 993 981 523</a>
+            </div>
+            
+            <div class="contact-card">
+                <div class="contact-icon icon-schedule">
+                    <i class="bi bi-clock-fill"></i>
+                </div>
+                <h3 class="contact-card-title">Horario de Atención</h3>
+                <p class="contact-card-text">Lunes a Viernes</p>
+                <p class="contact-info" style="color: #0072ff; cursor: default;">8:00 a.m. - 6:00 p.m.</p>
+            </div>
+        </div>
+        
+        <div class="tips-section">
+            <div class="tips-header">
+                <i class="bi bi-lightbulb-fill tips-icon"></i>
+                <h2 class="tips-title">Consejos Útiles</h2>
+            </div>
+            
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon refresh">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </div>
+                    <p class="tip-text">Si la página no carga, actualiza el navegador o intenta limpiar la caché.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon internet">
+                        <i class="bi bi-wifi"></i>
+                    </div>
+                    <p class="tip-text">Verifica tu conexión a Internet antes de jugar para evitar interrupciones.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon key">
+                        <i class="bi bi-key-fill"></i>
+                    </div>
+                    <p class="tip-text">Usa "Recuperar contraseña" si olvidaste tus credenciales de acceso.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon document">
+                        <i class="bi bi-file-earmark-text-fill"></i>
+                    </div>
+                    <p class="tip-text">Para reportar errores, envíanos un correo detallado con capturas de pantalla.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon refresh">
+                        <i class="bi bi-browser-chrome"></i>
+                    </div>
+                    <p class="tip-text">Usa un navegador actualizado (Chrome, Firefox, Edge) para mejor rendimiento.</p>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-icon internet">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <p class="tip-text">Asegúrate de tener JavaScript habilitado para que todas las funciones funcionen correctamente.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Animación de entrada para las tarjetas de contacto
+        const contactCards = document.querySelectorAll('.contact-card');
+        contactCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 150);
+        });
+        
+        // Animación de entrada para los tips
+        const tipCards = document.querySelectorAll('.tip-card');
+        tipCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(-30px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateX(0)';
+            }, 600 + (index * 100));
+        });
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

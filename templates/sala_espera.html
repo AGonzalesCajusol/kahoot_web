@@ -101,6 +101,83 @@
     .footer-links a:hover {
       text-decoration: underline;
     }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 20px 15px;
+      }
+      
+      .card {
+        padding: 2rem 1.5rem !important;
+        max-width: 100%;
+      }
+      
+      h1 {
+        font-size: 1.8rem !important;
+      }
+      
+      h4 {
+        font-size: 1.3rem !important;
+      }
+      
+      .pin {
+        font-size: 1.2rem;
+        padding: 6px 12px;
+      }
+      
+      .participants-list {
+        max-height: 250px;
+      }
+      
+      li {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      body {
+        padding: 15px 10px;
+      }
+      
+      .card {
+        padding: 1.5rem 1rem !important;
+        border-radius: 15px;
+      }
+      
+      h1 {
+        font-size: 1.5rem !important;
+      }
+      
+      h4 {
+        font-size: 1.1rem !important;
+      }
+      
+      .pin {
+        font-size: 1rem;
+        padding: 5px 10px;
+        letter-spacing: 2px;
+      }
+      
+      .participants-list {
+        max-height: 200px;
+        gap: 8px;
+      }
+      
+      li {
+        font-size: 0.85rem;
+        padding: 5px 10px;
+      }
+      
+      .loading-container {
+        font-size: 1rem;
+      }
+      
+      .footer-links {
+        font-size: 0.8rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -129,12 +206,45 @@
 </body>
 <script>
   const socket = io();
+  const idCuestionario = {{ id_cuestionario | tojson }};
+  
+  // Unirse a la sala cuando se carga la página
+  socket.emit('unirme_sala', { sala: idCuestionario });
+
+  // Función para actualizar la lista de participantes
+  function actualizarListaParticipantes(participantes) {
+    const lista = document.getElementById('listaParticipantes');
+    if (!lista) return;
+    
+    lista.innerHTML = '';
+    
+    if (participantes.length === 0) {
+      lista.innerHTML = '<li class="text-light-50">Aún no hay participantes.</li>';
+      return;
+    }
+    
+    participantes.forEach(participante => {
+      const li = document.createElement('li');
+      li.textContent = `👤 ${participante.alias}`;
+      lista.appendChild(li);
+    });
+  }
+
+  // Escuchar actualizaciones de participantes
+  socket.on('actualizar_participantes', (data) => {
+    console.log('Participantes actualizados:', data.participantes);
+    actualizarListaParticipantes(data.participantes);
+  });
 
   socket.on('actualizar_tiempoAD', (data) => {
       const tiempo = data.tiempo;
-      document.querySelector('.timer').textContent = tiempo;
+      const timerElement = document.querySelector('.timer');
+      if (timerElement) {
+        timerElement.textContent = tiempo;
       if(tiempo == 0){
-        window.location.href = "/preguntas";
+        // Redirigir a la página de juego con el ID del cuestionario
+        window.location.href = `/prueba/${idCuestionario}`;
+        }
       }
   });
 

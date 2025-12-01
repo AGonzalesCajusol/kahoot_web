@@ -1,0 +1,803 @@
+============================================
+APIs FALTANTES: PREGUNTA, ALTERNATIVA Y GRUPO
+============================================
+
+Este archivo contiene el código Python para agregar las APIs faltantes
+a routes/api_todas_tablas.py
+
+============================================
+APIs PARA TABLA PREGUNTA
+============================================
+
+    @app.route("/api_registrar_pregunta", methods=["POST"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_registrar_pregunta():
+        """API para registrar una nueva pregunta"""
+        try:
+            data = request.json
+            id_cuestionario = data.get("id_cuestionario")
+            nombre_pregunta = data.get("nombre_pregunta")
+            puntos = data.get("puntos")
+            tiempo = data.get("tiempo")
+            tipo_pregunta = data.get("tipo_pregunta")
+            alternativas = data.get("alternativas", [])
+            respuesta = data.get("respuesta")
+            
+            if not id_cuestionario or not nombre_pregunta or not puntos or not tiempo or not tipo_pregunta or not respuesta:
+                return jsonify({
+                    "data": [],
+                    "message": "Faltan campos obligatorios: id_cuestionario, nombre_pregunta, puntos, tiempo, tipo_pregunta, respuesta",
+                    "status": 0
+                }), 400
+            
+            # Preparar datos para el controlador
+            datos_pregunta = {
+                'nombre_pregunta': nombre_pregunta,
+                'puntos': puntos,
+                'tiempo': tiempo,
+                'tipo_pregunta': tipo_pregunta,
+                'alternativas': alternativas,
+                'respuesta': respuesta
+            }
+            
+            resultado = controlador_cuestionario.agregar_pregunta_a_cuestionario(id_cuestionario, datos_pregunta)
+            
+            if resultado and resultado.get('estado'):
+                return jsonify({
+                    "data": [{"id_pregunta": resultado.get('id_pregunta')}],
+                    "message": "Pregunta registrada correctamente",
+                    "status": 1
+                }), 201
+            else:
+                return jsonify({
+                    "data": [],
+                    "message": resultado.get('mensaje', "Error al registrar la pregunta") if resultado else "Error al registrar la pregunta",
+                    "status": 0
+                }), 500
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_actualizar_pregunta", methods=["POST"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_actualizar_pregunta():
+        """API para actualizar una pregunta existente"""
+        try:
+            data = request.json
+            id_pregunta = data.get("id_pregunta")
+            
+            if not id_pregunta:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_pregunta es obligatorio",
+                    "status": 0
+                }), 400
+            
+            # Verificar que existe
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            with connection.cursor() as cursor:
+                query = "SELECT id_pregunta FROM Pregunta WHERE id_pregunta = %s"
+                cursor.execute(query, (id_pregunta,))
+                pregunta = cursor.fetchone()
+            
+            connection.close()
+            
+            if not pregunta:
+                return jsonify({
+                    "data": [],
+                    "message": "La pregunta no existe",
+                    "status": 0
+                }), 404
+            
+            # Preparar datos para actualizar
+            datos_actualizacion = {
+                'nombre_pregunta': data.get("nombre_pregunta"),
+                'puntos': data.get("puntos"),
+                'tiempo': data.get("tiempo"),
+                'tipo_pregunta': data.get("tipo_pregunta"),
+                'alternativas': data.get("alternativas", []),
+                'respuesta': data.get("respuesta")
+            }
+            
+            resultado = controlador_cuestionario.modificar_pregunta(id_pregunta, datos_actualizacion)
+            
+            if resultado and resultado.get('estado'):
+                return jsonify({
+                    "data": [],
+                    "message": "Pregunta actualizada correctamente",
+                    "status": 1
+                }), 200
+            else:
+                return jsonify({
+                    "data": [],
+                    "message": resultado.get('mensaje', "Error al actualizar la pregunta") if resultado else "Error al actualizar la pregunta",
+                    "status": 0
+                }), 500
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_obtener_pregunta_id", methods=["GET"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_obtener_pregunta_id():
+        """API para obtener una pregunta por su ID"""
+        try:
+            data = request.json if request.is_json else {}
+            id_pregunta = data.get("id_pregunta") or request.args.get("id_pregunta")
+            
+            if not id_pregunta:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_pregunta es obligatorio",
+                    "status": 0
+                }), 400
+            
+            try:
+                id_pregunta = int(id_pregunta)
+            except ValueError:
+                return jsonify({
+                    "data": [],
+                    "message": "El id_pregunta debe ser un número",
+                    "status": 0
+                }), 400
+            
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            with connection.cursor() as cursor:
+                query = """
+                    SELECT p.id_pregunta, p.pregunta, p.puntaje, p.tiempo_respuesta, 
+                           p.tipo_pregunta, p.id_cuestionario
+                    FROM Pregunta p
+                    WHERE p.id_pregunta = %s
+                """
+                cursor.execute(query, (id_pregunta,))
+                pregunta = cursor.fetchone()
+            
+            if not pregunta:
+                connection.close()
+                return jsonify({
+                    "data": [],
+                    "message": "Pregunta no encontrada",
+                    "status": 0
+                }), 404
+            
+            # Obtener alternativas
+            with connection.cursor() as cursor:
+                query_alt = """
+                    SELECT id_alternativa, respuesta, estado_alternativa
+                    FROM Alternativa
+                    WHERE id_pregunta = %s
+                """
+                cursor.execute(query_alt, (id_pregunta,))
+                alternativas = cursor.fetchall()
+            
+            connection.close()
+            
+            if isinstance(pregunta, dict):
+                pregunta_dict = {
+                    "ID pregunta": pregunta.get('id_pregunta'),
+                    "Pregunta": pregunta.get('pregunta'),
+                    "Puntaje": pregunta.get('puntaje'),
+                    "Tiempo respuesta": pregunta.get('tiempo_respuesta'),
+                    "Tipo pregunta": pregunta.get('tipo_pregunta'),
+                    "ID cuestionario": pregunta.get('id_cuestionario'),
+                    "Alternativas": []
+                }
+            else:
+                pregunta_dict = {
+                    "ID pregunta": pregunta[0],
+                    "Pregunta": pregunta[1],
+                    "Puntaje": pregunta[2],
+                    "Tiempo respuesta": pregunta[3],
+                    "Tipo pregunta": pregunta[4] if len(pregunta) > 4 else None,
+                    "ID cuestionario": pregunta[5] if len(pregunta) > 5 else None,
+                    "Alternativas": []
+                }
+            
+            # Agregar alternativas
+            for alt in alternativas:
+                if isinstance(alt, dict):
+                    alt_dict = {
+                        "ID alternativa": alt.get('id_alternativa'),
+                        "Respuesta": alt.get('respuesta'),
+                        "Estado alternativa": alt.get('estado_alternativa')
+                    }
+                else:
+                    alt_dict = {
+                        "ID alternativa": alt[0],
+                        "Respuesta": alt[1],
+                        "Estado alternativa": alt[2] if len(alt) > 2 else None
+                    }
+                pregunta_dict["Alternativas"].append(alt_dict)
+            
+            return jsonify({
+                "data": [pregunta_dict],
+                "message": "Pregunta obtenida correctamente",
+                "status": 1
+            }), 200
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_obtener_preguntas", methods=["GET"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_obtener_preguntas():
+        """API para obtener todas las preguntas de un cuestionario"""
+        try:
+            data = request.json if request.is_json else {}
+            id_cuestionario = data.get("id_cuestionario") or request.args.get("id_cuestionario")
+            
+            if not id_cuestionario:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_cuestionario es obligatorio",
+                    "status": 0
+                }), 400
+            
+            try:
+                id_cuestionario = int(id_cuestionario)
+            except ValueError:
+                return jsonify({
+                    "data": [],
+                    "message": "El id_cuestionario debe ser un número",
+                    "status": 0
+                }), 400
+            
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            with connection.cursor() as cursor:
+                query = """
+                    SELECT p.id_pregunta, p.pregunta, p.puntaje, p.tiempo_respuesta, 
+                           p.tipo_pregunta, p.id_cuestionario
+                    FROM Pregunta p
+                    WHERE p.id_cuestionario = %s
+                    ORDER BY p.id_pregunta
+                """
+                cursor.execute(query, (id_cuestionario,))
+                preguntas = cursor.fetchall()
+            
+            data_list = []
+            
+            for pregunta in preguntas:
+                if isinstance(pregunta, dict):
+                    pregunta_dict = {
+                        "ID pregunta": pregunta.get('id_pregunta'),
+                        "Pregunta": pregunta.get('pregunta'),
+                        "Puntaje": pregunta.get('puntaje'),
+                        "Tiempo respuesta": pregunta.get('tiempo_respuesta'),
+                        "Tipo pregunta": pregunta.get('tipo_pregunta'),
+                        "ID cuestionario": pregunta.get('id_cuestionario')
+                    }
+                    id_pregunta = pregunta.get('id_pregunta')
+                else:
+                    pregunta_dict = {
+                        "ID pregunta": pregunta[0],
+                        "Pregunta": pregunta[1],
+                        "Puntaje": pregunta[2],
+                        "Tiempo respuesta": pregunta[3],
+                        "Tipo pregunta": pregunta[4] if len(pregunta) > 4 else None,
+                        "ID cuestionario": pregunta[5] if len(pregunta) > 5 else None
+                    }
+                    id_pregunta = pregunta[0]
+                
+                # Obtener alternativas para esta pregunta
+                with connection.cursor() as cursor_alt:
+                    query_alt = """
+                        SELECT id_alternativa, respuesta, estado_alternativa
+                        FROM Alternativa
+                        WHERE id_pregunta = %s
+                    """
+                    cursor_alt.execute(query_alt, (id_pregunta,))
+                    alternativas = cursor_alt.fetchall()
+                    
+                    pregunta_dict["Alternativas"] = []
+                    for alt in alternativas:
+                        if isinstance(alt, dict):
+                            alt_dict = {
+                                "ID alternativa": alt.get('id_alternativa'),
+                                "Respuesta": alt.get('respuesta'),
+                                "Estado alternativa": alt.get('estado_alternativa')
+                            }
+                        else:
+                            alt_dict = {
+                                "ID alternativa": alt[0],
+                                "Respuesta": alt[1],
+                                "Estado alternativa": alt[2] if len(alt) > 2 else None
+                            }
+                        pregunta_dict["Alternativas"].append(alt_dict)
+                
+                data_list.append(pregunta_dict)
+            
+            connection.close()
+            
+            return jsonify({
+                "data": data_list,
+                "message": "Listado correcto de preguntas",
+                "status": 1
+            }), 200
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_eliminar_pregunta", methods=["DELETE"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_eliminar_pregunta():
+        """API para eliminar una pregunta"""
+        try:
+            data = request.json if request.is_json else {}
+            id_pregunta = data.get("id_pregunta")
+            
+            if not id_pregunta:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_pregunta es obligatorio",
+                    "status": 0
+                }), 400
+            
+            try:
+                id_pregunta = int(id_pregunta)
+            except ValueError:
+                return jsonify({
+                    "data": [],
+                    "message": "El id_pregunta debe ser un número",
+                    "status": 0
+                }), 400
+            
+            resultado = controlador_cuestionario.eliminar_pregunta(id_pregunta)
+            
+            if resultado and resultado.get('estado'):
+                return jsonify({
+                    "data": [],
+                    "message": "Pregunta eliminada correctamente",
+                    "status": 1
+                }), 200
+            else:
+                return jsonify({
+                    "data": [],
+                    "message": resultado.get('mensaje', "Error al eliminar la pregunta") if resultado else "Error al eliminar la pregunta",
+                    "status": 0
+                }), 500
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+============================================
+APIs PARA TABLA ALTERNATIVA
+============================================
+
+    @app.route("/api_registrar_alternativa", methods=["POST"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_registrar_alternativa():
+        """API para registrar una nueva alternativa"""
+        try:
+            data = request.json
+            id_pregunta = data.get("id_pregunta")
+            respuesta = data.get("respuesta")
+            estado_alternativa = data.get("estado_alternativa", 0)
+            
+            if not id_pregunta or not respuesta:
+                return jsonify({
+                    "data": [],
+                    "message": "Faltan campos obligatorios: id_pregunta, respuesta",
+                    "status": 0
+                }), 400
+            
+            # Verificar que la pregunta existe
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            with connection.cursor() as cursor:
+                query = "SELECT id_pregunta FROM Pregunta WHERE id_pregunta = %s"
+                cursor.execute(query, (id_pregunta,))
+                pregunta = cursor.fetchone()
+            
+            if not pregunta:
+                connection.close()
+                return jsonify({
+                    "data": [],
+                    "message": "La pregunta no existe",
+                    "status": 0
+                }), 404
+            
+            # Insertar alternativa
+            with connection.cursor() as cursor:
+                query = "INSERT INTO Alternativa (respuesta, estado_alternativa, id_pregunta) VALUES (%s, %s, %s)"
+                cursor.execute(query, (respuesta, estado_alternativa, id_pregunta))
+                id_alternativa = cursor.lastrowid
+                connection.commit()
+            
+            connection.close()
+            
+            return jsonify({
+                "data": [{"id_alternativa": id_alternativa}],
+                "message": "Alternativa registrada correctamente",
+                "status": 1
+            }), 201
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_actualizar_alternativa", methods=["POST"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_actualizar_alternativa():
+        """API para actualizar una alternativa existente"""
+        try:
+            data = request.json
+            id_alternativa = data.get("id_alternativa")
+            respuesta = data.get("respuesta")
+            estado_alternativa = data.get("estado_alternativa")
+            
+            if not id_alternativa:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_alternativa es obligatorio",
+                    "status": 0
+                }), 400
+            
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            # Verificar que existe
+            with connection.cursor() as cursor:
+                query = "SELECT id_alternativa FROM Alternativa WHERE id_alternativa = %s"
+                cursor.execute(query, (id_alternativa,))
+                alternativa = cursor.fetchone()
+            
+            if not alternativa:
+                connection.close()
+                return jsonify({
+                    "data": [],
+                    "message": "La alternativa no existe",
+                    "status": 0
+                }), 404
+            
+            # Actualizar
+            update_fields = []
+            params = []
+            
+            if respuesta is not None:
+                update_fields.append("respuesta = %s")
+                params.append(respuesta)
+            
+            if estado_alternativa is not None:
+                update_fields.append("estado_alternativa = %s")
+                params.append(estado_alternativa)
+            
+            if not update_fields:
+                connection.close()
+                return jsonify({
+                    "data": [],
+                    "message": "No hay campos para actualizar",
+                    "status": 0
+                }), 400
+            
+            with connection.cursor() as cursor:
+                query = "UPDATE Alternativa SET " + ", ".join(update_fields) + " WHERE id_alternativa = %s"
+                params.append(id_alternativa)
+                cursor.execute(query, tuple(params))
+                connection.commit()
+            
+            connection.close()
+            
+            return jsonify({
+                "data": [],
+                "message": "Alternativa actualizada correctamente",
+                "status": 1
+            }), 200
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_obtener_alternativa_id", methods=["GET"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_obtener_alternativa_id():
+        """API para obtener una alternativa por su ID"""
+        try:
+            data = request.json if request.is_json else {}
+            id_alternativa = data.get("id_alternativa") or request.args.get("id_alternativa")
+            
+            if not id_alternativa:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_alternativa es obligatorio",
+                    "status": 0
+                }), 400
+            
+            try:
+                id_alternativa = int(id_alternativa)
+            except ValueError:
+                return jsonify({
+                    "data": [],
+                    "message": "El id_alternativa debe ser un número",
+                    "status": 0
+                }), 400
+            
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            with connection.cursor() as cursor:
+                query = "SELECT id_alternativa, respuesta, estado_alternativa, id_pregunta FROM Alternativa WHERE id_alternativa = %s"
+                cursor.execute(query, (id_alternativa,))
+                alternativa = cursor.fetchone()
+            
+            connection.close()
+            
+            if not alternativa:
+                return jsonify({
+                    "data": [],
+                    "message": "Alternativa no encontrada",
+                    "status": 0
+                }), 404
+            
+            if isinstance(alternativa, dict):
+                alternativa_dict = {
+                    "ID alternativa": alternativa.get('id_alternativa'),
+                    "Respuesta": alternativa.get('respuesta'),
+                    "Estado alternativa": alternativa.get('estado_alternativa'),
+                    "ID pregunta": alternativa.get('id_pregunta')
+                }
+            else:
+                alternativa_dict = {
+                    "ID alternativa": alternativa[0],
+                    "Respuesta": alternativa[1],
+                    "Estado alternativa": alternativa[2],
+                    "ID pregunta": alternativa[3] if len(alternativa) > 3 else None
+                }
+            
+            return jsonify({
+                "data": [alternativa_dict],
+                "message": "Alternativa obtenida correctamente",
+                "status": 1
+            }), 200
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_obtener_alternativas", methods=["GET"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_obtener_alternativas():
+        """API para obtener todas las alternativas de una pregunta"""
+        try:
+            data = request.json if request.is_json else {}
+            id_pregunta = data.get("id_pregunta") or request.args.get("id_pregunta")
+            
+            if not id_pregunta:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_pregunta es obligatorio",
+                    "status": 0
+                }), 400
+            
+            try:
+                id_pregunta = int(id_pregunta)
+            except ValueError:
+                return jsonify({
+                    "data": [],
+                    "message": "El id_pregunta debe ser un número",
+                    "status": 0
+                }), 400
+            
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            with connection.cursor() as cursor:
+                query = "SELECT id_alternativa, respuesta, estado_alternativa, id_pregunta FROM Alternativa WHERE id_pregunta = %s ORDER BY id_alternativa"
+                cursor.execute(query, (id_pregunta,))
+                alternativas = cursor.fetchall()
+            
+            connection.close()
+            
+            data_list = []
+            
+            for alternativa in alternativas:
+                if isinstance(alternativa, dict):
+                    alternativa_dict = {
+                        "ID alternativa": alternativa.get('id_alternativa'),
+                        "Respuesta": alternativa.get('respuesta'),
+                        "Estado alternativa": alternativa.get('estado_alternativa'),
+                        "ID pregunta": alternativa.get('id_pregunta')
+                    }
+                else:
+                    alternativa_dict = {
+                        "ID alternativa": alternativa[0],
+                        "Respuesta": alternativa[1],
+                        "Estado alternativa": alternativa[2],
+                        "ID pregunta": alternativa[3] if len(alternativa) > 3 else None
+                    }
+                data_list.append(alternativa_dict)
+            
+            return jsonify({
+                "data": data_list,
+                "message": "Listado correcto de alternativas",
+                "status": 1
+            }), 200
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+    @app.route("/api_eliminar_alternativa", methods=["DELETE"])
+    # @jwt_required()  # Comentado temporalmente hasta que funcione la autenticación
+    def api_eliminar_alternativa():
+        """API para eliminar una alternativa"""
+        try:
+            data = request.json if request.is_json else {}
+            id_alternativa = data.get("id_alternativa")
+            
+            if not id_alternativa:
+                return jsonify({
+                    "data": [],
+                    "message": "El campo id_alternativa es obligatorio",
+                    "status": 0
+                }), 400
+            
+            try:
+                id_alternativa = int(id_alternativa)
+            except ValueError:
+                return jsonify({
+                    "data": [],
+                    "message": "El id_alternativa debe ser un número",
+                    "status": 0
+                }), 400
+            
+            connection = conectarbd()
+            if not connection:
+                return jsonify({
+                    "data": [],
+                    "message": "Error de conexión a la base de datos",
+                    "status": 0
+                }), 500
+            
+            # Verificar que existe
+            with connection.cursor() as cursor:
+                query = "SELECT id_alternativa FROM Alternativa WHERE id_alternativa = %s"
+                cursor.execute(query, (id_alternativa,))
+                alternativa = cursor.fetchone()
+            
+            if not alternativa:
+                connection.close()
+                return jsonify({
+                    "data": [],
+                    "message": "La alternativa no existe",
+                    "status": 0
+                }), 404
+            
+            # Eliminar
+            with connection.cursor() as cursor:
+                query = "DELETE FROM Alternativa WHERE id_alternativa = %s"
+                cursor.execute(query, (id_alternativa,))
+                connection.commit()
+            
+            connection.close()
+            
+            return jsonify({
+                "data": [],
+                "message": "Alternativa eliminada correctamente",
+                "status": 1
+            }), 200
+                
+        except Exception as ex:
+            return jsonify({"message": str(repr(ex)), "status": 0}), 500
+
+============================================
+NOTA: APIs DE GRUPO
+============================================
+
+Las APIs de Grupo YA ESTÁN incluidas en routes/api_todas_tablas.py:
+- api_registrar_grupo
+- api_actualizar_grupo
+- api_obtener_grupo_id
+- api_obtener_grupos
+- api_eliminar_grupo
+
+Si no las encuentras, verifica que estén en el archivo.
+
+============================================
+INSTRUCCIONES PARA AGREGAR ESTAS APIs
+============================================
+
+1. Abre routes/api_todas_tablas.py
+2. Busca la sección "# APIs PARA TABLA RECOMPENSA"
+3. Después de esa sección (al final del archivo, antes del último cierre),
+   agrega las APIs de PREGUNTA y ALTERNATIVA de este archivo
+4. Asegúrate de mantener la indentación correcta (4 espacios)
+5. Guarda el archivo
+
+============================================
+EJEMPLOS DE USO EN POSTMAN
+============================================
+
+REGISTRAR PREGUNTA:
+POST https://grupo5daw2025.pythonanywhere.com/api_registrar_pregunta
+{
+    "id_cuestionario": 1,
+    "nombre_pregunta": "¿Cuál es la capital de Perú?",
+    "puntos": 100,
+    "tiempo": 30,
+    "tipo_pregunta": "ALT",
+    "alternativas": ["Lima", "Cusco", "Arequipa", "Trujillo"],
+    "respuesta": "Lima"
+}
+
+OBTENER PREGUNTA POR ID:
+GET https://grupo5daw2025.pythonanywhere.com/api_obtener_pregunta_id?id_pregunta=1
+
+OBTENER TODAS LAS PREGUNTAS DE UN CUESTIONARIO:
+GET https://grupo5daw2025.pythonanywhere.com/api_obtener_preguntas?id_cuestionario=1
+
+REGISTRAR ALTERNATIVA:
+POST https://grupo5daw2025.pythonanywhere.com/api_registrar_alternativa
+{
+    "id_pregunta": 1,
+    "respuesta": "Lima",
+    "estado_alternativa": 1
+}
+
+OBTENER ALTERNATIVAS DE UNA PREGUNTA:
+GET https://grupo5daw2025.pythonanywhere.com/api_obtener_alternativas?id_pregunta=1
+
+============================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

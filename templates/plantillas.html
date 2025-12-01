@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% block title %}Plantillas - GoQuiz{% endblock %}
+
+{% block head_extra %}
+<style>
+    .templates-section {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        min-height: calc(100vh - 200px);
+        padding: 4rem 2rem;
+    }
+    
+    .templates-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .templates-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #fff;
+    }
+    
+    .templates-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .templates-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .template-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+    }
+    
+    .template-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    }
+    
+    .template-card h3 {
+        color: #f5576c;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+    
+    .template-card h4 {
+        color: #f093fb;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .download-btn {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .download-btn:hover {
+        transform: scale(1.05);
+        color: white;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    }
+    
+    .info-box {
+        background: #f8f9fa;
+        border-left: 4px solid #f5576c;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+    }
+    
+    .format-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1rem 0;
+    }
+    
+    .format-table th,
+    .format-table td {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        text-align: left;
+    }
+    
+    .format-table th {
+        background: #f5576c;
+        color: white;
+    }
+    
+    .format-table tr:nth-child(even) {
+        background: #f8f9fa;
+    }
+    
+    @media (max-width: 768px) {
+        .templates-title {
+            font-size: 2.5rem;
+        }
+        
+        .template-card {
+            padding: 1.5rem;
+        }
+        
+        .format-table {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="templates-section">
+    <div class="templates-container">
+        <div class="templates-header">
+            <h1 class="templates-title">
+                <i class="bi bi-file-earmark-spreadsheet-fill"></i> Plantillas
+            </h1>
+            <p class="templates-subtitle">
+                Descarga plantillas listas para usar y crea cuestionarios de forma rápida y eficiente.
+            </p>
+        </div>
+        
+        <!-- Plantilla Excel -->
+        <div class="template-card">
+            <h3><i class="bi bi-file-excel"></i> Plantilla Excel para Cuestionarios</h3>
+            <p>
+                Esta plantilla te permite crear cuestionarios completos desde Excel e importarlos directamente a GoQuiz.
+                Es ideal para crear múltiples cuestionarios de forma rápida o reutilizar contenido existente.
+            </p>
+            
+            <div class="info-box">
+                <strong><i class="bi bi-info-circle"></i> Nota:</strong> 
+                Si eres docente, puedes descargar la plantilla directamente desde tu dashboard haciendo clic en 
+                "Descargar plantilla" en la sección de cuestionarios.
+            </div>
+            
+            <h4>Formato de la Plantilla:</h4>
+            <table class="format-table">
+                <thead>
+                    <tr>
+                        <th>Fila</th>
+                        <th>Columna A</th>
+                        <th>Columna B</th>
+                        <th>Columna C</th>
+                        <th>Columna D</th>
+                        <th>Columna E-J</th>
+                        <th>Columna K</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1</strong></td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2</strong></td>
+                        <td>Nombre Cuestionario</td>
+                        <td>Tipo (I/G)</td>
+                        <td>Descripción</td>
+                        <td>Estado (Público/Privado)</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3</strong></td>
+                        <td>Encabezados Preguntas</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                        <td>Encabezados</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4+</strong></td>
+                        <td>Pregunta</td>
+                        <td>Tipo (VF/ALT)</td>
+                        <td>Puntos</td>
+                        <td>Tiempo (seg)</td>
+                        <td>Alternativas (E-J)</td>
+                        <td>Respuesta Correcta</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h4>Instrucciones de Uso:</h4>
+            <ol>
+                <li><strong>Fila 2 - Datos del Cuestionario:</strong>
+                    <ul>
+                        <li>Columna A: Nombre del cuestionario</li>
+                        <li>Columna B: Tipo - "I" para Individual o "G" para Grupal</li>
+                        <li>Columna C: Descripción (opcional)</li>
+                        <li>Columna D: Estado - "Público" o "Privado"</li>
+                    </ul>
+                </li>
+                <li><strong>Fila 4 en adelante - Preguntas:</strong>
+                    <ul>
+                        <li>Columna A: Texto de la pregunta</li>
+                        <li>Columna B: Tipo - "VF" para Verdadero/Falso o "ALT" para Alternativa Múltiple</li>
+                        <li>Columna C: Puntos (1-1000)</li>
+                        <li>Columna D: Tiempo en segundos (2-300)</li>
+                        <li>Columnas E-J: Alternativas (máximo 6 para ALT, 2 fijas para VF)</li>
+                        <li>Columna K: Respuesta correcta (debe coincidir exactamente con una alternativa)</li>
+                    </ul>
+                </li>
+            </ol>
+            
+            {% if session.get('docente_id') %}
+            <a href="/descargar_plantilla_excel" class="download-btn">
+                <i class="bi bi-download"></i> Descargar Plantilla Excel
+            </a>
+            {% else %}
+            <div class="info-box">
+                <strong><i class="bi bi-lock"></i> Requiere cuenta de docente:</strong> 
+                <a href="/register">Regístrate como docente</a> o 
+                <a href="/login">inicia sesión</a> para descargar la plantilla.
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Ejemplos de Plantillas -->
+        <div class="template-card">
+            <h3><i class="bi bi-collection"></i> Ejemplos de Cuestionarios</h3>
+            <p>
+                Aquí tienes algunos ejemplos de cómo estructurar tus cuestionarios según diferentes temas:
+            </p>
+            
+            <h4>1. Cuestionario de Matemáticas</h4>
+            <ul>
+                <li>Tipo: Individual o Grupal</li>
+                <li>Preguntas: 15-20 preguntas</li>
+                <li>Tiempo promedio: 30-45 segundos por pregunta</li>
+                <li>Puntos: 100 puntos por pregunta</li>
+                <li>Ejemplo de pregunta: "¿Cuál es el resultado de 15 × 8?"</li>
+            </ul>
+            
+            <h4>2. Cuestionario de Historia</h4>
+            <ul>
+                <li>Tipo: Individual</li>
+                <li>Preguntas: 20-25 preguntas</li>
+                <li>Tiempo promedio: 45-60 segundos por pregunta</li>
+                <li>Puntos: 100 puntos por pregunta</li>
+                <li>Ejemplo de pregunta: "¿En qué año se independizó Perú?"</li>
+            </ul>
+            
+            <h4>3. Cuestionario de Ciencias</h4>
+            <ul>
+                <li>Tipo: Grupal (para fomentar discusión)</li>
+                <li>Preguntas: 10-15 preguntas</li>
+                <li>Tiempo promedio: 60-90 segundos por pregunta</li>
+                <li>Puntos: 150 puntos por pregunta</li>
+                <li>Ejemplo de pregunta: "¿Cuál es el proceso de fotosíntesis?"</li>
+            </ul>
+        </div>
+        
+        <!-- Consejos para Usar Plantillas -->
+        <div class="template-card">
+            <h3><i class="bi bi-lightbulb"></i> Consejos para Usar Plantillas</h3>
+            
+            <h4>Mejores Prácticas:</h4>
+            <ul>
+                <li><strong>Revisa el formato:</strong> Asegúrate de seguir exactamente el formato de la plantilla</li>
+                <li><strong>Valida los datos:</strong> Verifica que los tipos de pregunta sean correctos (VF o ALT)</li>
+                <li><strong>Respuestas exactas:</strong> La respuesta correcta debe coincidir exactamente con una alternativa</li>
+                <li><strong>Límites:</strong> Recuerda que el máximo es 50 preguntas por cuestionario</li>
+                <li><strong>Prueba primero:</strong> Importa un cuestionario de prueba antes de crear muchos</li>
+                <li><strong>Guarda copias:</strong> Mantén una copia de tus archivos Excel originales</li>
+            </ul>
+            
+            <h4>Errores Comunes a Evitar:</h4>
+            <ul>
+                <li>No dejar celdas vacías en las filas de preguntas</li>
+                <li>No usar tipos de pregunta incorrectos (solo VF o ALT)</li>
+                <li>No exceder el límite de alternativas (6 máximo para ALT)</li>
+                <li>No poner la respuesta correcta que no esté en las alternativas</li>
+                <li>No usar valores fuera de rango (puntos: 1-1000, tiempo: 2-300)</li>
+            </ul>
+        </div>
+        
+        <!-- Soporte -->
+        <div class="template-card">
+            <h3><i class="bi bi-question-circle"></i> ¿Necesitas Ayuda?</h3>
+            <p>
+                Si tienes problemas al usar las plantillas o necesitas asistencia, puedes:
+            </p>
+            <ul>
+                <li>Consultar nuestra <a href="/guia_uso">Guía de Uso</a></li>
+                <li>Revisar las <a href="/preguntas_frecuentes">Preguntas Frecuentes</a></li>
+                <li><a href="/contactanos">Contactarnos</a> directamente</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

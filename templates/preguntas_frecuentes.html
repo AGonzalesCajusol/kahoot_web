@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% block title %}Preguntas Frecuentes - GoQuiz{% endblock %}
+{% block head_extra %}
+<style>
+    .faq-section {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        min-height: calc(100vh - 200px);
+        padding: 4rem 2rem;
+        margin: 0;
+    }
+    
+    .faq-container {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+    
+    .faq-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #fff;
+    }
+    
+    .faq-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        font-family: 'Georgia', serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .faq-title i {
+        font-size: 3.5rem;
+        color: #ffffff;
+    }
+    
+    .faq-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    .faq-item {
+        background: white;
+        border-radius: 15px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-item:hover {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+    
+    .faq-question {
+        padding: 1.5rem 2rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 600;
+        font-size: 1.2rem;
+        color: #2c3e50;
+        transition: background-color 0.3s ease;
+    }
+    
+    .faq-question:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .faq-question i {
+        font-size: 1.5rem;
+        color: #0072ff;
+        transition: all 0.3s ease;
+    }
+    
+    .faq-item.active .faq-question i {
+        color: #dc3545;
+    }
+    
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease, padding 0.4s ease;
+        padding: 0 2rem;
+        background-color: #f8f9fa;
+    }
+    
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+        padding: 1.5rem 2rem;
+    }
+    
+    .faq-answer p {
+        color: #555;
+        line-height: 1.8;
+        font-size: 1.05rem;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .faq-title {
+            font-size: 2.5rem;
+        }
+        
+        .faq-title i {
+            font-size: 2.5rem;
+        }
+        
+        .faq-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .faq-question {
+            font-size: 1.1rem;
+            padding: 1.25rem 1.5rem;
+        }
+        
+        .faq-answer {
+            padding: 0 1.5rem;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 1.25rem 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="faq-section">
+    <div class="faq-container">
+        <div class="faq-header">
+            <h1 class="faq-title">
+                <i class="bi bi-question-circle-fill"></i>
+                Preguntas Frecuentes
+            </h1>
+            <p class="faq-subtitle">
+                Encuentra respuestas rápidas a las dudas más comunes sobre GoQuiz, la plataforma educativa interactiva que revoluciona el aprendizaje.
+            </p>
+        </div>
+        
+        <div class="faq-list" id="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Qué es GoQuiz?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        GoQuiz es una plataforma educativa interactiva que permite a docentes y estudiantes participar en cuestionarios dinámicos para hacer el aprendizaje más dinámico y divertido. Los docentes pueden crear cuestionarios personalizados y los estudiantes pueden unirse a partidas en tiempo real usando un PIN único.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Quiénes pueden usar GoQuiz?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        GoQuiz está diseñado para dos tipos de usuarios: <strong>Docentes</strong> y <strong>Jugadores</strong>. Los docentes pueden crear cuestionarios, gestionar grupos y realizar seguimiento de resultados. Los jugadores pueden unirse a partidas en vivo usando un PIN proporcionado por el docente.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Cómo puedo crear un cuestionario?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Para crear un cuestionario, primero debes registrarte como docente. Una vez registrado, podrás acceder al dashboard donde encontrarás la opción "Crear Cuestionario". El editor intuitivo te permite agregar preguntas con diferentes tipos de respuesta: opción múltiple, selección simple o verdadero/falso.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Necesito pagar para usar GoQuiz?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        No, GoQuiz es completamente gratuito. Puedes registrarte como docente o jugador sin ningún costo y acceder a todas las funcionalidades de la plataforma.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Qué tipo de dispositivos son compatibles?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        GoQuiz es una plataforma web responsive que funciona en cualquier dispositivo con conexión a internet: computadoras de escritorio, laptops, tablets y smartphones. La interfaz se adapta automáticamente al tamaño de tu pantalla para una experiencia óptima.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Cómo me uno a una partida como jugador?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Para unirte a una partida, necesitas el PIN único que el docente comparte contigo. Una vez que tengas el PIN, haz clic en "Jugar" en la página principal, ingresa el PIN y podrás unirte a la partida en tiempo real. Asegúrate de estar registrado como jugador antes de unirte.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Puedo ver los resultados de mis estudiantes?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Sí, como docente puedes acceder a los resultados detallados de cada partida. En el dashboard encontrarás estadísticas de rendimiento, respuestas correctas e incorrectas, y tiempos de respuesta de cada estudiante. También puedes exportar estos datos para análisis posterior.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Puedo reutilizar cuestionarios que ya creé?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Sí, todos los cuestionarios que crees se guardan en tu cuenta. Puedes reutilizarlos, editarlos o compartirlos con otros docentes. También puedes explorar el repositorio público para encontrar cuestionarios creados por otros usuarios.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Qué pasa si pierdo mi contraseña?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Si olvidaste tu contraseña, puedes usar la opción "Recuperar Contraseña" en la página de inicio de sesión. Recibirás un código de verificación en tu correo electrónico que te permitirá crear una nueva contraseña de forma segura.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>¿Hay límite en el número de preguntas por cuestionario?</span>
+                    <i class="bi bi-plus-circle-fill"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>
+                        Sí, hay un límite máximo de 50 preguntas por cuestionario para mantener la calidad y el rendimiento de la aplicación. Recomendamos mantener los cuestionarios entre 10 y 30 preguntas para mantener la atención y el interés de los estudiantes durante la partida.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const faqItems = document.querySelectorAll('.faq-item');
+        
+        faqItems.forEach(function(item) {
+            const question = item.querySelector('.faq-question');
+            
+            if (question) {
+                question.addEventListener('click', function() {
+                    // Toggle del item actual
+                    item.classList.toggle('active');
+                    
+                    // Actualizar icono
+                    const icon = question.querySelector('i');
+                    if (icon) {
+                        if (item.classList.contains('active')) {
+                            icon.classList.remove('bi-plus-circle-fill');
+                            icon.classList.add('bi-x-circle-fill');
+                        } else {
+                            icon.classList.remove('bi-x-circle-fill');
+                            icon.classList.add('bi-plus-circle-fill');
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
+

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,53 +8,430 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/juego.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
-    <div class="cont container-fluid d-flex flex-column justify-content-center align-items-center text-center min-vh-100 min-vw-100">
+    <div
+        class="cont container-fluid d-flex flex-column justify-content-center align-items-center text-center min-vh-100 min-vw-100">
         <!-- Pregunta card -->
         <div class="preguntas card shadow-lg p-4 bg-white rounded-4 d-none">
-            <label for="" class="fw-semibold text-primary">Pregunta:</label>
+            <div class="icon-decoration top-left">💡</div>
+            <div class="icon-decoration bottom-right">✨</div>
+            <div class="question-badge">
+                <i class="bi bi-question-circle-fill me-2"></i>Pregunta Activa
+                <span id="contadorPregunta" class="badge bg-primary ms-2"></span>
+            </div>
+            <label for="" class="fw-semibold text-primary">
+                <i class="bi bi-chat-quote-fill me-2"></i>Pregunta:
+            </label>
             <h2 class="cuest fw-bold"></h2>
-            <label for="" class="fw-semibold text-primary">Puntos</label>
-            <p class="punt fw-semibold"></p>
-            <label for="" class="fw-semibold text-primary">Tiempo</label>
-            <span class="temp fw-semibold"></span>s
+            <div class="info-grid">
+                <div class="info-item">
+                    <label for="" class="fw-semibold text-primary">
+                        <i class="bi bi-star-fill me-2"></i>Puntos
+                    </label>
+                    <p class="punt fw-semibold"></p>
+                </div>
+                <div class="info-item">
+                    <label for="" class="fw-semibold text-primary">
+                        <i class="bi bi-clock-fill me-2"></i>Tiempo
+                    </label>
+                    <span class="temp fw-semibold"></span><span class="fw-semibold">s</span>
+                </div>
+            </div>
+            
+            <!-- Botones de control -->
+            <div class="control-buttons mt-4 d-flex gap-2 justify-content-center flex-wrap">
+                <button id="siguientePreguntaBtn" class="btn btn-success btn-lg d-none">
+                    <i class="bi bi-arrow-right-circle-fill me-2"></i>Siguiente Pregunta
+                </button>
+                <button id="finalizarBtn" class="btn btn-danger btn-lg">
+                    <i class="bi bi-stop-circle-fill me-2"></i>Finalizar Cuestionario
+                </button>
+            </div>
         </div>
 
-        <!-- Temporizador card -->
-        <div class="card shadow-lg p-4 bg-white rounded-4 tempo" style="max-width: 420px;">
-            <h3 class="fw-bold text-primary mb-3">{{ datos_frm.nombre }}</h3>
-            <h5 class="text-muted mb-4">PIN: <span class="fw-semibold">{{ datos_frm.pin }}</span></h5>
+        <!-- Contenedor principal con dos columnas -->
+        <div class="d-flex flex-wrap justify-content-center gap-4 w-100 px-3" style="max-width: 1400px;">
+            <!-- Temporizador card -->
+            <div class="card shadow-lg p-4 bg-white rounded-4 tempo" style="max-width: 420px; flex: 1 1 400px;">
+                <h3 class="fw-bold text-primary mb-3">{{ datos_frm.nombre }}</h3>
+                <h5 class="text-muted mb-4">
+                    PIN: 
+                    <span class="fw-semibold" id="pinDisplay">{{ datos_frm.pin }}</span>
+                    <button type="button" class="btn btn-sm btn-outline-secondary ms-2" id="togglePinDisplay" aria-label="Mostrar/ocultar PIN">
+                        <i class="bi bi-eye" id="pinDisplayIcon"></i>
+                    </button>
+                </h5>
 
-            <div class="mb-3">
-                <label for="timeInput" class="form-label fw-semibold">Selecciona el tiempo inicial:</label>
-                <div class="d-flex justify-content-center gap-2">
-                    <input type="number" id="minutes" class="form-control w-50 text-center" min="0" max="59" placeholder="Minutos">
-                    <input type="number" id="seconds" class="form-control w-50 text-center" min="0" max="59" placeholder="Segundos">
+                <div class="mb-3">
+                    <label for="timeInput" class="form-label fw-semibold">Selecciona el tiempo inicial:</label>
+                    <div class="d-flex justify-content-center gap-2">
+                        <input type="number" id="minutes" class="form-control w-50 text-center" min="0" max="59"
+                            placeholder="Minutos">
+                        <input type="number" id="seconds" class="form-control w-50 text-center" min="0" max="59"
+                            placeholder="Segundos">
+                    </div>
+                </div>
+
+                <div>
+                    <i class="fs-1 text-danger bi bi-alarm-fill"></i>
+                </div>
+
+                <button id="startBtn" class="btn btn-gradient w-100 mt-3 fw-semibold btn-outline-primary">
+                    Iniciar
+                </button>
+
+                <div class="mt-4">
+                    <h2 id="timer" class="fw-bold text-dark"></h2>
                 </div>
             </div>
 
-            <div>
-                <i class="fs-1 text-danger bi bi-alarm-fill"></i>
-            </div>
-
-            <button id="startBtn" class="btn btn-gradient w-100 mt-3 fw-semibold btn-outline-primary">
-                Iniciar
-            </button>
-
-            <div class="mt-4">
-                <h2 id="timer" class="fw-bold text-dark"></h2>
+            <!-- Participantes card -->
+            <div class="card shadow-lg p-4 bg-white rounded-4 participantes-card"
+                style="max-width: 500px; flex: 1 1 400px;">
+                <h4 class="fw-bold text-primary mb-3">
+                    <i class="bi bi-people-fill me-2"></i>Participantes
+                    <span class="badge bg-primary ms-2" id="contadorParticipantes">0</span>
+                </h4>
+                <hr>
+                <div class="participants-container" id="participantsContainer"
+                    style="max-height: 400px; overflow-y: auto;">
+                    <div class="text-muted py-4">
+                        <i class="bi bi-hourglass-split fs-3 d-block mb-2"></i>
+                        <span>Esperando participantes...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <style>
+        /* Estilos personalizados para SweetAlert2 */
+        .swal2-popup-custom {
+            border-radius: 20px !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+        
+        .swal2-title {
+            font-weight: 700 !important;
+            color: #2c3e50 !important;
+            font-size: 1.5rem !important;
+        }
+        
+        .swal2-html-container {
+            font-size: 1rem !important;
+            color: #495057 !important;
+        }
+        
+        .swal2-icon.swal2-warning {
+            border-color: #ffc107 !important;
+            color: #ffc107 !important;
+        }
+        
+        .swal2-popup-custom .btn {
+            padding: 0.6rem 1.5rem !important;
+            font-weight: 600 !important;
+            border-radius: 10px !important;
+            transition: all 0.3s ease !important;
+            font-size: 1rem !important;
+        }
+        
+        .swal2-popup-custom .btn:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+        
+        .swal2-popup-custom .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+            border: none !important;
+        }
+        
+        .swal2-popup-custom .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+            border: none !important;
+        }
+        
+        .swal2-actions {
+            gap: 1rem !important;
+        }
+        
+        .participantes-card {
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .participants-container {
+            scrollbar-width: thin;
+            scrollbar-color: #007bff #f0f0f0;
+        }
+
+        .participants-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .participants-container::-webkit-scrollbar-track {
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .participants-container::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 10px;
+        }
+
+        .participant-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: participantJoin 0.4s ease-out;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .participant-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        @keyframes participantJoin {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateX(0);
+            }
+        }
+
+        .participant-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .participant-name i {
+            font-size: 1.2rem;
+        }
+        
+        .participant-position {
+            font-weight: 700;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            min-width: 35px;
+            text-align: center;
+        }
+        
+        .participant-score {
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+        
+        .participant-score i {
+            color: #ffd700;
+        }
+        
+        .participant-item.top-1 {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+        
+        .participant-item.top-2 {
+            background: linear-gradient(135deg, #c0c0c0 0%, #e8e8e8 100%);
+            box-shadow: 0 4px 15px rgba(192, 192, 192, 0.4);
+        }
+        
+        .participant-item.top-3 {
+            background: linear-gradient(135deg, #cd7f32 0%, #e6a857 100%);
+            box-shadow: 0 4px 15px rgba(205, 127, 50, 0.4);
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+        }
+
+        .empty-participants {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-participants i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            /* Tablet */
+            .cont {
+                padding: 1.5rem;
+            }
+            
+            .d-flex.flex-wrap {
+                gap: 2rem;
+            }
+            
+            .tempo,
+            .participantes-card {
+                max-width: 100% !important;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            /* Tablet pequeña y móvil grande */
+            .cont {
+                padding: 1rem;
+            }
+            
+            .d-flex.flex-wrap {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .tempo,
+            .participantes-card {
+                max-width: 100% !important;
+                flex: 1 1 auto !important;
+            }
+            
+            .tempo h3 {
+                font-size: 1.3rem;
+            }
+            
+            .participantes-card h4 {
+                font-size: 1.2rem;
+            }
+            
+            .participant-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            #startBtn {
+                font-size: 1rem;
+                padding: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Celular */
+            .cont {
+                padding: 0.5rem;
+            }
+            
+            .tempo {
+                padding: 1.5rem 1rem !important;
+            }
+            
+            .tempo h3 {
+                font-size: 1.1rem;
+            }
+            
+            .tempo h5 {
+                font-size: 0.85rem;
+            }
+            
+            .tempo input.form-control {
+                font-size: 0.9rem;
+            }
+            
+            .participantes-card {
+                padding: 1.5rem 1rem !important;
+            }
+            
+            .participantes-card h4 {
+                font-size: 1.1rem;
+            }
+            
+            .participant-item {
+                padding: 10px 12px;
+                font-size: 0.9rem;
+            }
+            
+            .participant-name {
+                font-size: 1rem;
+            }
+            
+            #startBtn {
+                font-size: 0.95rem;
+                padding: 0.8rem;
+            }
+            
+            #timer {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+
     <script>
         const idCuestionario = {{ id_cuestionario | tojson }};
         window.idCuestionario = idCuestionario;
+        
+        // Toggle para mostrar/ocultar PIN
+        document.addEventListener('DOMContentLoaded', () => {
+            const togglePinDisplay = document.getElementById('togglePinDisplay');
+            const pinDisplay = document.getElementById('pinDisplay');
+            const pinDisplayIcon = document.getElementById('pinDisplayIcon');
+            const pinOriginal = '{{ datos_frm.pin }}';
+            
+            if (togglePinDisplay && pinDisplay && pinDisplayIcon) {
+                let pinVisible = false;
+                
+                togglePinDisplay.addEventListener('click', function() {
+                    pinVisible = !pinVisible;
+                    
+                    if (pinVisible) {
+                        pinDisplay.textContent = pinOriginal;
+                        pinDisplayIcon.classList.remove('bi-eye');
+                        pinDisplayIcon.classList.add('bi-eye-slash');
+                    } else {
+                        pinDisplay.textContent = '•••••';
+                        pinDisplayIcon.classList.remove('bi-eye-slash');
+                        pinDisplayIcon.classList.add('bi-eye');
+                    }
+                });
+            }
+        });
     </script>
 
     <script src="{{ url_for('static', filename='JS/juego.js') }}"></script>
 
 </body>
+
 </html>

@@ -1,0 +1,142 @@
+{% extends '/dashboard.html' %}
+
+{% block titulo_pagina %}Grupos Formados{% endblock %}
+
+{% block contenido %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                <i class="bi bi-people-fill"></i> Grupos del Cuestionario: {{ cuestionario.nombre }}
+            </h4>
+            <small>PIN: {{ cuestionario.pin }}</small>
+        </div>
+        <div class="card-body">
+            {% if grupos %}
+            <div class="row g-4">
+                {% for grupo in grupos %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-{% if grupo.estado == 'A' %}success{% else %}secondary{% endif %}">
+                        <div class="card-header bg-{% if grupo.estado == 'A' %}success{% else %}secondary{% endif %} text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-people"></i> {{ grupo.nombre_grupo }}
+                                {% if grupo.estado == 'A' %}
+                                    <span class="badge bg-light text-success">Activo</span>
+                                {% else %}
+                                    <span class="badge bg-light text-secondary">Disuelto</span>
+                                {% endif %}
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2">
+                                <strong><i class="bi bi-star-fill text-warning"></i> Líder:</strong> 
+                                {{ grupo.lider_alias or 'N/A' }}
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-people"></i> Miembros:</strong> 
+                                {{ grupo.num_miembros }}/5
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-trophy"></i> Puntaje:</strong> 
+                                <span class="badge bg-primary">{{ grupo.puntaje or 0.00 }}</span>
+                            </p>
+                            <p class="mb-2">
+                                <strong><i class="bi bi-gear"></i> Método:</strong>
+                                <span class="badge bg-info">
+                                    {% if grupo.metodo_evaluacion == 'votacion' %}Votación (Mayoría)
+                                    {% elif grupo.metodo_evaluacion == 'consenso' %}Consenso (Unanimidad)
+                                    {% elif grupo.metodo_evaluacion == 'lider' %}Decisión del Líder
+                                    {% else %}Votación{% endif %}
+                                </span>
+                            </p>
+                            
+                            <hr>
+                            
+                            <div class="mb-2">
+                                <strong>Miembros del Grupo:</strong>
+                                <div class="mt-2">
+                                    {% for miembro in grupo.miembros %}
+                                    <span class="badge {% if miembro.es_lider %}bg-warning text-dark{% else %}bg-secondary{% endif %} me-1 mb-1">
+                                        {{ miembro.alias }}
+                                        {% if miembro.es_lider %}<i class="bi bi-star-fill"></i>{% endif %}
+                                    </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            
+                            <p class="text-muted small mb-0">
+                                <i class="bi bi-calendar"></i> Creado: {{ grupo.fecha_creacion.strftime('%d/%m/%Y %H:%M') if grupo.fecha_creacion else 'N/A' }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="mt-4">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Total de grupos:</strong> {{ grupos|length }}
+                    <br>
+                    <strong>Grupos activos:</strong> {{ grupos|selectattr('estado', 'equalto', 'A')|list|length }}
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-people fs-1 text-muted"></i>
+                <h5 class="mt-3 text-muted">Aún no se han formado grupos</h5>
+                <p class="text-muted">Los estudiantes pueden formar grupos cuando ingresen con el PIN.</p>
+            </div>
+            {% endif %}
+            
+            <div class="mt-4 text-center">
+                <a href="/dashboard" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s;
+    }
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+</style>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

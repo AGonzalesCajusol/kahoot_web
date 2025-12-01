@@ -1,0 +1,359 @@
+{% extends 'base.html' %}
+{% block title %}Tutoriales - GoQuiz{% endblock %}
+
+{% block head_extra %}
+<style>
+    .tutorials-section {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        min-height: calc(100vh - 200px);
+        padding: 4rem 2rem;
+    }
+    
+    .tutorials-container {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+    
+    .tutorials-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        color: #fff;
+    }
+    
+    .tutorials-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .tutorials-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    
+    .tutorial-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    
+    .tutorial-card h3 {
+        color: #4facfe;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+    
+    .tutorial-card h4 {
+        color: #00f2fe;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 1.3rem;
+    }
+    
+    .video-container {
+        position: relative;
+        padding-bottom: 56.25%;
+        height: 0;
+        overflow: hidden;
+        margin: 1.5rem 0;
+        border-radius: 10px;
+        background: #000;
+    }
+    
+    .video-placeholder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        font-size: 1.2rem;
+        text-align: center;
+        padding: 2rem;
+    }
+    
+    .step-list {
+        counter-reset: step-counter;
+        list-style: none;
+        padding-left: 0;
+    }
+    
+    .step-list li {
+        counter-increment: step-counter;
+        margin-bottom: 1rem;
+        padding-left: 3rem;
+        position: relative;
+        line-height: 1.6;
+    }
+    
+    .step-list li::before {
+        content: counter(step-counter);
+        position: absolute;
+        left: 0;
+        top: 0;
+        background: #4facfe;
+        color: white;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+    
+    .highlight-box {
+        background: #e7f5ff;
+        border-left: 4px solid #4facfe;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 5px;
+    }
+    
+    @media (max-width: 768px) {
+        .tutorials-title {
+            font-size: 2.5rem;
+        }
+        
+        .tutorial-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="tutorials-section">
+    <div class="tutorials-container">
+        <div class="tutorials-header">
+            <h1 class="tutorials-title">
+                <i class="bi bi-play-circle-fill"></i> Tutoriales
+            </h1>
+            <p class="tutorials-subtitle">
+                Aprende a usar GoQuiz con nuestros tutoriales paso a paso. Videos y guías detalladas para docentes y estudiantes.
+            </p>
+        </div>
+        
+        <!-- Tutorial 1: Primeros Pasos -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-rocket-takeoff"></i> Tutorial 1: Primeros Pasos en GoQuiz</h3>
+            <p>
+                Aprende los conceptos básicos de GoQuiz: cómo registrarte, crear tu primer cuestionario y comenzar a usar la plataforma.
+            </p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div>
+                        <i class="bi bi-camera-video" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Video Tutorial: Primeros Pasos</strong><br>
+                        <small>Próximamente disponible</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h4>Contenido del Tutorial:</h4>
+            <ol class="step-list">
+                <li>Crear una cuenta como docente</li>
+                <li>Navegar por el dashboard</li>
+                <li>Entender la interfaz principal</li>
+                <li>Configurar tu perfil</li>
+            </ol>
+        </div>
+        
+        <!-- Tutorial 2: Crear Cuestionario -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-file-plus"></i> Tutorial 2: Crear tu Primer Cuestionario</h3>
+            <p>
+                Guía completa para crear un cuestionario desde cero, agregar preguntas y configurar todas las opciones disponibles.
+            </p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div>
+                        <i class="bi bi-camera-video" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Video Tutorial: Crear Cuestionario</strong><br>
+                        <small>Próximamente disponible</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h4>Pasos Detallados:</h4>
+            <ol class="step-list">
+                <li>Acceder a "Crear Cuestionario"</li>
+                <li>Completar los datos básicos del cuestionario</li>
+                <li>Agregar tu primera pregunta</li>
+                <li>Configurar alternativas y respuesta correcta</li>
+                <li>Establecer puntos y tiempo de respuesta</li>
+                <li>Guardar y revisar el cuestionario</li>
+            </ol>
+            
+            <div class="highlight-box">
+                <strong><i class="bi bi-lightbulb"></i> Tip:</strong> 
+                Puedes agregar hasta 50 preguntas por cuestionario. Recomendamos empezar con 10-15 preguntas para familiarizarte.
+            </div>
+        </div>
+        
+        <!-- Tutorial 3: Importar desde Excel -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-file-earmark-excel"></i> Tutorial 3: Importar Cuestionarios desde Excel</h3>
+            <p>
+                Aprende a crear cuestionarios masivamente usando Excel. Ideal para docentes que tienen muchos cuestionarios preparados.
+            </p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div>
+                        <i class="bi bi-camera-video" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Video Tutorial: Importar Excel</strong><br>
+                        <small>Próximamente disponible</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h4>Proceso Completo:</h4>
+            <ol class="step-list">
+                <li>Descargar la plantilla Excel</li>
+                <li>Comprender el formato de la plantilla</li>
+                <li>Llenar la plantilla con tus preguntas</li>
+                <li>Validar el formato antes de importar</li>
+                <li>Subir el archivo Excel</li>
+                <li>Revisar y corregir errores si los hay</li>
+                <li>Confirmar la importación</li>
+            </ol>
+            
+            <div class="highlight-box">
+                <strong><i class="bi bi-exclamation-triangle"></i> Importante:</strong> 
+                Asegúrate de seguir exactamente el formato de la plantilla. Los errores de formato impedirán la importación.
+            </div>
+        </div>
+        
+        <!-- Tutorial 4: Iniciar un Juego -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-play-btn"></i> Tutorial 4: Iniciar y Gestionar un Juego</h3>
+            <p>
+                Descubre cómo iniciar una partida, compartir el PIN con tus estudiantes y controlar el desarrollo del juego en tiempo real.
+            </p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div>
+                        <i class="bi bi-camera-video" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Video Tutorial: Gestionar Juego</strong><br>
+                        <small>Próximamente disponible</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h4>Flujo Completo del Juego:</h4>
+            <ol class="step-list">
+                <li>Seleccionar el cuestionario a jugar</li>
+                <li>Hacer clic en "Iniciar Juego"</li>
+                <li>Compartir el PIN con los estudiantes</li>
+                <li>Monitorear la sala de espera</li>
+                <li>Iniciar la partida cuando todos estén listos</li>
+                <li>Controlar el ritmo del juego</li>
+                <li>Ver resultados en tiempo real</li>
+                <li>Finalizar y revisar estadísticas</li>
+            </ol>
+        </div>
+        
+        <!-- Tutorial 5: Cuestionarios Grupales -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-people"></i> Tutorial 5: Cuestionarios Grupales</h3>
+            <p>
+                Aprende a crear y gestionar cuestionarios grupales donde los estudiantes trabajan en equipo para responder.
+            </p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div>
+                        <i class="bi bi-camera-video" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Video Tutorial: Cuestionarios Grupales</strong><br>
+                        <small>Próximamente disponible</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h4>Características de Cuestionarios Grupales:</h4>
+            <ul>
+                <li>Los estudiantes forman grupos de hasta 5 miembros</li>
+                <li>Un líder por grupo gestiona las respuestas</li>
+                <li>Tres métodos de evaluación: Votación, Consenso o Decisión del Líder</li>
+                <li>Fomenta el trabajo colaborativo y la discusión</li>
+            </ul>
+            
+            <h4>Configuración:</h4>
+            <ol class="step-list">
+                <li>Crear un cuestionario y seleccionar tipo "Grupal"</li>
+                <li>Los estudiantes se unen con el PIN</li>
+                <li>Los estudiantes forman o se unen a grupos</li>
+                <li>El líder establece el método de evaluación</li>
+                <li>El grupo responde colaborativamente</li>
+            </ol>
+        </div>
+        
+        <!-- Tutorial 6: Para Estudiantes -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-person-check"></i> Tutorial 6: Cómo Jugar como Estudiante</h3>
+            <p>
+                Guía completa para estudiantes: cómo unirse a un juego, crear alias, formar grupos y participar en las partidas.
+            </p>
+            
+            <div class="video-container">
+                <div class="video-placeholder">
+                    <div>
+                        <i class="bi bi-camera-video" style="font-size: 3rem; margin-bottom: 1rem; display: block;"></i>
+                        <strong>Video Tutorial: Para Estudiantes</strong><br>
+                        <small>Próximamente disponible</small>
+                    </div>
+                </div>
+            </div>
+            
+            <h4>Pasos para Estudiantes:</h4>
+            <ol class="step-list">
+                <li>Obtener el PIN del docente</li>
+                <li>Ir a "Unirse a un juego"</li>
+                <li>Ingresar el PIN de 5 dígitos</li>
+                <li>Crear un alias único</li>
+                <li>Esperar en la sala de espera</li>
+                <li>Formar grupo (si es cuestionario grupal)</li>
+                <li>Responder preguntas en tiempo real</li>
+                <li>Ver resultados y recompensas</li>
+            </ol>
+        </div>
+        
+        <!-- Recursos Adicionales -->
+        <div class="tutorial-card">
+            <h3><i class="bi bi-book"></i> Recursos Adicionales</h3>
+            <p>
+                Complementa estos tutoriales con otros recursos disponibles:
+            </p>
+            <ul>
+                <li><a href="/guia_uso">Guía de Uso Completa</a> - Documentación detallada</li>
+                <li><a href="/plantillas">Plantillas</a> - Descarga plantillas Excel</li>
+                <li><a href="/preguntas_frecuentes">Preguntas Frecuentes</a> - Respuestas a dudas comunes</li>
+                <li><a href="/contactanos">Contacto</a> - Soporte directo</li>
+            </ul>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

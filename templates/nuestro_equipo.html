@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% block title %}Nuestro Equipo - GoQuiz{% endblock %}
+{% block head_extra %}
+<style>
+    .team-section {
+        background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%);
+        min-height: 100vh;
+        padding: 4rem 2rem;
+    }
+    
+    .team-container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .team-header {
+        text-align: center;
+        margin-bottom: 4rem;
+        color: #fff;
+    }
+    
+    .team-title {
+        font-size: 3.5rem;
+        font-weight: 900;
+        margin-bottom: 1rem;
+        font-family: 'Georgia', serif;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .team-subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.95);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 3rem;
+    }
+    
+    .team-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        text-align: left;
+    }
+    
+    .team-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+    
+    .team-member-name {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 0.5rem;
+        font-family: 'Georgia', serif;
+    }
+    
+    .team-member-role {
+        font-size: 1.1rem;
+        color: #0072ff;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    .team-member-description {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.7;
+        margin: 0;
+    }
+    
+    @media (max-width: 768px) {
+        .team-title {
+            font-size: 2.5rem;
+        }
+        
+        .team-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .team-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .team-card {
+            padding: 1.5rem;
+        }
+        
+        .team-member-name {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="team-section">
+    <div class="team-container">
+        <div class="team-header">
+            <h1 class="team-title">Nuestro Equipo</h1>
+            <p class="team-subtitle">
+                Conoce a los desarrolladores detrás del proyecto. Somos un grupo apasionado por la tecnología y la innovación.
+            </p>
+        </div>
+        
+        <div class="team-grid">
+            <div class="team-card">
+                <h3 class="team-member-name">Jesus Chapoñan</h3>
+                <p class="team-member-role">Desarrollador</p>
+                <p class="team-member-description">
+                    Apasionado por crear soluciones tecnológicas innovadoras y eficientes. Especializado en el desarrollo de aplicaciones web modernas y escalables.
+                </p>
+            </div>
+            
+            <div class="team-card">
+                <h3 class="team-member-name">Rick Vasquez</h3>
+                <p class="team-member-role">Desarrollador</p>
+                <p class="team-member-description">
+                    Especialista en implementar funcionalidades robustas y escalables. Enfocado en la arquitectura del sistema y optimización del código.
+                </p>
+            </div>
+            
+            <div class="team-card">
+                <h3 class="team-member-name">Cerly Quesquen</h3>
+                <p class="team-member-role">Desarrollador</p>
+                <p class="team-member-description">
+                    Experto en diseño de interfaces y experiencia de usuario. Comprometido con crear experiencias intuitivas y atractivas para los usuarios.
+                </p>
+            </div>
+            
+            <div class="team-card">
+                <h3 class="team-member-name">Gianela Torres</h3>
+                <p class="team-member-role">Desarrollador</p>
+                <p class="team-member-description">
+                    Especializada en integración de sistemas y desarrollo de APIs. Apasionada por la tecnología y la creación de soluciones que impacten positivamente.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts_extra %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Animación de entrada para las tarjetas
+        const cards = document.querySelectorAll('.team-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 150);
+        });
+    });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+

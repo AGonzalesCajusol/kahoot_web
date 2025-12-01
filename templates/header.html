@@ -1,0 +1,88 @@
+{% if session.get('docente_id') %}
+<!-- Header para Docente -->
+<header class="shadow-sm bg-white">
+    <nav class="navbar navbar-expand-lg container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
+            <img src="{{ url_for('static', filename='IMG/GoQuiz.png') }}" alt="Logo" style="height:32px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Mis cuestionarios</a></li>
+                <li class="nav-item"><a class="nav-link" href="/nuevo_cuestionario">Crear cuestionario</a></li>
+                <li class="nav-item"><a class="nav-link" href="/repositorio">Repositorio</a></li>
+                <li class="nav-item"><a class="nav-link" href="/perfil">Perfil</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small d-none d-md-inline">Docente: {{ session.get('nombres') }}</span>
+                <a class="btn btn-outline-secondary btn-sm" href="/logout"><i class="bi bi-box-arrow-right"></i> Salir</a>
+            </div>
+        </div>
+    </nav>
+</header>
+{% elif session.get('jugador_id') %}
+<!-- Header para Jugador -->
+<header class="shadow-sm bg-white">
+    <nav class="navbar navbar-expand-lg container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/dashboard">
+            <img src="{{ url_for('static', filename='IMG/GoQuiz.png') }}" alt="Logo" style="height:32px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Mis juegos</a></li>
+                <li class="nav-item"><a class="nav-link" href="/mis_recompensas">Mis recompensas</a></li>
+                <li class="nav-item"><a class="nav-link" href="/pin_estudiante">Unirse a un juego</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <span class="text-muted small d-none d-md-inline">Jugador: {{ session.get('email') }}</span>
+                <a class="btn btn-outline-secondary btn-sm" href="/logout"><i class="bi bi-box-arrow-right"></i> Salir</a>
+            </div>
+        </div>
+    </nav>
+</header>
+{% else %}
+<!-- Header para usuarios no logueados -->
+<header class="shadow-sm bg-white">
+    <nav class="navbar navbar-expand-lg container">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+            <img src="{{ url_for('static', filename='IMG/GoQuiz.png') }}" alt="Logo" style="height:32px;">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainNav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/">Inicio</a></li>
+            </ul>
+            <div class="d-flex align-items-center gap-2">
+                <a class="btn btn-outline-primary btn-sm" href="/login"><i class="bi bi-box-arrow-in-right"></i> Ingresar</a>
+                <a class="btn btn-primary btn-sm" href="/register"><i class="bi bi-person-plus"></i> Registro</a>
+            </div>
+        </div>
+    </nav>
+</header>
+{% endif %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,2036 @@
+openapi: 3.0.4
+info:
+  title: GoQuiz 1.0
+  description: Esta es un pagina de cuestionario lo puedes encontrar en [https://grupo5daw2025.pythonanywhere.com/](https://grupo5daw2025.pythonanywhere.com/).  En
+    esta aplicación web podras crear cuestionarios y tambien podras entrar como jugador
+    y responder los cuestionarios que te inviten de manera online.
+  termsOfService: https://grupo5daw2025.pythonanywhere.com/
+  contact:
+    email: mixdjangel7@usat.edu.pe
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Descubre más de nosotros en GoQuiz
+  url: https://grupo5daw2025.pythonanywhere.com/
+servers:
+- url: https://grupo5daw2025.pythonanywhere.com
+  description: Servidor de desarrollo
+tags:
+- name: Docente
+  description: Operaciones relacionadas con docentes
+- name: Jugador
+  description: Operaciones relacionadas con jugadores
+- name: Cuestionario
+  description: Operaciones relacionadas con cuestionarios
+- name: Grupo
+  description: Operaciones relacionadas con grupos
+- name: Recompensa
+  description: Operaciones relacionadas con recompensas
+- name: Pregunta
+  description: Operaciones relacionadas con preguntas
+- name: Alternativa
+  description: Operaciones relacionadas con alternativas
+- name: Jugador_Cuestionario
+  description: Operaciones relacionadas con jugadores en cuestionarios
+- name: Respuesta
+  description: Operaciones relacionadas con respuestas
+- name: GrupoMiembro
+  description: Operaciones relacionadas con miembros de grupos
+- name: VotacionGrupo
+  description: Operaciones relacionadas con votaciones de grupos
+paths:
+  /api_registrar_docente:
+    post:
+      tags:
+      - Docente
+      summary: API para registrar un nuevo docente
+      description: API para registrar un nuevo docente
+      operationId: api_registrar_docente
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                correo:
+                  type: string
+                password:
+                  type: string
+                nombres:
+                  type: string
+                apellidos:
+                  type: integer
+              required:
+              - correo
+              - password
+              - nombres
+              - apellidos
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_docente:
+    post:
+      tags:
+      - Docente
+      summary: API para actualizar un docente existente
+      description: API para actualizar un docente existente
+      operationId: api_actualizar_docente
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_docente:
+                  type: integer
+                correo:
+                  type: string
+                password:
+                  type: string
+                nombres:
+                  type: string
+                apellidos:
+                  type: integer
+              required:
+              - id_docente
+              - correo
+              - password
+              - nombres
+              - apellidos
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_docente_id:
+    get:
+      tags:
+      - Docente
+      summary: API para obtener un docente por su ID (sin autenticación JWT requerida)
+      description: API para obtener un docente por su ID (sin autenticación JWT requerida)
+      operationId: api_obtener_docente_id
+      parameters:
+      - name: id_docente
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_docente
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_docentes:
+    get:
+      tags:
+      - Docente
+      summary: API para obtener todos los docentes (sin autenticación JWT requerida)
+      description: API para obtener todos los docentes (sin autenticación JWT requerida)
+      operationId: api_obtener_docentes
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_docente:
+    delete:
+      tags:
+      - Docente
+      summary: API para eliminar un docente
+      description: API para eliminar un docente
+      operationId: api_eliminar_docente
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_docente
+        in: query
+        required: true
+        description: ID del docente a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_jugador:
+    post:
+      tags:
+      - Jugador
+      summary: API para registrar un nuevo jugador
+      description: API para registrar un nuevo jugador
+      operationId: api_registrar_jugador
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - email
+              - password
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_jugador:
+    post:
+      tags:
+      - Jugador
+      summary: API para actualizar un jugador existente
+      description: API para actualizar un jugador existente
+      operationId: api_actualizar_jugador
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_jugador:
+                  type: integer
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+              - id_jugador
+              - email
+              - password
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_jugador_id:
+    get:
+      tags:
+      - Jugador
+      summary: API para obtener un jugador por su ID (sin autenticación JWT requerida)
+      description: API para obtener un jugador por su ID (sin autenticación JWT requerida)
+      operationId: api_obtener_jugador_id
+      parameters:
+      - name: id_jugador
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_jugador
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_jugadores:
+    get:
+      tags:
+      - Jugador
+      summary: API para obtener todos los jugadores (sin autenticación JWT requerida)
+      description: API para obtener todos los jugadores (sin autenticación JWT requerida)
+      operationId: api_obtener_jugadores
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_jugador:
+    delete:
+      tags:
+      - Jugador
+      summary: API para eliminar un jugador
+      description: API para eliminar un jugador
+      operationId: api_eliminar_jugador
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_jugador
+        in: query
+        required: true
+        description: ID del jugador a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_cuestionario:
+    post:
+      tags:
+      - Cuestionario
+      summary: API para registrar un nuevo cuestionario (solo cuestionario, sin preguntas
+        ni alternativas)
+      description: API para registrar un nuevo cuestionario (solo cuestionario, sin
+        preguntas ni alternativas)
+      operationId: api_registrar_cuestionario
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                id_docente:
+                  type: integer
+              required:
+              - nombre
+              - id_docente
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_cuestionario:
+    post:
+      tags:
+      - Cuestionario
+      summary: API para actualizar un cuestionario existente
+      description: API para actualizar un cuestionario existente
+      operationId: api_actualizar_cuestionario
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_cuestionario:
+                  type: integer
+                nombre:
+                  type: string
+                estado:
+                  type: string
+                tipo_cuestionario:
+                  type: string
+                descripcion:
+                  type: string
+              required:
+              - id_cuestionario
+              - nombre
+              - estado
+              - tipo_cuestionario
+              - descripcion
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_cuestionario_id:
+    get:
+      tags:
+      - Cuestionario
+      summary: API para obtener un cuestionario por su ID con sus preguntas (sin autenticación
+        JWT requerida)
+      description: API para obtener un cuestionario por su ID con sus preguntas (sin
+        autenticación JWT requerida)
+      operationId: api_obtener_cuestionario_id
+      parameters:
+      - name: id_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_cuestionarios:
+    get:
+      tags:
+      - Cuestionario
+      summary: API para obtener todos los cuestionarios (opcionalmente filtrados por
+        id_docente) (sin autenticación JWT requerida)
+      description: API para obtener todos los cuestionarios (opcionalmente filtrados
+        por id_docente) (sin autenticación JWT requerida)
+      operationId: api_obtener_cuestionarios
+      parameters:
+      - name: id_docente
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_docente
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_cuestionario:
+    delete:
+      tags:
+      - Cuestionario
+      summary: API para eliminar un cuestionario
+      description: API para eliminar un cuestionario
+      operationId: api_eliminar_cuestionario
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_cuestionario
+        in: query
+        required: true
+        description: ID del cuestionario a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_grupo:
+    post:
+      tags:
+      - Grupo
+      summary: API para registrar un nuevo grupo
+      description: API para registrar un nuevo grupo
+      operationId: api_registrar_grupo
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre_grupo:
+                  type: string
+                id_cuestionario:
+                  type: integer
+                id_lider:
+                  type: integer
+              required:
+              - nombre_grupo
+              - id_cuestionario
+              - id_lider
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_grupo:
+    post:
+      tags:
+      - Grupo
+      summary: API para actualizar un grupo existente (cambiar método de evaluación)
+      description: API para actualizar un grupo existente (cambiar método de evaluación)
+      operationId: api_actualizar_grupo
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_grupo:
+                  type: integer
+                metodo_evaluacion:
+                  type: string
+                id_jugador_cuestionario:
+                  type: integer
+              required:
+              - id_grupo
+              - metodo_evaluacion
+              - id_jugador_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_grupo_id:
+    get:
+      tags:
+      - Grupo
+      summary: API para obtener un grupo por su ID (sin autenticación JWT requerida)
+      description: API para obtener un grupo por su ID (sin autenticación JWT requerida)
+      operationId: api_obtener_grupo_id
+      parameters:
+      - name: id_grupo
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_grupo
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_grupos:
+    get:
+      tags:
+      - Grupo
+      summary: API para obtener todos los grupos de un cuestionario (sin autenticación
+        JWT requerida)
+      description: API para obtener todos los grupos de un cuestionario (sin autenticación
+        JWT requerida)
+      operationId: api_obtener_grupos
+      parameters:
+      - name: id_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_grupo:
+    delete:
+      tags:
+      - Grupo
+      summary: API para eliminar (disolver) un grupo
+      description: API para eliminar (disolver) un grupo
+      operationId: api_eliminar_grupo
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_grupo
+        in: query
+        required: true
+        description: ID del grupo a eliminar
+        schema:
+          type: integer
+          example: 1
+      - name: id_jugador_cuestionario
+        in: query
+        required: true
+        description: ID del jugador_cuestionario que elimina el grupo
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_recompensa:
+    post:
+      tags:
+      - Recompensa
+      summary: API para registrar una nueva recompensa
+      description: API para registrar una nueva recompensa
+      operationId: api_registrar_recompensa
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_cuestionario:
+                  type: integer
+                id_jugador_cuestionario:
+                  type: integer
+                id_jugador:
+                  type: integer
+                puntos:
+                  type: string
+              required:
+              - id_cuestionario
+              - id_jugador_cuestionario
+              - id_jugador
+              - puntos
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_recompensa:
+    post:
+      tags:
+      - Recompensa
+      summary: API para actualizar una recompensa existente
+      description: API para actualizar una recompensa existente
+      operationId: api_actualizar_recompensa
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_recompensa:
+                  type: integer
+                puntos:
+                  type: string
+                tipo_recompensa:
+                  type: string
+              required:
+              - id_recompensa
+              - puntos
+              - tipo_recompensa
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_recompensa_id:
+    get:
+      tags:
+      - Recompensa
+      summary: API para obtener una recompensa por su ID (sin autenticación JWT requerida)
+      description: API para obtener una recompensa por su ID (sin autenticación JWT
+        requerida)
+      operationId: api_obtener_recompensa_id
+      parameters:
+      - name: id_recompensa
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_recompensa
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_recompensas:
+    get:
+      tags:
+      - Recompensa
+      summary: API para obtener todas las recompensas de un cuestionario (sin autenticación
+        JWT requerida)
+      description: API para obtener todas las recompensas de un cuestionario (sin
+        autenticación JWT requerida)
+      operationId: api_obtener_recompensas
+      parameters:
+      - name: id_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_recompensa:
+    delete:
+      tags:
+      - Recompensa
+      summary: API para eliminar una recompensa
+      description: API para eliminar una recompensa
+      operationId: api_eliminar_recompensa
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_recompensa
+        in: query
+        required: true
+        description: ID de la recompensa a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_pregunta:
+    post:
+      tags:
+      - Pregunta
+      summary: API para registrar una nueva pregunta (solo pregunta, sin alternativas)
+      description: API para registrar una nueva pregunta (solo pregunta, sin alternativas)
+      operationId: api_registrar_pregunta
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_cuestionario:
+                  type: integer
+                nombre_pregunta:
+                  type: string
+                puntos:
+                  type: string
+                tiempo:
+                  type: number
+                tipo_pregunta:
+                  type: string
+              required:
+              - id_cuestionario
+              - nombre_pregunta
+              - puntos
+              - tiempo
+              - tipo_pregunta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_pregunta:
+    post:
+      tags:
+      - Pregunta
+      summary: API para actualizar una pregunta existente (solo pregunta, sin alternativas)
+      description: API para actualizar una pregunta existente (solo pregunta, sin
+        alternativas)
+      operationId: api_actualizar_pregunta
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_pregunta:
+                  type: integer
+                puntos:
+                  type: string
+                tiempo:
+                  type: number
+                tipo_pregunta:
+                  type: string
+              required:
+              - id_pregunta
+              - puntos
+              - tiempo
+              - tipo_pregunta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_pregunta_id:
+    get:
+      tags:
+      - Pregunta
+      summary: API para obtener una pregunta por su ID (sin autenticación JWT requerida)
+      description: API para obtener una pregunta por su ID (sin autenticación JWT
+        requerida)
+      operationId: api_obtener_pregunta_id
+      parameters:
+      - name: id_pregunta
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_pregunta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_preguntas:
+    get:
+      tags:
+      - Pregunta
+      summary: API para obtener todas las preguntas de un cuestionario (sin autenticación
+        JWT requerida)
+      description: API para obtener todas las preguntas de un cuestionario (sin autenticación
+        JWT requerida)
+      operationId: api_obtener_preguntas
+      parameters:
+      - name: id_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_pregunta:
+    delete:
+      tags:
+      - Pregunta
+      summary: API para eliminar una pregunta
+      description: API para eliminar una pregunta
+      operationId: api_eliminar_pregunta
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_pregunta
+        in: query
+        required: true
+        description: ID de la pregunta a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_alternativa:
+    post:
+      tags:
+      - Alternativa
+      summary: API para registrar una nueva alternativa
+      description: API para registrar una nueva alternativa
+      operationId: api_registrar_alternativa
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_pregunta:
+                  type: integer
+                respuesta:
+                  type: string
+              required:
+              - id_pregunta
+              - respuesta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_alternativa:
+    post:
+      tags:
+      - Alternativa
+      summary: API para actualizar una alternativa existente
+      description: API para actualizar una alternativa existente
+      operationId: api_actualizar_alternativa
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_alternativa:
+                  type: integer
+                respuesta:
+                  type: string
+                estado_alternativa:
+                  type: string
+              required:
+              - id_alternativa
+              - respuesta
+              - estado_alternativa
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_alternativa_id:
+    get:
+      tags:
+      - Alternativa
+      summary: API para obtener una alternativa por su ID (sin autenticación JWT requerida)
+      description: API para obtener una alternativa por su ID (sin autenticación JWT
+        requerida)
+      operationId: api_obtener_alternativa_id
+      parameters:
+      - name: id_alternativa
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_alternativa
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_alternativas:
+    get:
+      tags:
+      - Alternativa
+      summary: API para obtener todas las alternativas de una pregunta (sin autenticación
+        JWT requerida)
+      description: API para obtener todas las alternativas de una pregunta (sin autenticación
+        JWT requerida)
+      operationId: api_obtener_alternativas
+      parameters:
+      - name: id_pregunta
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_pregunta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_alternativa:
+    delete:
+      tags:
+      - Alternativa
+      summary: API para eliminar una alternativa
+      description: API para eliminar una alternativa
+      operationId: api_eliminar_alternativa
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_alternativa
+        in: query
+        required: true
+        description: ID de la alternativa a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_jugador_cuestionario:
+    post:
+      tags:
+      - Jugador_Cuestionario
+      summary: API para registrar un nuevo jugador en cuestionario
+      description: API para registrar un nuevo jugador en cuestionario
+      operationId: api_registrar_jugador_cuestionario
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_jugador:
+                  type: integer
+                alias:
+                  type: string
+                id_cuestionario:
+                  type: integer
+              required:
+              - id_jugador
+              - alias
+              - id_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_actualizar_jugador_cuestionario:
+    post:
+      tags:
+      - Jugador_Cuestionario
+      summary: API para actualizar un jugador_cuestionario existente
+      description: API para actualizar un jugador_cuestionario existente
+      operationId: api_actualizar_jugador_cuestionario
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_jugador_cuestionario:
+                  type: integer
+                alias:
+                  type: string
+                puntaje:
+                  type: number
+                id_jugador:
+                  type: integer
+              required:
+              - id_jugador_cuestionario
+              - alias
+              - puntaje
+              - id_jugador
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_jugador_cuestionario_id:
+    get:
+      tags:
+      - Jugador_Cuestionario
+      summary: API para obtener un jugador_cuestionario por su ID (sin autenticación JWT requerida)
+      description: API para obtener un jugador_cuestionario por su ID (sin autenticación JWT requerida)
+      operationId: api_obtener_jugador_cuestionario_id
+      parameters:
+      - name: id_jugador_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_jugador_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_jugadores_cuestionario:
+    get:
+      tags:
+      - Jugador_Cuestionario
+      summary: API para obtener todos los jugadores de un cuestionario (sin autenticación
+        JWT requerida)
+      description: API para obtener todos los jugadores de un cuestionario (sin autenticación
+        JWT requerida)
+      operationId: api_obtener_jugadores_cuestionario
+      parameters:
+      - name: id_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_jugador_cuestionario:
+    delete:
+      tags:
+      - Jugador_Cuestionario
+      summary: API para eliminar un jugador_cuestionario
+      description: API para eliminar un jugador_cuestionario
+      operationId: api_eliminar_jugador_cuestionario
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_jugador_cuestionario
+        in: query
+        required: true
+        description: ID del jugador_cuestionario a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_respuesta:
+    post:
+      tags:
+      - Respuesta
+      summary: API para registrar una nueva respuesta
+      description: API para registrar una nueva respuesta
+      operationId: api_registrar_respuesta
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_jugador_cuestionario:
+                  type: integer
+                id_pregunta:
+                  type: integer
+                id_alternativa:
+                  type: integer
+              required:
+              - id_jugador_cuestionario
+              - id_pregunta
+              - id_alternativa
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_respuesta_id:
+    get:
+      tags:
+      - Respuesta
+      summary: API para obtener una respuesta por su ID (sin autenticación JWT requerida)
+      description: API para obtener una respuesta por su ID (sin autenticación JWT
+        requerida)
+      operationId: api_obtener_respuesta_id
+      parameters:
+      - name: id_respuesta
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_respuesta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_respuestas:
+    get:
+      tags:
+      - Respuesta
+      summary: API para obtener todas las respuestas de un jugador_cuestionario o pregunta (sin
+        autenticación JWT requerida)
+      description: API para obtener todas las respuestas de un jugador_cuestionario o pregunta
+        (sin autenticación JWT requerida)
+      operationId: api_obtener_respuestas
+      parameters:
+      - name: id_jugador_cuestionario
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_jugador_cuestionario
+      - name: id_pregunta
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_pregunta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_respuesta:
+    delete:
+      tags:
+      - Respuesta
+      summary: API para eliminar una respuesta
+      description: API para eliminar una respuesta
+      operationId: api_eliminar_respuesta
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_respuesta
+        in: query
+        required: true
+        description: ID de la respuesta a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_grupo_miembro:
+    post:
+      tags:
+      - GrupoMiembro
+      summary: API para agregar un miembro a un grupo
+      description: API para agregar un miembro a un grupo
+      operationId: api_registrar_grupo_miembro
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_grupo:
+                  type: integer
+                id_jugador_cuestionario:
+                  type: integer
+              required:
+              - id_grupo
+              - id_jugador_cuestionario
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_grupo_miembros:
+    get:
+      tags:
+      - GrupoMiembro
+      summary: API para obtener todos los miembros de un grupo (sin autenticación
+        JWT requerida)
+      description: API para obtener todos los miembros de un grupo (sin autenticación
+        JWT requerida)
+      operationId: api_obtener_grupo_miembros
+      parameters:
+      - name: id_grupo
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_grupo
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_grupo_miembro:
+    delete:
+      tags:
+      - GrupoMiembro
+      summary: API para eliminar un miembro de un grupo
+      description: API para eliminar un miembro de un grupo
+      operationId: api_eliminar_grupo_miembro
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_miembro
+        in: query
+        required: true
+        description: ID del miembro a eliminar del grupo
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_votacion_grupo:
+    post:
+      tags:
+      - VotacionGrupo
+      summary: API para registrar una votación de grupo
+      description: API para registrar una votación de grupo
+      operationId: api_registrar_votacion_grupo
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id_grupo:
+                  type: integer
+                id_pregunta:
+                  type: integer
+                id_jugador_cuestionario:
+                  type: integer
+                id_alternativa:
+                  type: integer
+              required:
+              - id_grupo
+              - id_pregunta
+              - id_jugador_cuestionario
+              - id_alternativa
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_obtener_votaciones_grupo:
+    get:
+      tags:
+      - VotacionGrupo
+      summary: API para obtener todas las votaciones de un grupo y pregunta (sin autenticación
+        JWT requerida)
+      description: API para obtener todas las votaciones de un grupo y pregunta (sin
+        autenticación JWT requerida)
+      operationId: api_obtener_votaciones_grupo
+      parameters:
+      - name: id_grupo
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_grupo
+      - name: id_pregunta
+        in: query
+        required: true
+        schema:
+          type: integer
+        description: Parámetro id_pregunta
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_eliminar_votacion_grupo:
+    delete:
+      tags:
+      - VotacionGrupo
+      summary: API para eliminar una votación de grupo
+      description: API para eliminar una votación de grupo
+      operationId: api_eliminar_votacion_grupo
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id_votacion
+        in: query
+        required: true
+        description: ID de la votación a eliminar
+        schema:
+          type: integer
+          example: 1
+      responses:
+        '200':
+          description: Operación exitosa
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: {}
+        message:
+          type: string
+        status:
+          type: integer
+          example: 0
+    SuccessResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: {}
+        message:
+          type: string
+        status:
+          type: integer
+          example: 1
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

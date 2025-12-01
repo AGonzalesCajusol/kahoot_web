@@ -1,0 +1,510 @@
+/* Estilos Kahoot Style para Prueba.html - Pantalla de Juego del Estudiante */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Fondo animado tipo Kahoot */
+.background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    z-index: -1;
+    animation: gradientShift 15s ease infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    }
+    50% {
+        background: linear-gradient(135deg, #764ba2 0%, #f093fb 50%, #667eea 100%);
+    }
+}
+
+/* Contenedor principal */
+.cont {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+    padding: 2rem;
+}
+
+/* Temporizador circular tipo Kahoot */
+.timer-container {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.timer-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--color-timer, #4CAF50) var(--progress, 100%),
+        rgba(255, 255, 255, 0.3) 0%
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.timer-circle::before {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: -1;
+}
+
+.timer-circle.timer-safe {
+    --color-timer: #4CAF50;
+}
+
+.timer-circle.timer-warning {
+    --color-timer: #FF9800;
+}
+
+.timer-circle.timer-danger {
+    --color-timer: #f44336;
+}
+
+.timer-circle.timer-pulse {
+    animation: pulseTimer 1s ease-in-out infinite;
+}
+
+@keyframes pulseTimer {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(244, 67, 54, 0.6);
+    }
+}
+
+.timer-content {
+    text-align: center;
+    color: #fff;
+}
+
+.timer-value {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.timer-label {
+    font-size: 0.75rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+/* Card de información */
+.info-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    max-width: 300px;
+    animation: slideDown 0.5s ease-out;
+}
+
+.info-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.info-item i {
+    color: #FFD700;
+    font-size: 1.5rem;
+}
+
+/* Contenedor de alternativas */
+.alternativas-container {
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.alternativas {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    padding: 2rem;
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Botones de alternativas estilo Kahoot */
+.btn-alternativa {
+    position: relative;
+    min-height: 120px;
+    padding: 2rem 1.5rem;
+    border: none;
+    border-radius: 20px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    background: var(--color-alt, #0072ff);
+    overflow: hidden;
+    animation: slideInUp 0.5s ease-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-alternativa::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-alternativa:hover::before {
+    left: 100%;
+}
+
+.btn-alternativa:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+    filter: brightness(1.1);
+}
+
+.btn-alternativa:active {
+    transform: translateY(-4px) scale(1.02);
+}
+
+.btn-alternativa.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-alternativa.seleccionado {
+    animation: bounceSelected 0.5s ease-out;
+    transform: scale(1.05);
+}
+
+.btn-alternativa.correcta {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
+    animation: correctPulse 0.6s ease-out;
+}
+
+.btn-alternativa.incorrecta {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    box-shadow: 0 0 30px rgba(244, 67, 54, 0.6);
+    animation: shake 0.5s ease-out;
+}
+
+.alternativa-icono {
+    font-size: 2rem;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.alternativa-texto {
+    flex: 1;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Colores específicos para cada alternativa */
+.btn-alt-0 {
+    background: linear-gradient(135deg, #0072ff 0%, #0056cc 100%);
+}
+
+.btn-alt-1 {
+    background: linear-gradient(135deg, #ff006e 0%, #cc0058 100%);
+}
+
+.btn-alt-2 {
+    background: linear-gradient(135deg, #fb5607 0%, #c94405 100%);
+}
+
+.btn-alt-3 {
+    background: linear-gradient(135deg, #06ffa5 0%, #05cc84 100%);
+}
+
+/* Mensaje de retroalimentación */
+.feedback-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    padding: 2rem 4rem;
+    border-radius: 20px;
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: 'Nunito', sans-serif;
+    color: #fff;
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    pointer-events: none;
+}
+
+.feedback-message.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.feedback-success {
+    background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+    animation: feedbackPop 0.5s ease-out;
+}
+
+.feedback-error {
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    animation: feedbackPop 0.5s ease-out;
+}
+
+.feedback-warning {
+    background: linear-gradient(135deg, #FF9800 0%, #f57c00 100%);
+    animation: feedbackPop 0.5s ease-out;
+}
+
+/* Animaciones */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounceSelected {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes correctPulse {
+    0%, 100% {
+        transform: scale(1.05);
+    }
+    50% {
+        transform: scale(1.2);
+        box-shadow: 0 0 50px rgba(76, 175, 80, 0.8);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-10px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(10px);
+    }
+}
+
+@keyframes feedbackPop {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .timer-container {
+        top: 15px;
+        right: 15px;
+    }
+    
+    .timer-circle {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .timer-circle::before {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .timer-value {
+        font-size: 1.3rem;
+    }
+    
+    .timer-label {
+        font-size: 0.6rem;
+    }
+    
+    .alternativas {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 1rem;
+    }
+    
+    .btn-alternativa {
+        min-height: 100px;
+        padding: 1.5rem 1rem;
+        font-size: 1.1rem;
+    }
+    
+    .alternativa-icono {
+        font-size: 1.5rem;
+    }
+    
+    .feedback-message {
+        font-size: 1.5rem;
+        padding: 1.5rem 2rem;
+    }
+    
+    .info-card {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .cont {
+        padding: 1rem;
+    }
+    
+    .btn-alternativa {
+        min-height: 80px;
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    .alternativa-icono {
+        font-size: 1.2rem;
+    }
+}
+
+/* Efectos de brillo al hover */
+.btn-alternativa::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.btn-alternativa:hover::after {
+    opacity: 1;
+}
+
+/* Mejora para accesibilidad */
+.btn-alternativa:focus {
+    outline: 3px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 3px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

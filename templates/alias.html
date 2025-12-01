@@ -90,12 +90,24 @@
     <div class="card mx-auto">
       <img src="../static/IMG/GoQuiz.png" alt="Logo GoQuiz" class="logo">
       <h5 class="fw-bold text-dark mb-2">¡Listo para el desafío!</h5>
-      <p class="text-muted mb-4">Escribe tu alias para unirte al juego.</p>
+      <p class="text-muted mb-4">Escribe tu alias para unirte al juego</p>
+
+      {% if nombre_sugerido %}
+      <div class="alert alert-info small mb-3">
+        <i class="bi bi-info-circle me-1"></i>
+        Sugerencia: Puedes usar "{{ nombre_sugerido }}" o crear uno nuevo
+      </div>
+      {% endif %}
 
       <form id="aliasForm" novalidate>
         <input type="hidden" id="idCuestionario" value="{{ id_cuestionario }}">
         <div class="mb-3">
-          <input type="text" maxlength="15" class="form-control" id="aliasInput" placeholder="Escribe tu alias..." required>
+          <label for="aliasInput" class="form-label text-muted small">Tu alias</label>
+          <input type="text" maxlength="20" minlength="2" class="form-control" id="aliasInput" 
+                 placeholder="{% if nombre_sugerido %}{{ nombre_sugerido }}{% else %}Escribe tu alias...{% endif %}" 
+                 value="{% if nombre_sugerido %}{{ nombre_sugerido }}{% endif %}"
+                 required autocomplete="off">
+          <small class="text-muted">Mínimo 2 caracteres, máximo 20</small>
         </div>
         <div class="alert" id="errorAlias">Este alias ya está en uso. Intenta con otro.</div>
         <button type="submit" class="btn btn-primary w-100 py-2">Unirme al juego</button>
@@ -127,17 +139,23 @@
       const alias = aliasInput.value.trim();
 
       // 🔹 Validación básica
-      if (!alias) {
+      if (!alias || alias.trim().length < 2) {
         errorAlias.style.display = 'block';
-        errorAlias.textContent = "Por favor, ingresa un alias.";
+        errorAlias.textContent = "El alias debe tener al menos 2 caracteres.";
         return;
       }
 
-      // 🔹 Validación de formato (solo letras/números/guiones)
-      const regexAlias = /^[a-zA-Z0-9_ñÑáéíóúÁÉÍÓÚ]+$/;
+      if (alias.length > 20) {
+        errorAlias.style.display = 'block';
+        errorAlias.textContent = "El alias no puede tener más de 20 caracteres.";
+        return;
+      }
+
+      // 🔹 Validación de formato (letras, números, guiones bajos y espacios)
+      const regexAlias = /^[a-zA-Z0-9_ñÑáéíóúÁÉÍÓÚ\s]+$/;
       if (!regexAlias.test(alias)) {
         errorAlias.style.display = 'block';
-        errorAlias.textContent = "El alias solo puede contener letras, números o guiones bajos.";
+        errorAlias.textContent = "El alias solo puede contener letras, números, guiones bajos y espacios.";
         return;
       }
 
@@ -156,7 +174,12 @@
 
         if (response.ok && data.success) {
           // ✅ Alias registrado correctamente → Redirige
-          window.location.href = `/sala_espera/${idCuestionario}`;
+          // Si es cuestionario grupal, redirigir a gestión de grupos
+          if (data.tipo_cuestionario === 'G' && data.redirect) {
+            window.location.href = data.redirect;
+          } else {
+            window.location.href = `/sala_espera/${idCuestionario}`;
+          }
         } else {
           // ❌ Alias duplicado o error
           errorAlias.style.display = 'block';

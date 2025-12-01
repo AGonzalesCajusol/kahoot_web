@@ -1,95 +1,502 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Juego - Kahoot Style</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/juego.css">
+    <link rel="stylesheet" href="/static/css/prueba.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        .pregunta-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 20px;
+            max-width: 800px;
+            width: 100%;
+            animation: slideDown 0.5s ease-out;
+        }
+        
+        .pregunta-header {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+        
+        .pregunta-texto {
+            color: white;
+            font-size: 2rem;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .esperando-pregunta {
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .pregunta-texto {
+                font-size: 1.5rem;
+            }
+            
+            .pregunta-card {
+                max-width: 100%;
+                padding: 1.5rem !important;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="cont container-fluid d-flex flex-column justify-content-center align-items-center text-center min-vh-100 min-vw-100">
-        <div class="card shadow-lg p-4 bg-white rounded-4">
-            <h6 id="contador"></h6> 
+        <div class="pregunta-card card shadow-lg p-4 mb-4" id="pregunta-card" style="display: none;">
+            <div class="pregunta-header">
+                <i class="bi bi-question-circle-fill me-2"></i>
+                <span>Pregunta</span>
+            </div>
+            <h2 class="pregunta-texto fw-bold mt-3" id="pregunta-texto"></h2>
         </div>
-        <div class="alternativas card shadow-lg mt-3 d-flex">
+
+        <div class="timer-container">
+            <div class="timer-circle" id="timer-circle">
+                <div class="timer-content">
+                    <div class="timer-value" id="contador">00:00</div>
+                    <div class="timer-label">Tiempo</div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="min-vh-100 min-vw-100 position-absolute">
 
+        <div class="info-card card shadow-lg p-3 mb-4" id="info-card" style="display: none;">
+            <div class="info-content">
+                <div class="info-item">
+                    <i class="bi bi-star-fill"></i>
+                    <span id="puntos-display">0</span> puntos (esta pregunta)
+                </div>
+                <div class="info-item" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <i class="bi bi-trophy-fill"></i>
+                    <span id="puntos-total-display">0</span> puntos totales
+                </div>
+            </div>
+        </div>
+
+        <div class="alternativas-container">
+            <div class="alternativas card shadow-lg" id="alternativas-container">
+                <div class="esperando-pregunta text-center p-5">
+                    <i class="bi bi-hourglass-split" style="font-size: 3rem; color: #6c757d; margin-bottom: 1rem;"></i>
+                    <p class="text-muted">Esperando a que el profesor active la pregunta...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback-message" id="feedback-message"></div>
     </div>
 
-</body>
+    <div class="background-animation"></div>
+
 <script>
 let socket = io();
+let id = {{ id_cuestionario if id_cuestionario else 0 }};
 
-// ID de la sala que pasa Flask
-let id = 2;
+const temporizadorDisplay = document.getElementById('contador');
+const circuloTimer = document.getElementById('timer-circle');
+const divAlternativas = document.getElementById('alternativas-container');
+const tarjetaInfo = document.getElementById('info-card');
+const displayPuntos = document.getElementById('puntos-display');
+const mensajeFeedback = document.getElementById('feedback-message');
+const preguntaCard = document.getElementById('pregunta-card');
+const preguntaTexto = document.getElementById('pregunta-texto');
 
-// Obtener el elemento donde mostrar el temporizador
-const timerDisplay = document.getElementById('contador');
-
-// Unirse a la sala
-socket.emit('unirme_sala', { sala: id });
-
-// Escuchar el temporizador enviado por el servidor
 let formato = {
     'id_pregunta': 0,
+    'id_alternativa': 0,
     'tiempo_maximo': 0,
     'puntaje_max': 0,
     'tiempo_resp': 0,
-    'puntaje_f' : 0,
+    'puntaje_f': 0,
 };
 
-let time = 0;
-socket.on('tiempo', (data) => {
-    const mins = String(Math.floor(data.tiempo / 60)).padStart(2, '0');
-    const secs = String(data.tiempo % 60).padStart(2, '0');
-    timerDisplay.innerText = `${mins}:${secs}`;
-    time = data.tiempo;
-});
+let tiempoActual = 0;
+let tiempoMaximo = 0;
+let intervalo_timer = null;
+let puntajeTotal = 0;
+let preguntaActual = null;
+let respuestaEnviada = false;
 
-
-socket.on('alternativas', (data) => {
-    const alternativas = JSON.parse(data.alt);
-    timerDisplay.innerText = data.tiempo;
-    formato.tiempo_maximo = data.tiempo;
-    formato.puntaje_max = data.puntaje;
-    mostrar_alternativas(alternativas);
-});
-const div_alt = document.querySelector('.alternativas');
-const mostrar_alternativas = (alt) =>{
-    div_alt.innerHTML = '';
-    alt.forEach((item) => {
-        console.log(item);
-        div_alt.innerHTML += `
-            <button class="me-3 btn_alt btn btn-outline-secondary" data-idal="${item.id_alternativa}" data-estado="${item.estado_alternativa}"  onclick=seleccionar(this)>${item.respuesta}</button>
-        `;
-    })
+if (socket.connected) {
+    console.log('[DEBUG] Socket conectado, uniéndose a sala:', id);
+    socket.emit('unirme_sala', { sala: id });
+} else {
+    socket.on('connect', () => {
+        console.log('[DEBUG] Socket conectado después, uniéndose a sala:', id);
+        socket.emit('unirme_sala', { sala: id });
+    });
 }
 
-const seleccionar = (btnSeleccionado) => {
-    btnSeleccionado.classList.add('btn-outline-primary');
-    btnSeleccionado.classList.remove('btn-outline-secondary');
-    let puntaje = 0;
-    const botones = document.querySelectorAll('.btn_alt');
+socket.on('disconnect', () => {});
+
+socket.on('connect_error', (error) => {});
+
+socket.on('configuracion', (data) => {});
+
+socket.on('tiempo', (datos) => {
+    const minutos = String(Math.floor(datos.tiempo / 60)).padStart(2, '0');
+    const segundos = String(datos.tiempo % 60).padStart(2, '0');
+    temporizadorDisplay.textContent = `${minutos}:${segundos}`;
+    tiempoActual = datos.tiempo;
+    
+    if (tiempoMaximo > 0) {
+        const porcentaje = (tiempoActual / tiempoMaximo) * 100;
+        actualizarProgresoTimer(porcentaje);
+    }
+});
+
+socket.on('datos_cuestionario', (datos) => {
+    console.log('[DEBUG] Participante recibió datos_cuestionario:', datos);
+    preguntaActual = datos;
+    formato.id_pregunta = datos.id_pregunta;
+    formato.tiempo_maximo = datos.tiempo_respuesta;
+    formato.puntaje_max = datos.puntaje;
+    tiempoMaximo = datos.tiempo_respuesta;
+    tiempoActual = datos.tiempo_respuesta;
+    respuestaEnviada = false;
+    
+    if (preguntaTexto && datos.pregunta) {
+        preguntaTexto.textContent = datos.pregunta;
+        preguntaCard.style.display = 'block';
+    }
+    
+    if (displayPuntos) {
+        displayPuntos.textContent = datos.puntaje;
+        tarjetaInfo.style.display = 'block';
+    }
+    
+    if (temporizadorDisplay) {
+        temporizadorDisplay.textContent = `${Math.floor(tiempoActual / 60)}:${String(tiempoActual % 60).padStart(2, '0')}`;
+        actualizarProgresoTimer(100);
+    }
+    
+    if (divAlternativas) {
+        divAlternativas.innerHTML = '<div class="esperando-pregunta text-center p-3"><p class="text-muted">Cargando alternativas...</p></div>';
+    }
+    
+    iniciarCuentaRegresiva();
+});
+
+socket.on('respuesta_cuestionario', (alternativasJson) => {
+    console.log('[DEBUG] Participante recibió respuesta_cuestionario:', alternativasJson);
+    let alternativas;
+    try {
+        if (typeof alternativasJson === 'string') {
+            alternativas = JSON.parse(alternativasJson);
+            console.log('[DEBUG] Alternativas parseadas desde string:', alternativas);
+        } else if (Array.isArray(alternativasJson)) {
+            alternativas = alternativasJson;
+            console.log('[DEBUG] Alternativas como array:', alternativas);
+        } else {
+            alternativas = [];
+            console.log('[DEBUG] Alternativas vacías, tipo recibido:', typeof alternativasJson);
+        }
+        
+        if (alternativas && alternativas.length > 0) {
+            console.log('[DEBUG] Mostrando', alternativas.length, 'alternativas');
+            mostrarAlternativas(alternativas);
+        } else {
+            console.log('[ERROR] No hay alternativas para mostrar');
+            if (divAlternativas) {
+                divAlternativas.innerHTML = `
+                    <div class="esperando-pregunta text-center p-5">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: #ffc107; margin-bottom: 1rem;"></i>
+                        <p class="text-muted">No se recibieron alternativas</p>
+                    </div>
+                `;
+            }
+        }
+    } catch (error) {
+        console.error('[ERROR] Error al procesar alternativas:', error);
+        if (divAlternativas) {
+            divAlternativas.innerHTML = `
+                <div class="esperando-pregunta text-center p-5">
+                    <i class="bi bi-exclamation-circle" style="font-size: 3rem; color: #dc3545; margin-bottom: 1rem;"></i>
+                    <p class="text-danger">Error al cargar las alternativas</p>
+                    <p class="text-muted small">${error.message}</p>
+                </div>
+            `;
+        }
+    }
+});
+
+socket.on('actualiza_tiempocuestionario', (data) => {
+    tiempoActual = data.tiempo;
+    const minutos = Math.floor(tiempoActual / 60);
+    const segundos = tiempoActual % 60;
+    temporizadorDisplay.textContent = `${minutos}:${String(segundos).padStart(2, '0')}`;
+    
+    if (tiempoMaximo > 0) {
+        const porcentaje = (tiempoActual / tiempoMaximo) * 100;
+        actualizarProgresoTimer(porcentaje);
+    }
+    
+    if (tiempoActual <= 0 && !respuestaEnviada) {
+        enviarRespuesta(null, 0);
+    }
+});
+
+socket.on('actualizar_tiempoUS', (data) => {
+    const tiempo = data.tiempo;
+    const minutos = Math.floor(tiempo / 60);
+    const segundos = tiempo % 60;
+    temporizadorDisplay.textContent = `${minutos}:${String(segundos).padStart(2, '0')}`;
+});
+
+function actualizarProgresoTimer(porcentaje) {
+    circuloTimer.style.setProperty('--progress', `${porcentaje}%`);
+    
+    if (porcentaje > 50) {
+        circuloTimer.classList.remove('timer-warning', 'timer-danger');
+        circuloTimer.classList.add('timer-safe');
+    } else if (porcentaje > 25) {
+        circuloTimer.classList.remove('timer-safe', 'timer-danger');
+        circuloTimer.classList.add('timer-warning');
+    } else {
+        circuloTimer.classList.remove('timer-safe', 'timer-warning');
+        circuloTimer.classList.add('timer-danger');
+    }
+}
+
+function iniciarCuentaRegresiva() {
+    if (intervalo_timer) {
+        clearInterval(intervalo_timer);
+    }
+    
+    intervalo_timer = setInterval(() => {
+        if (tiempoActual > 0) {
+            tiempoActual--;
+            const minutos = Math.floor(tiempoActual / 60);
+            const segundos = tiempoActual % 60;
+            temporizadorDisplay.textContent = `${minutos}:${String(segundos).padStart(2, '0')}`;
+            
+            const porcentaje = (tiempoActual / tiempoMaximo) * 100;
+            actualizarProgresoTimer(porcentaje);
+            
+            if (tiempoActual <= 10 && tiempoActual > 0) {
+                circuloTimer.classList.add('timer-pulse');
+            } else {
+                circuloTimer.classList.remove('timer-pulse');
+            }
+        } else {
+            clearInterval(intervalo_timer);
+            mostrarMensajeFeedback('⏰ ¡Tiempo agotado!', 'warning');
+        }
+    }, 1000);
+}
+
+const mostrarAlternativas = (alternativas) => {
+    divAlternativas.innerHTML = '';
+    
+    const colores = ['#0072ff', '#ff006e', '#fb5607', '#06ffa5'];
+    const iconos = ['🔵', '🔴', '🟠', '🟢'];
+    
+    if (!alternativas || alternativas.length === 0) {
+        divAlternativas.innerHTML = `
+            <div class="esperando-pregunta text-center p-5">
+                <i class="bi bi-exclamation-triangle" style="font-size: 3rem; color: #ffc107; margin-bottom: 1rem;"></i>
+                <p class="text-muted">No hay alternativas disponibles</p>
+            </div>
+        `;
+        return;
+    }
+    
+    alternativas.forEach((item, indice) => {
+        const color = colores[indice % colores.length];
+        const icono = iconos[indice % iconos.length];
+        
+        const boton = document.createElement('button');
+        boton.className = `btn-alternativa btn-alt-${indice} btn-kahoot`;
+        boton.setAttribute('data-idal', item.id_alternativa);
+        boton.setAttribute('data-estado', item.estado_alternativa);
+        boton.style.setProperty('--color-alt', color);
+        boton.style.animationDelay = `${indice * 0.1}s`;
+        
+        boton.innerHTML = `
+            <span class="alternativa-icono">${icono}</span>
+            <span class="alternativa-texto">${item.respuesta}</span>
+        `;
+        
+        boton.addEventListener('click', () => seleccionar(boton));
+        
+        divAlternativas.appendChild(boton);
+    });
+}
+
+const seleccionar = (botonSeleccionado) => {
+    if (respuestaEnviada) return;
+    
+    const botones = document.querySelectorAll('.btn-alternativa');
     botones.forEach((btn) => {
         btn.disabled = true;
+        btn.classList.add('disabled');
     });
-    formato.tiempo_resp = time;
-    formato.id_pregunta = btnSeleccionado.dataset.id_alternativa;
     
-    if(btnSeleccionado.dataset.estado_alternativa == 1){
-        console.log((puntajeMax * (time / formato.tiempo_maximo)));
-        formato.puntaje_f =  +(puntajeMax * (time / formato.tiempo_maximo)).toFixed(2);
+    botonSeleccionado.classList.add('seleccionado');
+    botonSeleccionado.classList.remove('btn-kahoot');
+    
+    formato.tiempo_resp = tiempoActual;
+    formato.id_alternativa = botonSeleccionado.dataset.idal;
+    
+    // Calcular tiempo utilizado (tiempo máximo - tiempo restante)
+    const tiempoUtilizado = formato.tiempo_maximo - tiempoActual;
+    
+    if (botonSeleccionado.dataset.estado == 1) {
+        // Respuesta correcta: usar exactamente el puntaje de la pregunta (sin bonus)
+        const puntajeCalculado = +formato.puntaje_max.toFixed(2);
+        formato.puntaje_f = puntajeCalculado;
+        puntajeTotal += puntajeCalculado;
+        
+        mostrarMensajeFeedback(`✅ ¡Correcto! +${puntajeCalculado} puntos`, 'success');
+        botonSeleccionado.classList.add('correcta');
+    } else {
+        // Respuesta incorrecta: 0 puntos (no se resta nada)
+        const puntajeCalculado = 0;
+        formato.puntaje_f = puntajeCalculado;
+        
+        mostrarMensajeFeedback(`❌ Incorrecto (0 puntos)`, 'error');
+        botonSeleccionado.classList.add('incorrecta');
+        
+        botones.forEach((btn) => {
+            if (btn.dataset.estado == 1) {
+                btn.classList.add('correcta');
+            }
+        });
     }
-    console.log(formato);
+    
+    // Asegurar que el puntaje no sea negativo
+    if (puntajeTotal < 0) {
+        puntajeTotal = 0;
+    }
+    
+    // Actualizar el display del puntaje total
+    const puntosTotalDisplay = document.getElementById('puntos-total-display');
+    if (puntosTotalDisplay) {
+        puntosTotalDisplay.textContent = puntajeTotal.toFixed(2);
+    }
+    
+    if (intervalo_timer) {
+        clearInterval(intervalo_timer);
+    }
+    
+    // Enviar respuesta al backend para que calcule y actualice el puntaje correctamente
+    enviarRespuesta(formato.id_alternativa, tiempoUtilizado);
+    
+    respuestaEnviada = true;
 }
 
+function enviarRespuesta(idAlternativa, tiempoUtilizado) {
+    if (!preguntaActual) return;
+    
+    // Asegurar que el tiempo utilizado sea válido
+    const tiempoUsado = tiempoUtilizado >= 0 ? tiempoUtilizado : preguntaActual.tiempo_respuesta;
+    
+    socket.emit('enviar_respuesta', {
+        id_pregunta: preguntaActual.id_pregunta,
+        id_alternativa: idAlternativa || null,
+        tiempo_utilizado: tiempoUsado,
+        sala: id
+    });
+}
 
+// Verificar si el jugador está en un grupo
+const grupoInfo = {{ grupo_info | tojson if grupo_info else 'null' }};
+let esGrupo = grupoInfo !== null && grupoInfo !== undefined;
+let votacionesActuales = {};
 
+// Escuchar la respuesta del servidor con los puntos calculados
+socket.on('respuesta_registrada', (data) => {
+    const puntosObtenidos = data.puntos || 0;
+    console.log('Puntos obtenidos del servidor:', puntosObtenidos);
+    // El backend ya actualizó el puntaje en la base de datos
+    // Actualizar el puntaje total desde el servidor si está disponible
+    if (data.puntaje_total !== undefined) {
+        puntajeTotal = parseFloat(data.puntaje_total) || 0;
+        const puntosTotalDisplay = document.getElementById('puntos-total-display');
+        if (puntosTotalDisplay) {
+            puntosTotalDisplay.textContent = puntajeTotal.toFixed(2);
+        }
+    }
+});
+
+// Eventos para grupos
+socket.on('votacion_registrada', (data) => {
+    mostrarMensajeFeedback(data.mensaje || 'Tu votación ha sido registrada', 'info');
+});
+
+socket.on('actualizar_votaciones', (data) => {
+    votacionesActuales = data.votaciones || {};
+    actualizarVistaVotaciones();
+});
+
+socket.on('respuesta_grupo_registrada', (data) => {
+    mostrarMensajeFeedback(`✅ Respuesta del grupo registrada: +${data.puntos} puntos`, 'success');
+    respuestaEnviada = true;
+});
+
+function actualizarVistaVotaciones() {
+    if (!esGrupo) return;
+    
+    // Mostrar contador de votaciones en cada alternativa
+    const botones = document.querySelectorAll('.btn-alternativa');
+    botones.forEach((btn) => {
+        const idAlternativa = btn.dataset.idal;
+        const votos = votacionesActuales[idAlternativa] || 0;
+        
+        // Agregar badge con número de votos
+        let badge = btn.querySelector('.votos-badge');
+        if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'votos-badge badge bg-info ms-2';
+            btn.appendChild(badge);
+        }
+        badge.textContent = `${votos} voto${votos !== 1 ? 's' : ''}`;
+    });
+}
+
+socket.on('pantalla_finalizada', async () => {
+    if (intervalo_timer) {
+        clearInterval(intervalo_timer);
+    }
+    
+    mostrarMensajeFeedback('🎉 ¡Cuestionario finalizado!', 'success');
+    
+    setTimeout(() => {
+        window.location.href = `/resultados_inter/${id}`;
+    }, 3000);
+});
+
+function mostrarMensajeFeedback(mensaje, tipo) {
+    mensajeFeedback.textContent = mensaje;
+    mensajeFeedback.className = `feedback-message feedback-${tipo} show`;
+    
+    setTimeout(() => {
+        mensajeFeedback.classList.remove('show');
+    }, 3000);
+}
 </script>
 
+</body>
 </html>

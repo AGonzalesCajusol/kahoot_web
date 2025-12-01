@@ -1,11 +1,11 @@
-{% extends '/dashboard.html' %} {%block css%}
+{% extends 'dashboard.html' %} {%block css%}
 <link rel="stylesheet" href="/static/css/nuevo_cuestionario.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
 {% endblock %} {% block titulo_pagina%} Nuevo cuestionario {% endblock%} {%
 block search %} {% endblock%} {% block contenido %}
 <div class="d-flex h-75">
     <div class="navegacion_formulario me-3">
-        <div class="enfocar" onclick="detalle()">
+        <div class="enfocar" id="btn_ver_detalle" style="cursor: pointer;">
             <div class="detalle_inicial card shadow-lg p-3" id="detalle_card">
                 <p class="fw-bold">Detalle de formulario</p>
                 <p class="text-secondary">
@@ -15,12 +15,16 @@ block search %} {% endblock%} {% block contenido %}
         </div>
         <div class="text-secondary separador mt-3 mb-3"></div>
         <div>
-            <button class="btn btn-primary btn-sm w-100" onclick="agg_pr()">
+            <button type="button" class="btn btn-primary btn-sm w-100" id="btn_agregar_pregunta">
                 <i class="bi bi-plus-circle me-2"></i>Agregar pregunta
             </button>
             {% if request.path == '/nuevo_cuestionario' %}
-                <button class="btn btn-secondary btn-sm w-100 mt-2" onclick="confirmarEnvio()">
+                <button type="button" class="btn btn-secondary btn-sm w-100 mt-2" id="btn_crear_formulario">
                     <i class="bi bi-plus-circle me-2"></i> Crear formulario
+                </button>
+            {% else %}
+                <button type="button" class="btn btn-success btn-sm w-100 mt-2" id="btn_guardar_finalizar">
+                    <i class="bi bi-check-circle me-2"></i> Guardar y finalizar
                 </button>
             {% endif %}
         </div>
@@ -30,25 +34,71 @@ block search %} {% endblock%} {% block contenido %}
     </div>
 
     <form class="cont_formulario card shadow-lg p-4 overflow-y-scroll" style="padding: 2rem" id="form_cuestionario"> 
-        <h3 class="fw-bold mb-3">Paso 1: Detalle del formulario</h3>
+        <!-- Indicador de estado del formulario (Heurística 1) -->
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="fw-bold mb-0">Paso 1: Detalle del formulario</h3>
+            <div class="d-flex align-items-center gap-2">
+                <span class="form-status-indicator unsaved" id="form-status-indicator" title="Cambios sin guardar"></span>
+                <small class="text-muted" id="form-status-text">Sin guardar</small>
+            </div>
+        </div>
         <p class="text-secondary separador mb-4">Define la información básica de tu nuevo formulario</p>
         <div class="d-flex flex-wrap align-items-start gap-4">
             <div class="d-flex flex-column me-4" style="min-width: 300px;">
-                <label for="nombre_cuestionario" class="fw-bold mb-2">
+                <!-- Campo para subir imagen del cuestionario -->
+                <label class="fw-bold mb-2">
+                    <i class="bi bi-image"></i>
+                    Imagen del cuestionario
+                    <i class="bi bi-info-circle text-primary ms-1" data-bs-toggle="tooltip" data-bs-placement="top" title="Opcional: Sube una imagen para tu cuestionario"></i>
+                </label>
+                <div class="mb-3">
+                    <div class="d-flex align-items-center justify-content-center border rounded p-3" style="background-color: #f8f9fa; cursor: pointer;" onclick="document.getElementById('imagen_cuestionario').click()">
+                        <div class="text-center">
+                            <i class="bi bi-upload fs-3 mb-1 text-muted"></i>
+                            <p class="text-muted mb-0 small">Puedes subir una imagen (opcional)</p>
+                            <p class="text-muted mb-0" style="font-size: 0.75rem;">JPG, PNG, GIF</p>
+                        </div>
+                    </div>
+                    <input type="file" id="imagen_cuestionario" name="imagen_cuestionario" class="d-none" accept=".jpg,.jpeg,.png,.gif" onchange="previewImagenCuestionario(this)">
+                    <div id="preview_imagen_cuestionario" class="mt-2 d-none">
+                        <img id="img_preview_cuestionario" src="" alt="Vista previa" class="img-thumbnail" style="max-width: 200px; max-height: 150px;">
+                        <button type="button" class="btn btn-sm btn-danger mt-2" onclick="eliminarImagenCuestionario()">
+                            <i class="bi bi-trash"></i> Eliminar imagen
+                        </button>
+                    </div>
+                </div>
+
+                <label for="nombre_cuestionario" class="label-enhanced mb-2">
                     <i class="bi bi-pencil-square"></i>
                     Nombre del formulario
+                    <span class="required-indicator">*</span>
+                    <i class="bi bi-info-circle text-primary ms-1 tooltip-enhanced" data-tooltip="Mínimo 3 caracteres, máximo 200 caracteres. Usa un nombre descriptivo que identifique claramente el cuestionario."></i>
                 </label>
-                <input id="nombre_cuestionario" class="form-control mb-3" name="nombre_cuestionario" type="text"
-                    placeholder="Ingrese el nombre del cuestionario">
+                <input id="nombre_cuestionario" class="form-control mb-2" name="nombre_cuestionario" type="text"
+                    placeholder="Ingrese el nombre del cuestionario" maxlength="200" required
+                    aria-describedby="nombre_cuestionario_help">
+                <small id="nombre_cuestionario_help" class="help-text">Ejemplo: "Matemáticas Básicas - Grado 5"</small>
+                <div class="validation-feedback" id="nombre_cuestionario_feedback"></div>
 
                 <label for="tipo_cuestionario" class="fw-bold mb-2">
                     <i class="bi bi-info-circle"></i>
                     Tipo de formulario
+                    <span class="text-danger">*</span>
                 </label>
-                <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario">
-                    <option value="I">Individual</option>
-                    <option value="G">Grupal</option>
+                <select class="form-select mb-3" name="tipo_cuestionario" id="tipo_cuestionario" required>
+                    <option value="I">Individual - Cada estudiante juega solo</option>
+                    <option value="G">Grupal - Los estudiantes forman equipos</option>
                 </select>
+                <small class="text-muted">
+                    <i class="bi bi-info-circle text-primary"></i>
+                    <span id="infoTipoGrupal" style="display: none;">
+                        <strong>Modo Grupal:</strong> Los estudiantes deberán formar grupos antes de jugar. 
+                        Cada grupo puede establecer su método de evaluación (votación, consenso o decisión del líder).
+                    </span>
+                    <span id="infoTipoIndividual" style="display: none;">
+                        <strong>Modo Individual:</strong> Cada estudiante juega y responde por sí mismo.
+                    </span>
+                </small>
 
                  <label for="estado" class="fw-bold mb-2">
                     <i class="bi bi-check-circle"></i> Estado
@@ -60,12 +110,17 @@ block search %} {% endblock%} {% block contenido %}
             </div>
 
             <div class="d-flex flex-column flex-grow-1">
-                <label for="descripcion" class="fw-bold mb-2">
+                <label for="descripcion" class="label-enhanced mb-2">
                     <i class="bi bi-card-text"></i>
                     Descripción del formulario
+                    <i class="bi bi-info-circle text-primary ms-1 tooltip-enhanced" data-tooltip="Opcional: Proporciona información adicional sobre el cuestionario. Máximo 1000 caracteres."></i>
                 </label>
                 <textarea id="descripcion" class="form-control" name="descripcion" rows="7"
-                    placeholder="Ingrese la descripción del cuestionario"></textarea>
+                    placeholder="Ingrese la descripción del cuestionario (opcional)" maxlength="1000"
+                    aria-describedby="descripcion_help descripcion_counter"></textarea>
+                <small id="descripcion_help" class="help-text">Describe el contenido, objetivo o tema del cuestionario</small>
+                <small id="descripcion_counter" class="text-muted d-block mt-1">Caracteres: <span id="contador_descripcion">0</span>/1000</small>
+                <div class="validation-feedback" id="descripcion_feedback"></div>
             </div>
 
 
@@ -74,11 +129,11 @@ block search %} {% endblock%} {% block contenido %}
        
         </div>
             {% if request.path == '/nuevo_cuestionario' %}
-                <button type="button" class="btn btn-primary w-100" onclick="guardar_detalle()" >
+                <button type="button" class="btn btn-primary w-100" id="btn_guardar_detalle">
                     <i class="bi bi-save"></i> Guardar detalle
                 </button>
             {% else %}
-                <button type="button" class="btn btn-warning w-100" onclick="modificar_detalle()" >
+                <button type="button" class="btn btn-warning w-100" id="btn_modificar_detalle">
                     <i class="bi bi-save"></i> Modificar detalle
                 </button>
             {% endif %}
@@ -88,15 +143,303 @@ block search %} {% endblock%} {% block contenido %}
 {% endblock %} 
 
 
-{% block scripts %}
+{% block scripts_extra %}
     {% if request.path == '/nuevo_cuestionario' %}
-        <script src="/static/JS/nuevo_cuestionario.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {% else %}
-    <script>
-        let datos = {{ datos | tojson }};
-    </script>
-        <script src="{{ url_for('static', filename='js/modificar.js') }}"></script>
+        <script src="/static/JS/nuevo_cuestionario.js"></script>
+        <script>
+            // Función para inicializar los event listeners
+            function inicializarBotones() {
+                console.log('Inicializando botones...');
+                console.log('guardar_detalle:', typeof window.guardar_detalle);
+                console.log('agg_pr:', typeof window.agg_pr);
+                console.log('confirmarEnvio:', typeof window.confirmarEnvio);
+                console.log('detalle:', typeof window.detalle);
+                
+                // Botón Guardar Detalle
+                const btnGuardarDetalle = document.getElementById('btn_guardar_detalle');
+                if (btnGuardarDetalle) {
+                    btnGuardarDetalle.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en guardar_detalle');
+                        if (typeof window.guardar_detalle === 'function') {
+                            window.guardar_detalle();
+                        } else {
+                            console.error('guardar_detalle no está disponible');
+                            alert('Error: La función guardar_detalle no está disponible. Por favor, recarga la página.');
+                        }
+                        return false;
+                    };
+                }
+                
+                // Botón Agregar Pregunta
+                const btnAgregarPregunta = document.getElementById('btn_agregar_pregunta');
+                if (btnAgregarPregunta) {
+                    btnAgregarPregunta.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en agg_pr');
+                        if (typeof window.agg_pr === 'function') {
+                            window.agg_pr();
+                        } else {
+                            console.error('agg_pr no está disponible');
+                            alert('Error: La función agg_pr no está disponible. Por favor, recarga la página.');
+                        }
+                        return false;
+                    };
+                }
+                
+                // Botón Crear Formulario
+                const btnCrearFormulario = document.getElementById('btn_crear_formulario');
+                if (btnCrearFormulario) {
+                    btnCrearFormulario.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en confirmarEnvio');
+                        if (typeof window.confirmarEnvio === 'function') {
+                            window.confirmarEnvio();
+                        } else {
+                            console.error('confirmarEnvio no está disponible');
+                            alert('Error: La función confirmarEnvio no está disponible. Por favor, recarga la página.');
+                        }
+                        return false;
+                    };
+                }
+                
+                // Botón Ver Detalle
+                const btnVerDetalle = document.getElementById('btn_ver_detalle');
+                if (btnVerDetalle) {
+                    btnVerDetalle.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en ver detalle');
+                        if (typeof window.detalle === 'function') {
+                            window.detalle();
+                        } else {
+                            console.error('detalle no está disponible');
+                        }
+                        return false;
+                    };
+                }
+            }
+            
+            // Inicializar cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Esperar a que el script nuevo_cuestionario.js se cargue completamente
+                    setTimeout(inicializarBotones, 500);
+                });
+            } else {
+                setTimeout(inicializarBotones, 500);
+            }
+            
+            // También inicializar cuando la ventana se carga completamente
+            window.addEventListener('load', function() {
+                setTimeout(inicializarBotones, 800);
+            });
+            
+            // Verificar periódicamente si la función está disponible
+            let intentos = 0;
+            const verificarFuncion = setInterval(function() {
+                if (typeof window.guardar_detalle === 'function') {
+                    clearInterval(verificarFuncion);
+                    inicializarBotones();
+                } else {
+                    intentos++;
+                    if (intentos > 10) {
+                        clearInterval(verificarFuncion);
+                        console.warn('guardar_detalle no se cargó después de varios intentos');
+                    }
+                }
+            }, 200);
+            
+            // Funciones para manejar la imagen del cuestionario - disponibles globalmente
+            window.previewImagenCuestionario = function(input) {
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const imgPreview = document.getElementById('img_preview_cuestionario');
+                        const previewDiv = document.getElementById('preview_imagen_cuestionario');
+                        if (imgPreview) imgPreview.src = e.target.result;
+                        if (previewDiv) previewDiv.classList.remove('d-none');
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            };
 
+            window.eliminarImagenCuestionario = function() {
+                const imagenInput = document.getElementById('imagen_cuestionario');
+                const previewDiv = document.getElementById('preview_imagen_cuestionario');
+                const imgPreview = document.getElementById('img_preview_cuestionario');
+                if (imagenInput) imagenInput.value = '';
+                if (previewDiv) previewDiv.classList.add('d-none');
+                if (imgPreview) imgPreview.src = '';
+            };
+
+            // Contador de caracteres y otras inicializaciones
+            document.addEventListener('DOMContentLoaded', function() {
+                const descripcion = document.getElementById('descripcion');
+                const contador = document.getElementById('contador_descripcion');
+                if (descripcion && contador) {
+                    descripcion.addEventListener('input', function() {
+                        contador.textContent = this.value.length;
+                    });
+                }
+                
+                // Mostrar información según el tipo de cuestionario seleccionado
+                const tipoSelect = document.getElementById('tipo_cuestionario');
+                const infoGrupal = document.getElementById('infoTipoGrupal');
+                const infoIndividual = document.getElementById('infoTipoIndividual');
+                
+                if (tipoSelect && infoGrupal && infoIndividual) {
+                    tipoSelect.addEventListener('change', function() {
+                        if (this.value === 'G') {
+                            infoGrupal.style.display = 'inline';
+                            infoIndividual.style.display = 'none';
+                        } else {
+                            infoGrupal.style.display = 'none';
+                            infoIndividual.style.display = 'inline';
+                        }
+                    });
+                    
+                    // Mostrar información inicial
+                    if (tipoSelect.value === 'G') {
+                        infoGrupal.style.display = 'inline';
+                    } else {
+                        infoIndividual.style.display = 'inline';
+                    }
+                }
+                
+                // Inicializar tooltips
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            });
+        </script>
+    {% else %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            let datos = {{ datos | tojson }};
+        </script>
+        <script src="{{ url_for('static', filename='JS/modificar.js') }}"></script>
+        <script>
+            // Funciones para manejar la imagen del cuestionario - disponibles globalmente para modificar
+            if (typeof window.previewImagenCuestionario === 'undefined') {
+                window.previewImagenCuestionario = function(input) {
+                    if (input.files && input.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const imgPreview = document.getElementById('img_preview_cuestionario');
+                            const previewDiv = document.getElementById('preview_imagen_cuestionario');
+                            if (imgPreview) imgPreview.src = e.target.result;
+                            if (previewDiv) previewDiv.classList.remove('d-none');
+                        };
+                        reader.readAsDataURL(input.files[0]);
+                    }
+                };
+            }
+
+            if (typeof window.eliminarImagenCuestionario === 'undefined') {
+                window.eliminarImagenCuestionario = function() {
+                    const imagenInput = document.getElementById('imagen_cuestionario');
+                    const previewDiv = document.getElementById('preview_imagen_cuestionario');
+                    const imgPreview = document.getElementById('img_preview_cuestionario');
+                    if (imagenInput) imagenInput.value = '';
+                    if (previewDiv) previewDiv.classList.add('d-none');
+                    if (imgPreview) imgPreview.src = '';
+                };
+            }
+            
+            // Inicializar botones cuando se carga modificar.js
+            function inicializarBotonesModificar() {
+                console.log('Inicializando botones de modificación...');
+                console.log('modificar_detalle:', typeof window.modificar_detalle);
+                console.log('agg_pr:', typeof window.agg_pr);
+                console.log('detalle:', typeof window.detalle);
+                
+                // Botón Modificar Detalle
+                const btnModificarDetalle = document.getElementById('btn_modificar_detalle');
+                if (btnModificarDetalle) {
+                    btnModificarDetalle.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en modificar_detalle');
+                        if (typeof window.modificar_detalle === 'function') {
+                            window.modificar_detalle();
+                        } else {
+                            console.error('modificar_detalle no está disponible');
+                            alert('Error: La función modificar_detalle no está disponible. Por favor, recarga la página.');
+                        }
+                        return false;
+                    };
+                }
+                
+                // Botón Agregar Pregunta
+                const btnAgregarPregunta = document.getElementById('btn_agregar_pregunta');
+                if (btnAgregarPregunta) {
+                    btnAgregarPregunta.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en agg_pr');
+                        if (typeof window.agg_pr === 'function') {
+                            window.agg_pr();
+                        } else {
+                            console.error('agg_pr no está disponible');
+                            alert('Error: La función agg_pr no está disponible. Por favor, recarga la página.');
+                        }
+                        return false;
+                    };
+                }
+                
+                // Botón Ver Detalle
+                const btnVerDetalle = document.getElementById('btn_ver_detalle');
+                if (btnVerDetalle) {
+                    btnVerDetalle.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en ver detalle');
+                        if (typeof window.detalle === 'function') {
+                            window.detalle();
+                        } else {
+                            console.error('detalle no está disponible');
+                        }
+                        return false;
+                    };
+                }
+                
+                // Botón Guardar y Finalizar
+                const btnGuardarFinalizar = document.getElementById('btn_guardar_finalizar');
+                if (btnGuardarFinalizar) {
+                    btnGuardarFinalizar.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Click en guardar_y_finalizar');
+                        if (typeof window.guardar_y_finalizar === 'function') {
+                            window.guardar_y_finalizar();
+                        } else {
+                            console.error('guardar_y_finalizar no está disponible');
+                            alert('Error: La función guardar_y_finalizar no está disponible. Por favor, recarga la página.');
+                        }
+                        return false;
+                    };
+                }
+            }
+            
+            // Inicializar cuando el DOM esté listo
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(inicializarBotonesModificar, 500);
+                });
+            } else {
+                setTimeout(inicializarBotonesModificar, 500);
+            }
+            
+            // También inicializar cuando la ventana se carga completamente
+            window.addEventListener('load', function() {
+                setTimeout(inicializarBotonesModificar, 800);
+            });
+        </script>
     {% endif %}
 {% endblock %}

@@ -10,108 +10,208 @@
 {% endblock  %}
 
 <section class="questionnaires-section">
-  <h3>Cuestionarios Públicos</h3>
+  <div class="section-header">
+    <h2 class="section-title">
+      <i class="bi bi-folder2-open"></i> Repositorio de Cuestionarios
+    </h2>
+    <p class="section-description">
+      Explora cuestionarios públicos creados por otros profesores. Puedes reutilizarlos y adaptarlos a tus necesidades.
+    </p>
+  </div>
+  <h3 class="subsection-title">Cuestionarios Públicos</h3>
   <div id="cuestionarios-lista" class="questionnaires-grid"></div>
 </section>
 
 <style>
-  /* 🔹 Tarjeta base */
-  .questionnaire-card {
+  /* Sección principal */
+  .questionnaires-section {
+    padding: 2rem 0;
+  }
+
+  .section-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e9ecef;
+  }
+
+  .section-title {
+    font-weight: 800;
+    font-size: 2rem;
+    color: #007bff;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-title i {
+    font-size: 2.2rem;
+  }
+
+  .section-description {
+    color: #6c757d;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .subsection-title {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #495057;
+    margin-bottom: 1.5rem;
+    padding-left: 0.5rem;
+    border-left: 4px solid #007bff;
+  }
+
+  /* 🔹 Tarjeta base mejorada - Específico para repositorio */
+  .questionnaires-section .questionnaire-card,
+  section.questionnaires-section .questionnaire-card,
+  .questionnaires-grid .questionnaire-card {
     position: relative;
     overflow: hidden;
-    margin: 10px 0;
-    padding: 20px;
-    border-radius: 12px;
-    background-color: #f9f9f9;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
+    padding: 24px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%) !important;
+    background-color: #e8f5e9 !important;
+    border-left: 5px solid #28a745;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
     cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
-  .questionnaire-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-    background-color: #fefefe;
+  /* Sin cambio de fondo en hover - solo sombra y elevación */
+  .questionnaires-section .questionnaire-card:hover,
+  .questionnaires-section .questionnaire-card:focus,
+  .questionnaires-section .questionnaire-card:active,
+  section.questionnaires-section .questionnaire-card:hover,
+  section.questionnaires-section .questionnaire-card:focus,
+  section.questionnaires-section .questionnaire-card:active,
+  .questionnaires-grid .questionnaire-card:hover,
+  .questionnaires-grid .questionnaire-card:focus,
+  .questionnaires-grid .questionnaire-card:active {
+    transform: translateY(-6px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12) !important;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%) !important;
+    background-color: #e8f5e9 !important;
   }
 
-  /* ✅ Verde tipo “activo” */
-  .questionnaire-card.active {
-    border-left: 6px solid #28a745; /* Verde */
-    background-color: #e9f7e5;      /* Fondo claro */
+  /* Asegurar que no haya cambios de fondo desde otros estilos */
+  .questionnaires-section .questionnaire-card.active,
+  .questionnaires-section .questionnaire-card.active:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%) !important;
+    background-color: #e8f5e9 !important;
   }
 
-  .questionnaire-card.active:hover {
-    background-color: #dcf3d9; /* Un verde más claro al pasar el mouse */
-  }
-
-  /* 🔹 Contenido */
+  /* 🔹 Contenido mejorado */
   .questionnaire-card .card-content {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 12px;
+    flex: 1;
   }
 
   .questionnaire-card .title {
     font-weight: 700;
-    font-size: 1.1rem;
-    color: #0d1b2a;
-    margin-bottom: 4px;
+    font-size: 1.25rem;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    min-height: 2.6em;
   }
 
   .questionnaire-card .subtitle {
     color: #495057;
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .questionnaire-card .subtitle i {
+    color: #007bff;
+    font-size: 1rem;
   }
 
   .questionnaire-card .meta {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #6c757d;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 2px 0;
   }
 
-  .questionnaire-card:hover .title {
-    color: #198754; /* Verde Bootstrap */
+  .questionnaire-card .meta i {
+    color: #28a745;
+    font-size: 0.95rem;
+    width: 18px;
   }
 
-  /* 🔸 Grid adaptable */
+  /* 🔸 Grid adaptable mejorado */
   .questionnaires-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 1rem;
   }
 
-  /* 🔸 Título de sección */
-  h3 {
-    font-weight: 700;
-    color: #1d3557;
-    margin-bottom: 1rem;
-  }
-
-  /* 🔸 Animación suave */
-  .questionnaire-card {
-    opacity: 0;
-    animation: fadeInUp 0.5s forwards;
-  }
-
-  @keyframes fadeInUp {
-    from {
-      transform: translateY(10px);
-      opacity: 0;
-    }
-    to {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  }
-
-  /* 🔸 Botones */
+  /* 🔸 Botones mejorados */
   .button-group {
-    margin-top: 10px;
+    margin-top: auto;
+    padding-top: 12px;
   }
+
   .button-group .btn {
-    font-size: 0.85rem;
-    padding: 6px 12px;
-    border-radius: 6px;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    color: white;
+  }
+
+  .button-group .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  }
+
+  /* Sin animaciones - las tarjetas aparecen directamente */
+
+  /* Mensaje cuando no hay cuestionarios */
+  #cuestionarios-lista > p {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+    font-size: 1.1rem;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 2px dashed #dee2e6;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .questionnaires-grid {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .subsection-title {
+      font-size: 1.25rem;
+    }
   }
 </style>
 
@@ -124,18 +224,34 @@
         wrap.innerHTML = '<p>No se encontraron cuestionarios públicos.</p>';
         return;
       }
-      wrap.innerHTML = data.map(q => {
+      wrap.innerHTML = data.map((q, index) => {
         const tipo = q.tipo_cuestionario === 'I' ? 'Individual' : 'Grupal';
+        const tipoIcon = q.tipo_cuestionario === 'I' ? 'bi-person-fill' : 'bi-people-fill';
+        const imagenHtml = q.imagen_url ? `<img src="/${q.imagen_url}" alt="${q.nombre}" class="card-imagen">` : '';
+        const tipoColor = q.tipo_cuestionario === 'I' ? '#17a2b8' : '#ffc107';
 
         return `
-          <article class="questionnaire-card active">
+          <article class="questionnaire-card">
             <div class="card-content">
-              <h4 class="title">${q.nombre}</h4>
-              <p class="subtitle"><i class="bi bi-person-fill"></i> ${q.docente_completo}</p>
-              <p class="meta"><i class="bi bi-people-fill"></i> Tipo: ${tipo}</p>
-              <p class="meta"><i class="bi bi-key-fill"></i> PIN: ${q.pin}</p>
+              ${imagenHtml}
+              <h4 class="title">${q.nombre || 'Sin nombre'}</h4>
+              <p class="subtitle">
+                <i class="bi bi-person-fill"></i> 
+                <span>${q.docente_completo || 'Docente desconocido'}</span>
+              </p>
+              <p class="meta">
+                <i class="bi ${tipoIcon}" style="color: ${tipoColor}"></i> 
+                <span>Tipo: <strong>${tipo}</strong></span>
+              </p>
+              <p class="meta">
+                <i class="bi bi-key-fill"></i> 
+                <span>PIN: <strong>${q.pin || 'N/A'}</strong></span>
+              </p>
+              ${q.descripcion ? `<p class="meta" style="font-style: italic; color: #6c757d; margin-top: 8px;">${q.descripcion}</p>` : ''}
               <div class="button-group">
-                <button class="btn btn-primary" onclick="location.href='/vercuestionario/${q.id_cuestionario}'">Ver cuestionario</button>
+                <button class="btn btn-primary" onclick="location.href='/vercuestionario/${q.id_cuestionario}?desde_repositorio=true'">
+                  <i class="bi bi-eye-fill me-2"></i>Ver cuestionario
+                </button>
               </div>
             </div>
           </article>

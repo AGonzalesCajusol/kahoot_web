@@ -16,49 +16,8 @@ body {
 }
 
 /* ===== NAVBAR SUPERIOR ===== */
-.navbar {
-    background: linear-gradient(90deg, #00b4ff, #0073ff);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-}
-
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 800;
-    color: #fff !important;
-    letter-spacing: 0.5px;
-}
-
-.navbar-brand img {
-    width: 140px;
-    height: auto;
-    object-fit: contain;
-}
-
-.navbar-toggler {
-    border: none;
-}
-
-.navbar-toggler:focus {
-    box-shadow: none;
-}
-
-/* ===== ENLACES NAVBAR ===== */
-.navbar-nav .nav-link {
-    color: #fff !important;
-    font-weight: 500;
-    padding: 8px 16px !important;
-    border-radius: 6px;
-    transition: all 0.3s ease;
-}
-
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(3px);
-}
+/* Estos estilos se han removido para usar el header compartido de base.html */
+/* El header ahora se maneja desde templates/partials/header.html */
 
 /* ===== Dropdown Usuario ===== */
 .dropdown-menu {
@@ -132,7 +91,6 @@ main header button {
 /* ===== Secciones ===== */
 section {
     width: 100%;
-    max-width: 1100px;
     margin: 0 auto 60px;
     text-align: left;
 }
@@ -159,6 +117,23 @@ section h3 {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     cursor: pointer;
+    overflow: hidden; /* Para que la imagen no se salga de los bordes redondeados */
+}
+
+/* Imagen de la tarjeta - cubre todo el espacio superior */
+.questionnaire-card .card-imagen,
+.questionnaires-section .questionnaire-card .card-imagen,
+.questionnaires-grid .questionnaire-card .card-imagen,
+.questionnaire-card .card-content .card-imagen,
+.questionnaires-section .questionnaire-card .card-content .card-imagen {
+    width: calc(100% + 48px); /* Ancho completo de la tarjeta + padding */
+    height: 200px;
+    object-fit: cover;
+    display: block;
+    margin: -24px -24px 16px -24px; /* Margen negativo para que la imagen ocupe todo el ancho superior */
+    border-radius: 16px 16px 0 0; /* Bordes redondeados solo en la parte superior */
+    position: relative;
+    z-index: 1;
 }
 
 .questionnaire-card:hover {
@@ -173,17 +148,22 @@ section h3 {
     color: #10221f;
 }
 
-/* Estado (activo/archivado) */
+/* Estado (activo/finalizado) */
 .status {
     display: inline-block;
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 0.8rem;
     color: #fff;
-    background: #0073ff;
+    background: #0073ff; /* Azul para Activo (SL) */
     font-weight: 600;
     margin-bottom: 10px;
     letter-spacing: 0.3px;
+}
+
+/* Estado Finalizado (FN) - color diferente */
+.status.finalizado {
+    background: #ff6b35; /* Naranja para Finalizado */
 }
 
 .questionnaire-card.archived .status {
@@ -230,13 +210,39 @@ footer {
 }
 
 /* ===== RESPONSIVO ===== */
+@media (max-width: 1024px) {
+    /* Tablet */
+    main header h1 {
+        font-size: 1.8rem;
+    }
+    
+    #cuestionarios-activos,
+    #cuestionarios-archivados {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+    
+    .button-group {
+        flex-wrap: wrap;
+    }
+    
+    .button-group .btn {
+        font-size: 0.9rem;
+        padding: 6px 12px;
+    }
+}
+
 @media (max-width: 768px) {
+    /* Tablet pequeña y móvil grande */
     main {
         padding: 100px 16px 60px;
     }
 
     main header {
         text-align: center;
+    }
+    
+    main header h1 {
+        font-size: 1.6rem;
     }
 
     section {
@@ -246,16 +252,93 @@ footer {
     .questionnaire-card {
         padding: 20px;
     }
+    
+    .navbar-brand span {
+        display: none; /* Ocultar texto en móvil */
+    }
+    
+    .navbar-brand img {
+        width: 100px;
+    }
+    
+    .navbar-nav {
+        margin-top: 1rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 10px !important;
+    }
+    
+    main header form {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    main header form button {
+        width: 100%;
+    }
+    
+    .button-group {
+        flex-direction: column;
+    }
+    
+    .button-group .btn {
+        width: 100%;
+    }
 }
 
 @media (max-width: 480px) {
+    /* Celular */
+    main {
+        padding: 90px 12px 50px;
+    }
+    
     main header h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
+    }
+    
+    main header form {
+        max-width: 100%;
+    }
+    
+    main header input {
+        font-size: 0.9rem;
+    }
+    
+    main header button {
+        font-size: 0.9rem;
     }
 
     #cuestionarios-activos,
     #cuestionarios-archivados {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .questionnaire-card {
+        padding: 16px;
+    }
+    
+    .questionnaire-card h4 {
+        font-size: 1rem;
+    }
+    
+    .status {
+        font-size: 0.75rem;
+        padding: 4px 10px;
+    }
+    
+    section h3 {
+        font-size: 1.1rem;
+    }
+    
+    .navbar-toggler {
+        padding: 4px 8px;
+    }
+    
+    footer {
+        font-size: 0.8rem;
+        padding: 0.8rem;
     }
 }
 

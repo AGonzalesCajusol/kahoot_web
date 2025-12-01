@@ -1,0 +1,3476 @@
+openapi: 3.0.4
+info:
+  title: API Kahoot Web
+  description: Documentación de APIs para el sistema Kahoot Web
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@kahootweb.com
+
+servers:
+  - url: http://localhost:5000
+    description: Servidor de desarrollo
+  - url: https://api.kahootweb.com
+    description: Servidor de producción
+
+tags:
+  - name: Docente
+    description: Operaciones relacionadas con docentes
+  - name: Jugador
+    description: Operaciones relacionadas con jugadores
+  - name: Cuestionario
+    description: Operaciones relacionadas con cuestionarios
+  - name: Grupo
+    description: Operaciones relacionadas con grupos
+  - name: Recompensa
+    description: Operaciones relacionadas con recompensas
+  - name: Pregunta
+    description: Operaciones relacionadas con preguntas
+  - name: Alternativa
+    description: Operaciones relacionadas con alternativas
+  - name: Usuario
+    description: Operaciones relacionadas con usuarios
+  - name: Respuesta
+    description: Operaciones relacionadas con respuestas
+  - name: GrupoMiembro
+    description: Operaciones relacionadas con miembros de grupos
+  - name: Participante
+    description: Operaciones relacionadas con participantes
+  - name: ParticipanteCuestionario
+    description: Operaciones relacionadas con participantes en cuestionarios
+  - name: VotacionGrupo
+    description: Operaciones relacionadas con votaciones de grupos
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: {}
+          example: []
+        message:
+          type: string
+          example: "Error message"
+        status:
+          type: integer
+          example: 0
+
+    SuccessResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items: {}
+        message:
+          type: string
+        status:
+          type: integer
+          example: 1
+
+    Docente:
+      type: object
+      properties:
+        ID docente:
+          type: integer
+          example: 1
+        Correo:
+          type: string
+          format: email
+          example: "docente@example.com"
+        Nombres:
+          type: string
+          example: "Juan"
+        Apellidos:
+          type: string
+          example: "Pérez"
+
+    Jugador:
+      type: object
+      properties:
+        ID jugador:
+          type: integer
+          example: 1
+        Email:
+          type: string
+          format: email
+          example: "jugador@example.com"
+
+    Cuestionario:
+      type: object
+      properties:
+        id_cuestionario:
+          type: integer
+          example: 1
+        nombre:
+          type: string
+          example: "Cuestionario de Matemáticas"
+        pin:
+          type: string
+          example: "12345"
+        estado:
+          type: string
+          enum: [P, R]
+          example: "P"
+        tipo_cuestionario:
+          type: string
+          enum: [I, G]
+          example: "I"
+        descripcion:
+          type: string
+          example: "Cuestionario sobre álgebra básica"
+
+    Grupo:
+      type: object
+      properties:
+        ID grupo:
+          type: integer
+          example: 1
+        Nombre grupo:
+          type: string
+          example: "Grupo A"
+        ID cuestionario:
+          type: integer
+          example: 1
+        ID lider:
+          type: integer
+          example: 1
+        Metodo evaluacion:
+          type: string
+          example: "mayoria"
+
+    Recompensa:
+      type: object
+      properties:
+        ID recompensa:
+          type: integer
+          example: 1
+        ID cuestionario:
+          type: integer
+          example: 1
+        ID usuario:
+          type: integer
+          example: 1
+        ID jugador:
+          type: integer
+          example: 1
+        Puntos:
+          type: integer
+          example: 100
+        Tipo recompensa:
+          type: string
+          example: "puntos"
+        Fecha recompensa:
+          type: string
+          format: date-time
+
+    Pregunta:
+      type: object
+      properties:
+        ID pregunta:
+          type: integer
+          example: 1
+        Pregunta:
+          type: string
+          example: "¿Cuál es la capital de Perú?"
+        Puntaje:
+          type: integer
+          example: 10
+        Tiempo respuesta:
+          type: integer
+          example: 30
+        Tipo pregunta:
+          type: string
+          enum: [VF, ALT]
+          example: "ALT"
+        ID cuestionario:
+          type: integer
+          example: 1
+        Alternativas:
+          type: array
+          items:
+            type: object
+
+    Alternativa:
+      type: object
+      properties:
+        ID alternativa:
+          type: integer
+          example: 1
+        Respuesta:
+          type: string
+          example: "Lima"
+        Estado alternativa:
+          type: integer
+          example: 1
+        ID pregunta:
+          type: integer
+          example: 1
+
+    Usuario:
+      type: object
+      properties:
+        ID usuario:
+          type: integer
+          example: 1
+        ID jugador:
+          type: integer
+          example: 1
+        Alias:
+          type: string
+          example: "jugador1"
+        ID cuestionario:
+          type: integer
+          example: 1
+        Puntaje:
+          type: number
+          format: float
+          example: 150.5
+        Fecha participacion:
+          type: string
+          format: date-time
+
+    Respuesta:
+      type: object
+      properties:
+        ID respuesta:
+          type: integer
+          example: 1
+        ID usuario:
+          type: integer
+          example: 1
+        ID pregunta:
+          type: integer
+          example: 1
+        ID alternativa:
+          type: integer
+          example: 1
+        Tiempo utilizado:
+          type: integer
+          example: 25
+        Fecha respuesta:
+          type: string
+          format: date-time
+
+    GrupoMiembro:
+      type: object
+      properties:
+        ID miembro:
+          type: integer
+          example: 1
+        ID grupo:
+          type: integer
+          example: 1
+        ID usuario:
+          type: integer
+          example: 1
+        Fecha union:
+          type: string
+          format: date-time
+        Es lider:
+          type: boolean
+          example: false
+
+    Participante:
+      type: object
+      properties:
+        ID participante:
+          type: integer
+          example: 1
+
+    ParticipanteCuestionario:
+      type: object
+      properties:
+        ID participante:
+          type: integer
+          example: 1
+        ID cuestionario:
+          type: integer
+          example: 1
+        Alias:
+          type: string
+          example: "participante1"
+
+    VotacionGrupo:
+      type: object
+      properties:
+        ID votacion:
+          type: integer
+          example: 1
+        ID grupo:
+          type: integer
+          example: 1
+        ID pregunta:
+          type: integer
+          example: 1
+        ID usuario:
+          type: integer
+          example: 1
+        ID alternativa:
+          type: integer
+          example: 1
+        Fecha votacion:
+          type: string
+          format: date-time
+
+paths:
+  /api_registrar_docente:
+    post:
+      tags:
+        - Docente
+      summary: Registrar un nuevo docente
+      description: Crea un nuevo registro de docente en el sistema.
+      operationId: registrarDocente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - correo
+                - password
+                - nombres
+                - apellidos
+              properties:
+                correo:
+                  type: string
+                  format: email
+                  example: "docente@example.com"
+                  description: Correo electrónico del docente
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+                  description: Contraseña del docente
+                nombres:
+                  type: string
+                  example: "Juan"
+                  description: Nombres del docente
+                apellidos:
+                  type: string
+                  example: "Pérez"
+                  description: Apellidos del docente
+      responses:
+        '201':
+          description: Docente registrado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Docente registrado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                camposFaltantes:
+                  value:
+                    data: []
+                    message: "Faltan campos obligatorios: correo, password, nombres, apellidos"
+                    status: 0
+                correoExistente:
+                  value:
+                    data: []
+                    message: "El correo ya está registrado"
+                    status: 0
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_docente_id:
+    get:
+      tags:
+        - Docente
+      summary: Obtener docente por ID
+      description: Obtiene la información de un docente específico mediante su ID.
+      operationId: obtenerDocentePorId
+      parameters:
+        - name: id_docente
+          in: query
+          required: true
+          description: ID del docente a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Docente obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Docente'
+                      message:
+                        type: string
+                        example: "Docente obtenido correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Docente no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_docentes:
+    get:
+      tags:
+        - Docente
+      summary: Obtener todos los docentes
+      description: Obtiene un listado de todos los docentes registrados en el sistema.
+      operationId: obtenerDocentes
+      responses:
+        '200':
+          description: Listado de docentes obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Docente'
+                      message:
+                        type: string
+                        example: "Listado correcto de docentes"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_docente:
+    post:
+      tags:
+        - Docente
+      summary: Actualizar docente existente
+      description: Actualiza la información de un docente existente.
+      operationId: actualizarDocente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_docente
+              properties:
+                id_docente:
+                  type: integer
+                  example: 1
+                  description: ID del docente a actualizar
+                correo:
+                  type: string
+                  format: email
+                  example: "docente.actualizado@example.com"
+                  description: Nuevo correo electrónico (opcional)
+                password:
+                  type: string
+                  format: password
+                  example: "nuevopassword123"
+                  description: Nueva contraseña (opcional)
+                nombres:
+                  type: string
+                  example: "Juan Carlos"
+                  description: Nuevos nombres (opcional)
+                apellidos:
+                  type: string
+                  example: "Pérez García"
+                  description: Nuevos apellidos (opcional)
+      responses:
+        '200':
+          description: Docente actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Docente actualizado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Docente no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_docente:
+    delete:
+      tags:
+        - Docente
+      summary: Eliminar docente
+      description: Elimina un docente del sistema mediante su ID.
+      operationId: eliminarDocente
+      parameters:
+        - name: id_docente
+          in: query
+          required: true
+          description: ID del docente a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Docente eliminado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Docente eliminado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Docente no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_jugador:
+    post:
+      tags:
+        - Jugador
+      summary: Registrar un nuevo jugador
+      description: Crea un nuevo registro de jugador en el sistema.
+      operationId: registrarJugador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "jugador@example.com"
+                  description: Correo electrónico del jugador
+                password:
+                  type: string
+                  format: password
+                  example: "password123"
+                  description: Contraseña del jugador
+      responses:
+        '201':
+          description: Jugador registrado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Jugador registrado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                camposFaltantes:
+                  value:
+                    data: []
+                    message: "Faltan campos obligatorios: email, password"
+                    status: 0
+                emailExistente:
+                  value:
+                    data: []
+                    message: "El email ya está registrado"
+                    status: 0
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_jugador_id:
+    get:
+      tags:
+        - Jugador
+      summary: Obtener jugador por ID
+      description: Obtiene la información de un jugador específico mediante su ID.
+      operationId: obtenerJugadorPorId
+      parameters:
+        - name: id_jugador
+          in: query
+          required: true
+          description: ID del jugador a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Jugador obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Jugador'
+                      message:
+                        type: string
+                        example: "Jugador obtenido correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Jugador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_jugadores:
+    get:
+      tags:
+        - Jugador
+      summary: Obtener todos los jugadores
+      description: Obtiene un listado de todos los jugadores registrados en el sistema.
+      operationId: obtenerJugadores
+      responses:
+        '200':
+          description: Listado de jugadores obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Jugador'
+                      message:
+                        type: string
+                        example: "Listado correcto de jugadores"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_cuestionario:
+    post:
+      tags:
+        - Cuestionario
+      summary: Registrar un nuevo cuestionario
+      description: Crea un nuevo cuestionario en el sistema. Genera un PIN aleatorio automáticamente.
+      operationId: registrarCuestionario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nombre
+                - id_docente
+              properties:
+                nombre:
+                  type: string
+                  minLength: 3
+                  maxLength: 200
+                  example: "Cuestionario de Matemáticas"
+                  description: Nombre del cuestionario (mínimo 3 caracteres, máximo 200)
+                id_docente:
+                  type: integer
+                  example: 1
+                  description: ID del docente que crea el cuestionario
+                estado:
+                  type: string
+                  enum: [P, R, Público, Privado]
+                  default: P
+                  example: "P"
+                  description: Estado del cuestionario (P=Público, R=Privado)
+                tipo_cuestionario:
+                  type: string
+                  enum: [I, G]
+                  default: I
+                  example: "I"
+                  description: Tipo de cuestionario (I=Individual, G=Grupal)
+                descripcion:
+                  type: string
+                  example: "Cuestionario sobre álgebra básica"
+                  description: Descripción del cuestionario (opcional)
+      responses:
+        '201':
+          description: Cuestionario registrado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_cuestionario:
+                              type: integer
+                              example: 1
+                            pin:
+                              type: string
+                              example: "12345"
+                      message:
+                        type: string
+                        example: "Cuestionario registrado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                camposFaltantes:
+                  value:
+                    data: []
+                    message: "Faltan campos obligatorios: nombre, id_docente"
+                    status: 0
+                nombreCorto:
+                  value:
+                    data: []
+                    message: "El nombre del cuestionario debe tener al menos 3 caracteres"
+                    status: 0
+                nombreLargo:
+                  value:
+                    data: []
+                    message: "El nombre del cuestionario no puede exceder 200 caracteres"
+                    status: 0
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_cuestionario_id:
+    get:
+      tags:
+        - Cuestionario
+      summary: Obtener cuestionario por ID
+      description: Obtiene la información de un cuestionario específico mediante su ID, incluyendo sus preguntas.
+      operationId: obtenerCuestionarioPorId
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: true
+          description: ID del cuestionario a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Cuestionario obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Cuestionario'
+                      message:
+                        type: string
+                        example: "Cuestionario obtenido correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Cuestionario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_cuestionarios:
+    get:
+      tags:
+        - Cuestionario
+      summary: Obtener todos los cuestionarios
+      description: Obtiene un listado de todos los cuestionarios, opcionalmente filtrados por id_docente.
+      operationId: obtenerCuestionarios
+      parameters:
+        - name: id_docente
+          in: query
+          required: false
+          description: ID del docente para filtrar cuestionarios
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de cuestionarios obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Cuestionario'
+                      message:
+                        type: string
+                        example: "Listado correcto de cuestionarios"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_cuestionario:
+    post:
+      tags:
+        - Cuestionario
+      summary: Actualizar cuestionario existente
+      description: Actualiza la información de un cuestionario existente.
+      operationId: actualizarCuestionario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_cuestionario
+              properties:
+                id_cuestionario:
+                  type: integer
+                  example: 1
+                  description: ID del cuestionario a actualizar
+                nombre:
+                  type: string
+                  minLength: 3
+                  maxLength: 200
+                  example: "Cuestionario Actualizado"
+                  description: Nuevo nombre (opcional)
+                estado:
+                  type: string
+                  enum: [P, R]
+                  example: "P"
+                  description: Nuevo estado (opcional)
+                tipo_cuestionario:
+                  type: string
+                  enum: [I, G]
+                  example: "I"
+                  description: Nuevo tipo (opcional)
+                descripcion:
+                  type: string
+                  example: "Nueva descripción"
+                  description: Nueva descripción (opcional)
+      responses:
+        '200':
+          description: Cuestionario actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Cuestionario actualizado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Cuestionario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_cuestionario:
+    delete:
+      tags:
+        - Cuestionario
+      summary: Eliminar cuestionario
+      description: Elimina un cuestionario del sistema mediante su ID.
+      operationId: eliminarCuestionario
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: true
+          description: ID del cuestionario a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Cuestionario eliminado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Cuestionario eliminado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Cuestionario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_jugador:
+    post:
+      tags:
+        - Jugador
+      summary: Actualizar jugador existente
+      description: Actualiza la información de un jugador existente.
+      operationId: actualizarJugador
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_jugador
+              properties:
+                id_jugador:
+                  type: integer
+                  example: 1
+                  description: ID del jugador a actualizar
+                email:
+                  type: string
+                  format: email
+                  example: "jugador.actualizado@example.com"
+                  description: Nuevo email (opcional)
+                password:
+                  type: string
+                  format: password
+                  example: "nuevopassword123"
+                  description: Nueva contraseña (opcional)
+      responses:
+        '200':
+          description: Jugador actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Jugador actualizado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Jugador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_jugador:
+    delete:
+      tags:
+        - Jugador
+      summary: Eliminar jugador
+      description: Elimina un jugador del sistema mediante su ID.
+      operationId: eliminarJugador
+      parameters:
+        - name: id_jugador
+          in: query
+          required: true
+          description: ID del jugador a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Jugador eliminado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Jugador eliminado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Jugador no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api_registrar_grupo:
+    post:
+      tags:
+        - Grupo
+      summary: Registrar un nuevo grupo
+      description: Crea un nuevo grupo en el sistema.
+      operationId: registrarGrupo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - nombre_grupo
+                - id_cuestionario
+                - id_lider
+              properties:
+                nombre_grupo:
+                  type: string
+                  example: "Grupo A"
+                  description: Nombre del grupo
+                id_cuestionario:
+                  type: integer
+                  example: 1
+                  description: ID del cuestionario
+                id_lider:
+                  type: integer
+                  example: 1
+                  description: ID del usuario líder
+      responses:
+        '201':
+          description: Grupo registrado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_grupo:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Grupo registrado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_grupo:
+    post:
+      tags:
+        - Grupo
+      summary: Actualizar grupo existente
+      description: Actualiza el método de evaluación de un grupo.
+      operationId: actualizarGrupo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_grupo
+                - metodo_evaluacion
+                - id_usuario
+              properties:
+                id_grupo:
+                  type: integer
+                  example: 1
+                  description: ID del grupo a actualizar
+                metodo_evaluacion:
+                  type: string
+                  example: "mayoria"
+                  description: Método de evaluación (mayoria, consenso, etc.)
+                id_usuario:
+                  type: integer
+                  example: 1
+                  description: ID del usuario que realiza la actualización
+      responses:
+        '200':
+          description: Grupo actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Grupo actualizado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_grupo_id:
+    get:
+      tags:
+        - Grupo
+      summary: Obtener grupo por ID
+      description: Obtiene la información de un grupo específico mediante su ID.
+      operationId: obtenerGrupoPorId
+      parameters:
+        - name: id_grupo
+          in: query
+          required: true
+          description: ID del grupo a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Grupo obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Grupo'
+                      message:
+                        type: string
+                        example: "Grupo obtenido correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Grupo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_grupos:
+    get:
+      tags:
+        - Grupo
+      summary: Obtener todos los grupos
+      description: Obtiene un listado de todos los grupos, opcionalmente filtrados por id_cuestionario.
+      operationId: obtenerGrupos
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: false
+          description: ID del cuestionario para filtrar grupos
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de grupos obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Grupo'
+                      message:
+                        type: string
+                        example: "Listado correcto de grupos"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_grupo:
+    delete:
+      tags:
+        - Grupo
+      summary: Eliminar grupo
+      description: Disuelve un grupo del sistema.
+      operationId: eliminarGrupo
+      parameters:
+        - name: id_grupo
+          in: query
+          required: true
+          description: ID del grupo a eliminar
+          schema:
+            type: integer
+            example: 1
+        - name: id_usuario
+          in: query
+          required: true
+          description: ID del usuario que elimina el grupo
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Grupo eliminado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Grupo eliminado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_recompensa:
+    post:
+      tags:
+        - Recompensa
+      summary: Registrar una nueva recompensa
+      description: Crea un nuevo registro de recompensa en el sistema.
+      operationId: registrarRecompensa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_cuestionario
+                - id_usuario
+                - id_jugador
+                - puntos
+              properties:
+                id_cuestionario:
+                  type: integer
+                  example: 1
+                  description: ID del cuestionario
+                id_usuario:
+                  type: integer
+                  example: 1
+                  description: ID del usuario
+                id_jugador:
+                  type: integer
+                  example: 1
+                  description: ID del jugador
+                puntos:
+                  type: integer
+                  example: 100
+                  description: Puntos de la recompensa
+                tipo_recompensa:
+                  type: string
+                  default: "puntos"
+                  example: "puntos"
+                  description: Tipo de recompensa
+      responses:
+        '201':
+          description: Recompensa registrada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Recompensa registrada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_recompensa:
+    post:
+      tags:
+        - Recompensa
+      summary: Actualizar recompensa existente
+      description: Actualiza la información de una recompensa existente.
+      operationId: actualizarRecompensa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_recompensa
+              properties:
+                id_recompensa:
+                  type: integer
+                  example: 1
+                  description: ID de la recompensa a actualizar
+                puntos:
+                  type: integer
+                  example: 150
+                  description: Nuevos puntos (opcional)
+                tipo_recompensa:
+                  type: string
+                  example: "puntos"
+                  description: Nuevo tipo de recompensa (opcional)
+      responses:
+        '200':
+          description: Recompensa actualizada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Recompensa actualizada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Recompensa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_recompensa_id:
+    get:
+      tags:
+        - Recompensa
+      summary: Obtener recompensa por ID
+      description: Obtiene la información de una recompensa específica mediante su ID.
+      operationId: obtenerRecompensaPorId
+      parameters:
+        - name: id_recompensa
+          in: query
+          required: true
+          description: ID de la recompensa a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Recompensa obtenida correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Recompensa'
+                      message:
+                        type: string
+                        example: "Recompensa obtenida correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Recompensa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_recompensas:
+    get:
+      tags:
+        - Recompensa
+      summary: Obtener todas las recompensas
+      description: Obtiene un listado de todas las recompensas, opcionalmente filtradas por id_cuestionario.
+      operationId: obtenerRecompensas
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: false
+          description: ID del cuestionario para filtrar recompensas
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de recompensas obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Recompensa'
+                      message:
+                        type: string
+                        example: "Listado correcto de recompensas"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_recompensa:
+    delete:
+      tags:
+        - Recompensa
+      summary: Eliminar recompensa
+      description: Elimina una recompensa del sistema mediante su ID.
+      operationId: eliminarRecompensa
+      parameters:
+        - name: id_recompensa
+          in: query
+          required: true
+          description: ID de la recompensa a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Recompensa eliminada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Recompensa eliminada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Recompensa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_pregunta:
+    post:
+      tags:
+        - Pregunta
+      summary: Registrar una nueva pregunta
+      description: Crea un nuevo registro de pregunta en el sistema.
+      operationId: registrarPregunta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_cuestionario
+                - nombre_pregunta
+                - puntos
+                - tiempo
+                - tipo_pregunta
+              properties:
+                id_cuestionario:
+                  type: integer
+                  example: 1
+                  description: ID del cuestionario
+                nombre_pregunta:
+                  type: string
+                  minLength: 5
+                  maxLength: 500
+                  example: "¿Cuál es la capital de Perú?"
+                  description: Texto de la pregunta
+                puntos:
+                  type: integer
+                  minimum: 1
+                  maximum: 1000
+                  example: 10
+                  description: Puntos de la pregunta
+                tiempo:
+                  type: integer
+                  minimum: 2
+                  maximum: 300
+                  example: 30
+                  description: Tiempo en segundos para responder
+                tipo_pregunta:
+                  type: string
+                  enum: [VF, ALT]
+                  example: "ALT"
+                  description: Tipo de pregunta (VF=Verdadero/Falso, ALT=Alternativas)
+      responses:
+        '201':
+          description: Pregunta registrada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_pregunta:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Pregunta registrada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Cuestionario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_pregunta:
+    post:
+      tags:
+        - Pregunta
+      summary: Actualizar pregunta existente
+      description: Actualiza la información de una pregunta existente.
+      operationId: actualizarPregunta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_pregunta
+              properties:
+                id_pregunta:
+                  type: integer
+                  example: 1
+                  description: ID de la pregunta a actualizar
+                nombre_pregunta:
+                  type: string
+                  minLength: 5
+                  maxLength: 500
+                  example: "Pregunta actualizada"
+                  description: Nuevo texto de la pregunta (opcional)
+                puntos:
+                  type: integer
+                  minimum: 1
+                  maximum: 1000
+                  example: 15
+                  description: Nuevos puntos (opcional)
+                tiempo:
+                  type: integer
+                  minimum: 2
+                  maximum: 300
+                  example: 45
+                  description: Nuevo tiempo en segundos (opcional)
+                tipo_pregunta:
+                  type: string
+                  enum: [VF, ALT]
+                  example: "ALT"
+                  description: Nuevo tipo de pregunta (opcional)
+      responses:
+        '200':
+          description: Pregunta actualizada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Pregunta actualizada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_pregunta_id:
+    get:
+      tags:
+        - Pregunta
+      summary: Obtener pregunta por ID
+      description: Obtiene la información de una pregunta específica mediante su ID, incluyendo sus alternativas.
+      operationId: obtenerPreguntaPorId
+      parameters:
+        - name: id_pregunta
+          in: query
+          required: true
+          description: ID de la pregunta a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Pregunta obtenida correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Pregunta'
+                      message:
+                        type: string
+                        example: "Pregunta obtenida correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_preguntas:
+    get:
+      tags:
+        - Pregunta
+      summary: Obtener todas las preguntas
+      description: Obtiene un listado de todas las preguntas, opcionalmente filtradas por id_cuestionario.
+      operationId: obtenerPreguntas
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: false
+          description: ID del cuestionario para filtrar preguntas
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de preguntas obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Pregunta'
+                      message:
+                        type: string
+                        example: "Listado correcto de preguntas"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_pregunta:
+    delete:
+      tags:
+        - Pregunta
+      summary: Eliminar pregunta
+      description: Elimina una pregunta del sistema mediante su ID.
+      operationId: eliminarPregunta
+      parameters:
+        - name: id_pregunta
+          in: query
+          required: true
+          description: ID de la pregunta a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Pregunta eliminada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Pregunta eliminada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_alternativa:
+    post:
+      tags:
+        - Alternativa
+      summary: Registrar una nueva alternativa
+      description: Crea un nuevo registro de alternativa en el sistema.
+      operationId: registrarAlternativa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_pregunta
+                - respuesta
+              properties:
+                id_pregunta:
+                  type: integer
+                  example: 1
+                  description: ID de la pregunta
+                respuesta:
+                  type: string
+                  example: "Lima"
+                  description: Texto de la alternativa
+                estado_alternativa:
+                  type: integer
+                  default: 0
+                  example: 1
+                  description: Estado de la alternativa (1=correcta, 0=incorrecta)
+      responses:
+        '201':
+          description: Alternativa registrada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_alternativa:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Alternativa registrada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Pregunta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_alternativa:
+    post:
+      tags:
+        - Alternativa
+      summary: Actualizar alternativa existente
+      description: Actualiza la información de una alternativa existente.
+      operationId: actualizarAlternativa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_alternativa
+              properties:
+                id_alternativa:
+                  type: integer
+                  example: 1
+                  description: ID de la alternativa a actualizar
+                respuesta:
+                  type: string
+                  example: "Lima, Perú"
+                  description: Nuevo texto de la alternativa (opcional)
+                estado_alternativa:
+                  type: integer
+                  example: 1
+                  description: Nuevo estado de la alternativa (opcional)
+      responses:
+        '200':
+          description: Alternativa actualizada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Alternativa actualizada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Alternativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_alternativa_id:
+    get:
+      tags:
+        - Alternativa
+      summary: Obtener alternativa por ID
+      description: Obtiene la información de una alternativa específica mediante su ID.
+      operationId: obtenerAlternativaPorId
+      parameters:
+        - name: id_alternativa
+          in: query
+          required: true
+          description: ID de la alternativa a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Alternativa obtenida correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Alternativa'
+                      message:
+                        type: string
+                        example: "Alternativa obtenida correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Alternativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_alternativas:
+    get:
+      tags:
+        - Alternativa
+      summary: Obtener todas las alternativas
+      description: Obtiene un listado de todas las alternativas, opcionalmente filtradas por id_pregunta.
+      operationId: obtenerAlternativas
+      parameters:
+        - name: id_pregunta
+          in: query
+          required: false
+          description: ID de la pregunta para filtrar alternativas
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de alternativas obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Alternativa'
+                      message:
+                        type: string
+                        example: "Listado correcto de alternativas"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_alternativa:
+    delete:
+      tags:
+        - Alternativa
+      summary: Eliminar alternativa
+      description: Elimina una alternativa del sistema mediante su ID.
+      operationId: eliminarAlternativa
+      parameters:
+        - name: id_alternativa
+          in: query
+          required: true
+          description: ID de la alternativa a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Alternativa eliminada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Alternativa eliminada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Alternativa no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_usuario:
+    post:
+      tags:
+        - Usuario
+      summary: Registrar un nuevo usuario
+      description: Crea un nuevo registro de usuario en el sistema.
+      operationId: registrarUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - alias
+                - id_cuestionario
+              properties:
+                id_jugador:
+                  type: integer
+                  example: 1
+                  description: ID del jugador (opcional)
+                alias:
+                  type: string
+                  example: "jugador1"
+                  description: Alias del usuario
+                id_cuestionario:
+                  type: integer
+                  example: 1
+                  description: ID del cuestionario
+                puntaje:
+                  type: number
+                  format: float
+                  default: 0.00
+                  example: 0.00
+                  description: Puntaje inicial del usuario
+      responses:
+        '201':
+          description: Usuario registrado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_usuario:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Usuario registrado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_actualizar_usuario:
+    post:
+      tags:
+        - Usuario
+      summary: Actualizar usuario existente
+      description: Actualiza la información de un usuario existente.
+      operationId: actualizarUsuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_usuario
+              properties:
+                id_usuario:
+                  type: integer
+                  example: 1
+                  description: ID del usuario a actualizar
+                alias:
+                  type: string
+                  example: "jugador_actualizado"
+                  description: Nuevo alias (opcional)
+                puntaje:
+                  type: number
+                  format: float
+                  example: 200.5
+                  description: Nuevo puntaje (opcional)
+                id_jugador:
+                  type: integer
+                  example: 1
+                  description: Nuevo ID de jugador (opcional)
+      responses:
+        '200':
+          description: Usuario actualizado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Usuario actualizado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_usuario_id:
+    get:
+      tags:
+        - Usuario
+      summary: Obtener usuario por ID
+      description: Obtiene la información de un usuario específico mediante su ID.
+      operationId: obtenerUsuarioPorId
+      parameters:
+        - name: id_usuario
+          in: query
+          required: true
+          description: ID del usuario a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Usuario obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Usuario'
+                      message:
+                        type: string
+                        example: "Usuario obtenido correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_usuarios:
+    get:
+      tags:
+        - Usuario
+      summary: Obtener todos los usuarios
+      description: Obtiene un listado de todos los usuarios, opcionalmente filtrados por id_cuestionario.
+      operationId: obtenerUsuarios
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: false
+          description: ID del cuestionario para filtrar usuarios
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de usuarios obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Usuario'
+                      message:
+                        type: string
+                        example: "Listado correcto de usuarios"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_usuario:
+    delete:
+      tags:
+        - Usuario
+      summary: Eliminar usuario
+      description: Elimina un usuario del sistema mediante su ID.
+      operationId: eliminarUsuario
+      parameters:
+        - name: id_usuario
+          in: query
+          required: true
+          description: ID del usuario a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Usuario eliminado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Usuario eliminado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_respuesta:
+    post:
+      tags:
+        - Respuesta
+      summary: Registrar una nueva respuesta
+      description: Crea un nuevo registro de respuesta en el sistema.
+      operationId: registrarRespuesta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_usuario
+                - id_pregunta
+                - id_alternativa
+              properties:
+                id_usuario:
+                  type: integer
+                  example: 1
+                  description: ID del usuario
+                id_pregunta:
+                  type: integer
+                  example: 1
+                  description: ID de la pregunta
+                id_alternativa:
+                  type: integer
+                  example: 1
+                  description: ID de la alternativa seleccionada
+                tiempo_utilizado:
+                  type: integer
+                  default: 0
+                  example: 25
+                  description: Tiempo utilizado en segundos
+      responses:
+        '201':
+          description: Respuesta registrada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            puntos:
+                              type: integer
+                              example: 10
+                        example: []
+                      message:
+                        type: string
+                        example: "Respuesta registrada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_respuesta_id:
+    get:
+      tags:
+        - Respuesta
+      summary: Obtener respuesta por ID
+      description: Obtiene la información de una respuesta específica mediante su ID.
+      operationId: obtenerRespuestaPorId
+      parameters:
+        - name: id_respuesta
+          in: query
+          required: true
+          description: ID de la respuesta a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Respuesta obtenida correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Respuesta'
+                      message:
+                        type: string
+                        example: "Respuesta obtenida correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_respuestas:
+    get:
+      tags:
+        - Respuesta
+      summary: Obtener todas las respuestas
+      description: Obtiene un listado de todas las respuestas, opcionalmente filtradas por id_usuario o id_pregunta.
+      operationId: obtenerRespuestas
+      parameters:
+        - name: id_usuario
+          in: query
+          required: false
+          description: ID del usuario para filtrar respuestas
+          schema:
+            type: integer
+            example: 1
+        - name: id_pregunta
+          in: query
+          required: false
+          description: ID de la pregunta para filtrar respuestas
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de respuestas obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Respuesta'
+                      message:
+                        type: string
+                        example: "Listado correcto de respuestas"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_respuesta:
+    delete:
+      tags:
+        - Respuesta
+      summary: Eliminar respuesta
+      description: Elimina una respuesta del sistema mediante su ID.
+      operationId: eliminarRespuesta
+      parameters:
+        - name: id_respuesta
+          in: query
+          required: true
+          description: ID de la respuesta a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Respuesta eliminada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Respuesta eliminada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Respuesta no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_grupo_miembro:
+    post:
+      tags:
+        - GrupoMiembro
+      summary: Agregar miembro a un grupo
+      description: Agrega un nuevo miembro a un grupo existente.
+      operationId: registrarGrupoMiembro
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_grupo
+                - id_usuario
+              properties:
+                id_grupo:
+                  type: integer
+                  example: 1
+                  description: ID del grupo
+                id_usuario:
+                  type: integer
+                  example: 1
+                  description: ID del usuario a agregar
+                es_lider:
+                  type: integer
+                  default: 0
+                  example: 0
+                  description: Indica si es líder (1) o no (0)
+      responses:
+        '201':
+          description: Miembro agregado al grupo correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_miembro:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Miembro agregado al grupo correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Grupo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_grupo_miembros:
+    get:
+      tags:
+        - GrupoMiembro
+      summary: Obtener miembros de un grupo
+      description: Obtiene un listado de todos los miembros de un grupo, opcionalmente filtrados por id_grupo.
+      operationId: obtenerGrupoMiembros
+      parameters:
+        - name: id_grupo
+          in: query
+          required: false
+          description: ID del grupo para filtrar miembros
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de miembros obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/GrupoMiembro'
+                      message:
+                        type: string
+                        example: "Listado correcto de miembros del grupo"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_grupo_miembro:
+    delete:
+      tags:
+        - GrupoMiembro
+      summary: Eliminar miembro de un grupo
+      description: Elimina un miembro de un grupo mediante su ID.
+      operationId: eliminarGrupoMiembro
+      parameters:
+        - name: id_miembro
+          in: query
+          required: true
+          description: ID del miembro a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Miembro eliminado del grupo correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Miembro eliminado del grupo correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Miembro no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_participante:
+    post:
+      tags:
+        - Participante
+      summary: Registrar un nuevo participante
+      description: Crea un nuevo registro de participante en el sistema.
+      operationId: registrarParticipante
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_participante
+              properties:
+                id_participante:
+                  type: integer
+                  example: 1
+                  description: ID del participante
+      responses:
+        '201':
+          description: Participante registrado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_participante:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Participante registrado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_participante_id:
+    get:
+      tags:
+        - Participante
+      summary: Obtener participante por ID
+      description: Obtiene la información de un participante específico mediante su ID.
+      operationId: obtenerParticipantePorId
+      parameters:
+        - name: id_participante
+          in: query
+          required: true
+          description: ID del participante a consultar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Participante obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Participante'
+                      message:
+                        type: string
+                        example: "Participante obtenido correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Participante no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_participantes:
+    get:
+      tags:
+        - Participante
+      summary: Obtener todos los participantes
+      description: Obtiene un listado de todos los participantes registrados en el sistema.
+      operationId: obtenerParticipantes
+      responses:
+        '200':
+          description: Listado de participantes obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/Participante'
+                      message:
+                        type: string
+                        example: "Listado correcto de participantes"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_participante:
+    delete:
+      tags:
+        - Participante
+      summary: Eliminar participante
+      description: Elimina un participante del sistema mediante su ID.
+      operationId: eliminarParticipante
+      parameters:
+        - name: id_participante
+          in: query
+          required: true
+          description: ID del participante a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Participante eliminado correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Participante eliminado correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Participante no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_participante_cuestionario:
+    post:
+      tags:
+        - ParticipanteCuestionario
+      summary: Registrar participante en cuestionario
+      description: Registra un participante en un cuestionario específico.
+      operationId: registrarParticipanteCuestionario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_participante
+                - id_cuestionario
+              properties:
+                id_participante:
+                  type: integer
+                  example: 1
+                  description: ID del participante
+                id_cuestionario:
+                  type: integer
+                  example: 1
+                  description: ID del cuestionario
+                alias:
+                  type: string
+                  example: "participante1"
+                  description: Alias del participante en el cuestionario
+      responses:
+        '201':
+          description: Participante registrado en cuestionario correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Participante registrado en cuestionario correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_participantes_cuestionario:
+    get:
+      tags:
+        - ParticipanteCuestionario
+      summary: Obtener participantes de un cuestionario
+      description: Obtiene un listado de todos los participantes de un cuestionario, opcionalmente filtrados por id_cuestionario.
+      operationId: obtenerParticipantesCuestionario
+      parameters:
+        - name: id_cuestionario
+          in: query
+          required: false
+          description: ID del cuestionario para filtrar participantes
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de participantes obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ParticipanteCuestionario'
+                      message:
+                        type: string
+                        example: "Listado correcto de participantes del cuestionario"
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_participante_cuestionario:
+    delete:
+      tags:
+        - ParticipanteCuestionario
+      summary: Eliminar participante de cuestionario
+      description: Elimina un participante de un cuestionario específico.
+      operationId: eliminarParticipanteCuestionario
+      parameters:
+        - name: id_participante
+          in: query
+          required: true
+          description: ID del participante
+          schema:
+            type: integer
+            example: 1
+        - name: id_cuestionario
+          in: query
+          required: true
+          description: ID del cuestionario
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Participante eliminado del cuestionario correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Participante eliminado del cuestionario correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Participante no encontrado en el cuestionario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_registrar_votacion_grupo:
+    post:
+      tags:
+        - VotacionGrupo
+      summary: Registrar una votación de grupo
+      description: Registra una votación de un usuario en un grupo para una pregunta específica.
+      operationId: registrarVotacionGrupo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - id_grupo
+                - id_pregunta
+                - id_usuario
+                - id_alternativa
+              properties:
+                id_grupo:
+                  type: integer
+                  example: 1
+                  description: ID del grupo
+                id_pregunta:
+                  type: integer
+                  example: 1
+                  description: ID de la pregunta
+                id_usuario:
+                  type: integer
+                  example: 1
+                  description: ID del usuario que vota
+                id_alternativa:
+                  type: integer
+                  example: 1
+                  description: ID de la alternativa seleccionada
+      responses:
+        '201':
+          description: Votación registrada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id_votacion:
+                              type: integer
+                              example: 1
+                      message:
+                        type: string
+                        example: "Votación registrada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_obtener_votaciones_grupo:
+    get:
+      tags:
+        - VotacionGrupo
+      summary: Obtener votaciones de un grupo
+      description: Obtiene todas las votaciones de un grupo para una pregunta específica.
+      operationId: obtenerVotacionesGrupo
+      parameters:
+        - name: id_grupo
+          in: query
+          required: true
+          description: ID del grupo
+          schema:
+            type: integer
+            example: 1
+        - name: id_pregunta
+          in: query
+          required: true
+          description: ID de la pregunta
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Listado de votaciones obtenido correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/VotacionGrupo'
+                      message:
+                        type: string
+                        example: "Listado correcto de votaciones"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api_eliminar_votacion_grupo:
+    delete:
+      tags:
+        - VotacionGrupo
+      summary: Eliminar votación de grupo
+      description: Elimina una votación de grupo mediante su ID.
+      operationId: eliminarVotacionGrupo
+      parameters:
+        - name: id_votacion
+          in: query
+          required: true
+          description: ID de la votación a eliminar
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Votación eliminada correctamente
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items: {}
+                        example: []
+                      message:
+                        type: string
+                        example: "Votación eliminada correctamente"
+        '400':
+          description: Error de validación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Votación no encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Error del servidor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
